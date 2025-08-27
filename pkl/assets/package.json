@@ -1,0 +1,36 @@
+{
+  "name": "math-apps-4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.5.2",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "postcss": "^8.5.6",
+    "postcss-import": "^16.1.1",
+    "rollup": "^4.48.1",
+    "rollup-plugin-postcss": "^4.0.2"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "admin-lte": "4.0.0-rc3",
+    "bootstrap": "5.3.0",
+    "datatables.net-bs5": "^2.3.3",
+    "datatables.net-responsive-bs5": "^3.0.6",
+    "jquery": "^3.7.1",
+    "moment": "^2.30.1",
+    "overlayscrollbars": "^2.11.5",
+    "select2": "4.1.0-rc.0",
+    "select2-bootstrap-5-theme": "^1.3.0",
+    "toastr": "^2.1.4"
+  }
+}

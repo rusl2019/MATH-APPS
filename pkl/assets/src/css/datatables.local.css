@@ -1,0 +1,6 @@
+@import 'datatables.net-bs5';
+@import 'datatables.net-responsive-bs5';
+
+.pagination {
+    --bs-pagination-border-radius: 0 !important;
+}

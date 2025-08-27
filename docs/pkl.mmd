@@ -1,0 +1,155 @@
+graph LR
+    %% Classes for style
+    classDef mahasiswa fill:#E3F9FF,stroke:#0077B6,stroke-width:2px;
+    classDef dosen fill:#F7E18A,stroke:#C59F00,stroke-width:2px;
+    classDef staf fill:#D9E8FF,stroke:#004AAD,stroke-width:2px;
+    classDef kps fill:#EAEADA,stroke:#687800,stroke-width:2px;
+    classDef dept fill:#FFD6DD,stroke:#920028,stroke-width:2px;
+    classDef dekan fill:#D6EAF8,stroke:#145A32,stroke-width:2px;
+    classDef startstop fill:#C6FFDD,stroke:#00A86B,stroke-width:3px;
+
+    subgraph Tahap_1["Tahap 1: Pengajuan Tempat PKL / Jenis Kegiatan PKL"]
+        direction TB
+
+        Start([Mulai]):::startstop
+
+        A["1\. Mhs konsultasi dg Dosen PA (setelah survey instansi)"]:::mahasiswa
+        B["2\. Mhs menyusun Portofolio (Lampiran 3) & Proposal (jika diminta instansi)"]:::mahasiswa
+        C["3\. Bimbingan Portofolio/Proposal dg Dosen & Mengisi Lembar Konsultasi"]:::mahasiswa
+        D{"4\. Dosen beri persetujuan? Portofolio/Proposal"}:::dosen
+        E["5\. Mhs isi Formulir Pengajuan PKL (Lampiran 2)"]:::mahasiswa
+        F["6\. Mhs serahkan berkas lengkap ke Staf Akademik"]:::mahasiswa
+        G["7\. Staf Akademik meneruskan ke KPS Sarjana"]:::staf
+        H["8\. KPS Sarjana memeriksa & tandatangan formulir"]:::kps
+        I["9\. Staf Akademik buat draft surat pengantar"]:::staf
+        J["10\. Ketua Departemen tandatangani surat pengantar"]:::dept
+        K["11\. Staf Akademik serahkan berkas final ke Mhs"]:::staf
+        L["12\. Mahasiswa kirim berkas ke instansi"]:::mahasiswa
+        M{"13\. Instansi menerima pengajuan?"}
+        N["14\. Mhs lapor Dosen & serahkan surat balasan ke Staf Akademik"]:::mahasiswa
+        O["15\. Staf Akademik laporkan daftar peserta ke KPS Sarjana"]:::staf
+        P["16\. KPS Sarjana melaporkan ke Ketua Departemen"]:::kps
+        Q["17\. Ketua Departemen ajukan SK Pembimbing ke Dekan"]:::dept
+        R["18\. Dekan menerbitkan & mengesahkan SK Dosen Pembimbing"]:::dekan
+
+        Next1([Lanjut ke Tahap Pelaksanaan PKL]):::startstop
+
+        Start --> A
+        A --> B
+        B --> C
+        C --> D
+        D -- Tidak layak, revisi --> B
+        D -- Layak --> E
+        E --> F
+        F --> G
+        G --> H
+        H --> I
+        I --> J
+        J --> K
+        K --> L
+        L --> M
+        M -- Ditolak (Maks. 3x) --> A
+        M -- Diterima --> N
+        N --> O
+        O --> P
+        P --> Q
+        Q --> R
+        R --> Next1
+    end
+
+    subgraph Tahap_2["Tahap 2: Pelaksanaan PKL"]
+        direction TB
+
+        T1["1\. Mhs melaksanakan PKL di tempat & waktu sesuai proposal yang telah disetujui"]:::mahasiswa
+        T2["2\. PKL berlangsung 1 - 1,5 bulan (Sarjana Matematika) atau minimal 182 jam (Sarjana Ilmu Aktuaria) *dengan syarat tidak mengganggu kuliah*"]:::mahasiswa
+        T3["3\. Selama PKL, Mhs mendapat arahan & bimbingan Pembimbing Lapangan dari instansi"]:::mahasiswa
+        T4["4\. Mhs wajib membuat log book harian (B-1) Laporan mingguan ke Dosen Pembimbing PKL Log book akhir disahkan Pembimbing Lapangan"]:::mahasiswa
+        T5["5\. Di akhir PKL, Pembimbing Lapangan memberi nilai (B-2) dan instansi mengeluarkan Sertifikat (B-3)"]:::dosen
+        T6["6\. Mhs menyerahkan Sertifikat & nilai ke Staf Akademik"]:::mahasiswa
+        T7["7\. Mhs wajib memprogram mata kuliah PKL pada KRS semester berikutnya"]:::mahasiswa
+
+        Next2([Lanjut ke Tahap Pembuatan Laporan PKL]):::startstop
+
+        T1 --> T2
+        T2 --> T3
+        T3 --> T4
+        T4 --> T5
+        T5 --> T6
+        T6 --> T7
+        T7 --> Next2
+    end
+
+    subgraph Tahap_3["Tahap 3: Pembuatan Laporan PKL"]
+        direction TB
+
+        L1["1\. Setelah PKL, Mhs membuat laporan PKL berdasarkan log book sesuai panduan (B-4)"]:::mahasiswa
+        L2["2\. Laporan disusun atas bimbingan & arahan Pembimbing Lapangan dan Dosen Pembimbing PKL"]:::mahasiswa
+        L3["3\. Mhs mengisi lembar konsultasi bimbingan PKL (A-4)"]:::mahasiswa
+        L4["4\. Dosen Pembimbing PKL memberi penilaian bimbingan pelaksanaan & laporan PKL (B-5)"]:::dosen
+
+        Next3([Lanjut ke Tahap Seminar PKL]):::startstop
+
+        L1 --> L2
+        L2 --> L3
+        L3 --> L4
+        L4 --> Next3
+    end
+
+    subgraph Tahap_4["Tahap 4: Seminar PKL"]
+        direction TB
+
+        S1["1\. Mhs meminta persetujuan Dosen Pembimbing PKL untuk seminar PKL"]:::mahasiswa
+        S2["2\. Dosen Pembimbing PKL menyetujui & menandatangani Lembar Pendaftaran Seminar PKL (C-1)"]:::dosen
+        S3["3\. Mhs mendaftar seminar PKL dengan menyerahkan berkas ke Staf Akademik"]:::mahasiswa
+        S4["4\. Staf Akademik mengirimkan lembar persetujuan melaksanakan seminar PKL ke KPS Sarjana"]:::staf
+        S5["5\. Mhs (sendiri/berkelompok) mendiskusikan jadwal seminar dengan Dosen Pembimbing PKL, lalu melapor ke Staf Akademik"]:::mahasiswa
+        S6["6\. Staf Akademik membuat undangan seminar PKL, ditandatangani KPS Sarjana & menyiapkan sarpras"]:::staf
+        S7["7\. Staf Akademik mengirimkan undangan seminar PKL kepada Dosen Pembimbing PKL"]:::staf
+        S8["8\. Mhs melaksanakan seminar PKL sesuai jadwal"]:::mahasiswa
+        S9["9\. Dosen Pembimbing PKL memberikan penilaian (D-1) dan mengisi formulir perbaikan laporan (D-4)"]:::dosen
+        S10["10\. Dosen Pembimbing PKL merekap penilaian & membuat Berita Acara Seminar PKL (D-3)"]:::dosen
+        S11["11\. Dosen Pembimbing PKL menyerahkan seluruh berkas seminar PKL ke Staf Akademik"]:::dosen
+
+        Next4([Lanjut ke Tahap Penyelesaian Administrasi PKL]):::startstop
+
+        S1 --> S2
+        S2 --> S3
+        S3 --> S4
+        S4 --> S5
+        S5 --> S6
+        S6 --> S7
+        S7 --> S8
+        S8 --> S9
+        S9 --> S10
+        S10 --> S11
+        S11 --> Next4
+    end
+
+    subgraph Tahap_5 ["Tahap 5: Penyelesaian Administrasi PKL"]
+        direction TB
+
+        AA["`1\. Staf Akademik kirim lembar revisi laporan PKL ke Mhs`"]:::staf
+        AB["`2\. Mhs revisi laporan PKL (≤25 hari kerja, >25 hari = nilai turun 1 tingkat, >50 hari = ulang PKL baru)`"]:::mahasiswa
+        AC["`3\. Mhs minta persetujuan hasil revisi ke Dosen Pembimbing (E-1)`"]:::mahasiswa
+        AD["`4\. Mhs memproses Lembar Pengesahan ditandatangani Dosen Pembimbing & Pembimbing Lapangan`"]:::mahasiswa
+        AE["`5\. Mhs menjilid naskah laporan PKL yang telah direvisi & disetujui`"]:::mahasiswa
+        AF["`6\. Mhs serahkan 4 eksemplar laporan ke Staf Akademik untuk ditandatangani Ketua Departemen`"]:::mahasiswa
+        AG["`7\. Staf Akademik serahkan laporan PKL ke Ketua Departemen untuk ditandatangani & distempel`"]:::staf
+        AH["`8\. Staf Akademik kembalikan laporan ke Mhs, selanjutnya diserahkan kepada: Dosen Pembimbing (1 eks), Instansi PKL (1 eks), Departemen Matematika (1 eks), Mahasiswa (1 eks)`"]:::staf
+        
+        End([Selesai PKL]):::startstop
+
+        AA --> AB
+        AB --> AC
+        AC --> AD
+        AD --> AE
+        AE --> AF
+        AF --> AG
+        AG --> AH
+        AH --> End
+    end
+
+    Tahap_1 --> Tahap_2
+    Tahap_2 --> Tahap_3
+    Tahap_3 --> Tahap_4
+    Tahap_4 --> Tahap_5

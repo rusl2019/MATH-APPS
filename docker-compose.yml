@@ -1,0 +1,33 @@
+services:
+  php:
+    container_name: math-apps-ci3
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www/html/
+  db:
+    container_name: math-apps-db
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: myE6ve9Dj15GGr8yEG05
+      MYSQL_DATABASE: sql_matematika_pkl
+      MYSQL_USER: sql_matematika_pkl
+      MYSQL_PASSWORD: WJkxzq779SN0Y1L962w4
+    volumes:
+      - ./database:/root/database
+    ports:
+      - 3310:3306
+  adminer:
+    container_name: math-apps-adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
