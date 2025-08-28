@@ -19,23 +19,23 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($applications as $a) : ?>
+            <?php foreach ($applications ?? [] as $a) : ?>
                 <tr>
-                    <td><?= $a->student_name ?></td>
-                    <td><?= $a->title ?></td>
-                    <td><?= $a->lecturer_name ?></td>
-                    <td><?= $a->place_name ?></td>
-                    <td><?= $a->submission_date ?></td>
+                    <td><?= $a->student_name ?? '-' ?></td>
+                    <td><?= $a->title ?? '-' ?></td>
+                    <td><?= $a->lecturer_name ?? '-' ?></td>
+                    <td><?= $a->place_name ?? '-' ?></td>
+                    <td><?= $a->submission_date ?? '-' ?></td>
                     <td>
-                        <a href="<?= site_url('pkl/applications/approve/' . $a->id) ?>" class="btn btn-sm btn-success">Setujui</a>
+                        <a href="<?= site_url('pkl/applications/approve/' . ($a->id ?? '')) ?>" class="btn btn-sm btn-success">Setujui</a>
                         <!-- tombol reject dengan modal alasan -->
-                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?= $a->id ?>">Tolak</button>
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?= $a->id ?? '' ?>">Tolak</button>
 
                         <!-- Modal reject -->
-                        <div class="modal fade" id="rejectModal<?= $a->id ?>" tabindex="-1">
+                        <div class="modal fade" id="rejectModal<?= $a->id ?? '' ?>" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form method="post" action="<?= site_url('pkl/applications/reject/' . $a->id) ?>">
+                                    <form method="post" action="<?= site_url('pkl/applications/reject/' . ($a->id ?? '')) ?>">
                                         <div class="modal-header">
                                             <h5 class="modal-title">Alasan Penolakan</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

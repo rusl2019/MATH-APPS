@@ -20,11 +20,14 @@ CREATE TABLE `pkl_places` (
 DROP TABLE IF EXISTS `pkl_applications`;
 CREATE TABLE `pkl_applications` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `student_id` VARCHAR(20) NOT NULL,
-  `lecturer_id` VARCHAR(20) DEFAULT NULL, -- dosen pembimbing
-  `place_id` INT(11) DEFAULT NULL,        -- instansi PKL
-  `title` VARCHAR(255) DEFAULT NULL,      -- judul/tema PKL
-  `type` VARCHAR(100) DEFAULT NULL,       -- jenis kegiatan
+  `student_id` VARCHAR(20) NOT NULL,           -- NIM mahasiswa
+  `phone_number` VARCHAR(20) DEFAULT NULL,     -- Nomor telepon/WA
+  `lecturer_id` VARCHAR(20) DEFAULT NULL,      -- Dosen pembimbing
+  `place_id` INT(11) DEFAULT NULL,             -- Instansi PKL
+  `addressed_to` VARCHAR(255) DEFAULT NULL,    -- Surat ditujukan kepada (jabatan)
+  `equivalent_activity` VARCHAR(255) DEFAULT NULL, -- Kegiatan setara
+  `title` VARCHAR(255) DEFAULT NULL,           -- Judul/tema PKL
+  `type` VARCHAR(100) DEFAULT NULL,            -- Jenis kegiatan
   `status` ENUM(
     'draft',
     'submitted',
@@ -39,9 +42,17 @@ CREATE TABLE `pkl_applications` (
     'finished'
   ) DEFAULT 'draft',
   `submission_date` DATE DEFAULT NULL,
+  `activity_period_start` DATE DEFAULT NULL,   -- Periode mulai
+  `activity_period_end` DATE DEFAULT NULL,     -- Periode selesai
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
   `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `student_id` (`student_id`),
+  KEY `lecturer_id` (`lecturer_id`),
+  KEY `place_id` (`place_id`),
+  CONSTRAINT `fk_applications_student` FOREIGN KEY (`student_id`) REFERENCES `apps_students` (`id`),
+  CONSTRAINT `fk_applications_lecturer` FOREIGN KEY (`lecturer_id`) REFERENCES `apps_lecturers` (`id`),
+  CONSTRAINT `fk_applications_place` FOREIGN KEY (`place_id`) REFERENCES `pkl_places` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 3. Dokumen (portofolio, proposal, surat, SK, laporan, sertifikat)
