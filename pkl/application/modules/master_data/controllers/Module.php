@@ -6,6 +6,14 @@ class Module extends MY_Controller
     public function __construct()
     {
         parent::__construct();
+
+        if (!$this->check_permission('master_data', 'read')) {
+            echo 'Access Denied!!!';
+            $this->output->set_status_header(403);
+            $this->output->set_output('Access Denied');
+            exit;
+        }
+
         $this->load->model('Module_model');
     }
 
@@ -22,6 +30,12 @@ class Module extends MY_Controller
             show_error('Access Denied', 403);
         }
 
+        if (!$this->check_permission('master_data', 'create')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
+        }
+
         $data['title'] = 'Modul';
 
         $content = $this->load->view('module_create', $data, true);
@@ -33,6 +47,12 @@ class Module extends MY_Controller
     {
         if (!$this->input->is_ajax_request()) {
             show_error('Access Denied', 403);
+        }
+
+        if (!$this->check_permission('master_data', 'create')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
         }
 
         $result = $this->Module_model->create() ? 'success' : 'error';
@@ -59,6 +79,12 @@ class Module extends MY_Controller
             show_error('Access Denied', 403);
         }
 
+        if (!$this->check_permission('master_data', 'update')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
+        }
+
         $id = $this->input->post('id', true);
         $data = $this->Module_model->get_data_detail($id);
         $data['title'] = 'Modul';
@@ -73,6 +99,12 @@ class Module extends MY_Controller
             show_error('Access Denied', 403);
         }
 
+        if (!$this->check_permission('master_data', 'update')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
+        }
+
         $result = $this->Module_model->update() ? 'success' : 'error';
         $this->output->set_content_type('application/json')->set_output(json_encode(['status' => $result]));
     }
@@ -81,6 +113,12 @@ class Module extends MY_Controller
     {
         if (!$this->input->is_ajax_request()) {
             show_error('Access Denied', 403);
+        }
+
+        if (!$this->check_permission('master_data', 'delete')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
         }
 
         $result = $this->Module_model->delete() ? 'success' : 'error';

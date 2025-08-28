@@ -6,6 +6,14 @@ class Student extends MY_Controller
     public function __construct()
     {
         parent::__construct();
+
+        if (!$this->check_permission('master_data', 'read')) {
+            echo 'Access Denied!!!';
+            $this->output->set_status_header(403);
+            $this->output->set_output('Access Denied');
+            exit;
+        }
+
         $this->load->model('Student_model');
     }
 
@@ -22,6 +30,12 @@ class Student extends MY_Controller
             show_error('Access Denied', 403);
         }
 
+        if (!$this->check_permission('master_data', 'create')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
+        }
+
         $data['study_programs'] = $this->Student_model->get_all_study_programs();
         $data['roles'] = $this->Student_model->get_all_roles();
         $data['title'] = 'Mahasiswa';
@@ -36,6 +50,12 @@ class Student extends MY_Controller
     {
         if (!$this->input->is_ajax_request()) {
             show_error('Access Denied', 403);
+        }
+
+        if (!$this->check_permission('master_data', 'create')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
         }
 
         $result = $this->Student_model->create() && $this->Student_model->create_roles() ? 'success' : 'error';
@@ -68,6 +88,12 @@ class Student extends MY_Controller
             show_error('Access Denied', 403);
         }
 
+        if (!$this->check_permission('master_data', 'update')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
+        }
+
         $id = $this->input->post('id', true);
 
         $data = $this->Student_model->get_data_detail($id);
@@ -87,6 +113,12 @@ class Student extends MY_Controller
             show_error('Access Denied', 403);
         }
 
+        if (!$this->check_permission('master_data', 'update')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
+        }
+
         $result = $this->Student_model->update() && $this->Student_model->create_roles() ? 'success' : 'error';
 
         $this->output->set_content_type('application/json');
@@ -97,6 +129,12 @@ class Student extends MY_Controller
     {
         if (!$this->input->is_ajax_request()) {
             show_error('Access Denied', 403);
+        }
+
+        if (!$this->check_permission('master_data', 'delete')) {
+            $this->output->set_content_type('application/json');
+            $this->output->set_output(json_encode(['status' => 'access_denied']));
+            return;
         }
 
         $result = $this->Student_model->delete() ? 'success' : 'error';

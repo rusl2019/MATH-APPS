@@ -67,6 +67,10 @@ export default class MasterDataHandler {
         $.ajax({
             url: this.buildUrl(action), type: "POST", data: data, dataType: "json",
             success: (response) => {
+                if (response.status === 'access_denied') {
+                    toastr.error('Akses ditolak: Anda tidak memiliki izin untuk melakukan tindakan ini.');
+                    return;
+                }
                 $(contentId).html(response);
                 const modal = new bootstrap.Modal(document.getElementById(modalId));
                 modal.show();
@@ -116,6 +120,8 @@ export default class MasterDataHandler {
                     if (response.status === 'success') {
                         toastr.success('Data berhasil dihapus');
                         this.dataTable.ajax.reload();
+                    } else if (response.status === 'access_denied') {
+                        toastr.error('Akses ditolak: Anda tidak memiliki izin untuk menghapus data ini.');
                     } else {
                         toastr.error(response.message || 'Data gagal dihapus');
                     }
