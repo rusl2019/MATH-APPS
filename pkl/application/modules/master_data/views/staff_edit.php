@@ -5,6 +5,7 @@
     </div>
     <?php echo form_open('/master_data/staff/update', ['id' => 'formEdit']); ?>
     <div class="modal-body">
+        <?php echo form_hidden('id', $id); ?>
         <div class="mb-3">
             <label class="form-label" for="id_edit">ID</label>
             <input type="text" class="form-control" id="id_edit" value="<?php echo $id; ?>" disabled>

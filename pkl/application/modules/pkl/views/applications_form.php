@@ -4,6 +4,12 @@
     <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
     <?= form_open_multipart('pkl/applications/create'); ?>
 
+    <?php if ($this->session->flashdata('error')) : ?>
+        <div class="alert alert-danger">
+            <?= $this->session->flashdata('error'); ?>
+        </div>
+    <?php endif; ?>
+
     <!-- Data Mahasiswa (readonly dari session) -->
     <div class="mb-3">
         <label class="form-label">Nama Mahasiswa</label>

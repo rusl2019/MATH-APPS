@@ -73,7 +73,7 @@ class Student_model extends CI_Model
         return true;
     }
 
-    public function delete_roles(int $id): bool
+    public function delete_roles(string $id): bool
     {
         return $this->db->delete('apps_user_roles', ['user_id' => $id]);
     }

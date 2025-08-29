@@ -56,7 +56,7 @@
                             <dd class="col-sm-8"><?= html_escape($student_detail->study_program ?? '') ?></dd>
 
                             <dt class="col-sm-4">No. WA</dt>
-                            <dd class="col-sm-8"><?= html_escape($a->phone_number ?? '-') ?></dd>
+                            <dd class="col-sm-8">+62<?= html_escape($a->phone_number ?? '-') ?></dd>
 
                             <dt class="col-sm-4">Surat Ditujukan Kepada</dt>
                             <dd class="col-sm-8"><?= html_escape($a->addressed_to ?? '-') ?></dd>
@@ -75,6 +75,9 @@
                                 <?= $a->activity_period_start ? date('d-m-Y', strtotime($a->activity_period_start)) : '-' ?> s/d
                                 <?= $a->activity_period_end ? date('d-m-Y', strtotime($a->activity_period_end)) : '-' ?>
                             </dd>
+
+                            <dt class="col-sm-4">Dosen Pembimbing</dt>
+                            <dd class="col-sm-8"><?= html_escape($a->lecturer_name ?? '-') ?></dd>
                         </dl>
 
                         <h6 class="mt-4">File Dokumen</h6>

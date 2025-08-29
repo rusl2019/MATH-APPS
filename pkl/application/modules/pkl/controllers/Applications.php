@@ -16,6 +16,7 @@ class Applications extends MY_Controller
         $this->data['title'] = 'Daftar Pengajuan PKL Saya';
         $this->data['applications'] = $this->app->get_by_student($student_id);
         $this->data['student_detail'] = $this->app->get_student($student_id);
+        $this->data['documents'] = $this->app->get_documents_by_student($student_id);
         $this->render('applications_index');
     }
 
@@ -84,6 +85,14 @@ class Applications extends MY_Controller
                     'status' => 'submitted',
                     'remarks' => 'Formulir pengajuan diajukan',
                 ]);
+                $this->app->insert_document([
+                    'application_id' => $application_id,
+                    'doc_type' => $doc_type,
+                    'file_path' => 'uploads/pkl/' . $file['file_name'],
+                ]);
+            } else {
+                $this->session->set_flashdata('error', 'Gagal mengunggah ' . $doc_type . ': ' . $this->upload->display_errors());
+                redirect('pkl/applications/create');
             }
         }
     }

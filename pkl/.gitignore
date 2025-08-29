@@ -33,3 +33,6 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 
 ## local environment files
 .env
+
+## Uploads
+/uploads/*

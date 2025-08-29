@@ -5,7 +5,7 @@ class Applications_model extends CI_Model
 {
     public function get_by_student($student_id): array
     {
-        return $this->db->select('a.*, l.name as lecturer_name, p.name as place_name')
+        return $this->db->select('a.*, l.name as lecturer_name, p.name as place_name, p.address as place_address')
             ->from('pkl_applications a')
             ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left')
             ->join('pkl_places p', 'a.place_id = p.id', 'left')
@@ -49,7 +49,7 @@ class Applications_model extends CI_Model
     {
         $id_kps = $this->get_study_program_kps();
 
-        $this->db->select('a.*, s.name as student_name, p.name as place_name, l.name as lecturer_name')
+        $this->db->select('a.*, s.name as student_name, p.name as place_name, p.address as place_address, l.name as lecturer_name')
             ->from('pkl_applications a')
             ->join('apps_students s', 'a.student_id = s.id')
             ->join('pkl_places p', 'a.place_id = p.id', 'left')
@@ -88,5 +88,18 @@ class Applications_model extends CI_Model
         $this->db->join('apps_study_programs sp', 's.study_program_id = sp.id', 'left');
         return $this->db->where('s.id', $student_id)
             ->get('apps_students')->row();
+    }
+
+    public function get_documents_by_student($student_id): array
+    {
+        $app_id = $this->db->select('id')
+            ->from('pkl_applications')
+            ->where('student_id', $student_id)
+            ->get()->row();
+        if (!$app_id) {
+            return [];
+        }
+        $app_id = $app_id->id;
+        return $this->db->get_where('pkl_documents', ['application_id' => $app_id])->result();
     }
 }
