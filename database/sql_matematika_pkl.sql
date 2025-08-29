@@ -1,4 +1,4 @@
--- Adminer 5.3.0 MariaDB 11.6.2-MariaDB-ubu2404 dump
+-- Adminer 5.3.0 MariaDB 11.8.2-MariaDB-ubu2404 dump
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
@@ -87,7 +87,8 @@ INSERT INTO `apps_roles` (`id`, `name`, `description`, `created_at`, `updated_at
 (2,	'student',	'Student with limited access',	'2025-08-27 15:17:34',	NULL,	NULL),
 (3,	'lecturer',	'Lecturer with teaching-related access',	'2025-08-27 15:17:34',	NULL,	NULL),
 (4,	'staff',	'Staff with administrative access',	'2025-08-27 15:17:34',	NULL,	NULL),
-(5,	'head study program',	'Head of study program with limited access',	'2025-08-27 15:17:34',	NULL,	NULL);
+(5,	'head study program',	'Head of study program with limited access',	'2025-08-27 15:17:34',	NULL,	NULL),
+(6,	'head department',	'Head Department',	'2025-08-29 04:13:11',	NULL,	NULL);
 
 DROP TABLE IF EXISTS `apps_role_access`;
 CREATE TABLE `apps_role_access` (
@@ -119,7 +120,11 @@ INSERT INTO `apps_role_access` (`role_id`, `module_id`, `can_create`, `can_read`
 (5,	1,	1,	1,	1,	1),
 (5,	2,	1,	1,	1,	1),
 (5,	3,	0,	0,	0,	0),
-(5,	4,	0,	0,	0,	0);
+(5,	4,	0,	0,	0,	0),
+(6,	1,	1,	1,	1,	1),
+(6,	2,	1,	1,	1,	1),
+(6,	3,	0,	0,	0,	0),
+(6,	4,	0,	0,	0,	0);
 
 DROP TABLE IF EXISTS `apps_staffs`;
 CREATE TABLE `apps_staffs` (
@@ -1400,4 +1405,4 @@ CREATE TABLE `ci_sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
--- 2025-08-27 15:18:57 UTC
+-- 2025-08-29 04:13:33 UTC
