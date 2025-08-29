@@ -149,6 +149,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <nav class="mt-2">
                     <!--begin::Sidebar Menu-->
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" aria-label="Main navigation" data-accordion="false" id="navigation">
+                        <!-- Dashboard (Accessible to all roles) -->
                         <li class="nav-item">
                             <a href="<?php echo base_url('dashboard'); ?>" class="nav-link <?php echo is_active('dashboard'); ?>">
                                 <i class="nav-icon bi bi-speedometer"></i>
@@ -156,53 +157,111 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </a>
                         </li>
 
-                        <li class="nav-item <?php echo is_active('master_data', 1, 'menu-open'); ?>">
-                            <a href="#" class="nav-link <?php echo is_active('master_data'); ?>">
-                                <i class="nav-icon bi bi-database"></i>
-                                <p>
-                                    Master Data
-                                    <i class="nav-arrow bi bi-chevron-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="<?php echo base_url('master_data/student'); ?>" class="nav-link <?php echo is_active('student', 2); ?>">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Mahasiswa</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="<?php echo base_url('master_data/lecturer'); ?>" class="nav-link <?php echo is_active('lecturer', 2); ?>">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Dosen</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="<?php echo base_url('master_data/staff'); ?>" class="nav-link <?php echo is_active('staff', 2); ?>">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Staff</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="<?php echo base_url('master_data/study_program'); ?>" class="nav-link <?php echo is_active('study_program', 2); ?>">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Program Studi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="<?php echo base_url('master_data/module'); ?>" class="nav-link <?php echo is_active('module', 2); ?>">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Modul</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="<?php echo base_url('master_data/role'); ?>" class="nav-link <?php echo is_active('role', 2); ?>">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Peran Pengguna</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        <?php
+                        $roles = $this->session->userdata('role_names') ?? [];
+                        ?>
+
+                        <!-- PKL Management for Mahasiswa -->
+                        <?php if (in_array('student', $roles)) : ?>
+                            <li class="nav-item <?php echo is_active('pkl', 1, 'menu-open'); ?>">
+                                <a href="#" class="nav-link <?php echo is_active('pkl'); ?>">
+                                    <i class="nav-icon bi bi-briefcase"></i>
+                                    <p>
+                                        PKL Management
+                                        <i class="nav-arrow bi bi-chevron-right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('pkl/applications'); ?>" class="nav-link <?php echo is_active('applications', 2); ?>">
+                                            <i class="nav-icon bi bi-list-check"></i>
+                                            <p>My Applications</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php endif; ?>
+
+                        <!-- PKL Management for Dosen, KPS, Kadep -->
+                        <?php if (in_array('lecturer', $roles) || in_array('head study program', $roles) || in_array('head department', $roles)) : ?>
+                            <li class="nav-item <?php echo is_active('pkl', 1, 'menu-open'); ?>">
+                                <a href="#" class="nav-link <?php echo is_active('pkl'); ?>">
+                                    <i class="nav-icon bi bi-briefcase"></i>
+                                    <p>
+                                        PKL Management
+                                        <i class="nav-arrow bi bi-chevron-right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('pkl/applications/approvals'); ?>" class="nav-link <?php echo is_active('approvals', 3); ?>">
+                                            <i class="nav-icon bi bi-check-circle"></i>
+                                            <p>Approvals</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('pkl/applications/all_applications'); ?>" class="nav-link <?php echo is_active('all_applications', 3); ?>">
+                                            <i class="nav-icon bi bi-list"></i>
+                                            <p>All Applications</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php endif; ?>
+
+
+                        <!-- Master Data for Admin (assumed role) -->
+                        <?php if ($this->session->userdata('is_admin')) : ?>
+                            <li class="nav-item <?php echo is_active('master_data', 1, 'menu-open'); ?>">
+                                <a href="#" class="nav-link <?php echo is_active('master_data'); ?>">
+                                    <i class="nav-icon bi bi-database"></i>
+                                    <p>
+                                        Master Data
+                                        <i class="nav-arrow bi bi-chevron-right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('master_data/student'); ?>" class="nav-link <?php echo is_active('student', 2); ?>">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Mahasiswa</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('master_data/lecturer'); ?>" class="nav-link <?php echo is_active('lecturer', 2); ?>">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Dosen</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('master_data/staff'); ?>" class="nav-link <?php echo is_active('staff', 2); ?>">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Staff</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('master_data/study_program'); ?>" class="nav-link <?php echo is_active('study_program', 2); ?>">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Program Studi</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('master_data/module'); ?>" class="nav-link <?php echo is_active('module', 2); ?>">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Modul</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('master_data/role'); ?>" class="nav-link <?php echo is_active('role', 2); ?>">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Peran Pengguna</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                     <!--end::Sidebar Menu-->
                 </nav>

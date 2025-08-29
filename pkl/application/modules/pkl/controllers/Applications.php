@@ -112,6 +112,9 @@ class Applications extends MY_Controller
         if (in_array('head study program', $roles)) {
             $role = 'kps';
             $this->app->update_status($id, 'approved_kps');
+        } elseif (in_array('head department', $roles)) {
+            $role = 'kadep';
+            $this->app->update_status($id, 'approved_kadep');
         } elseif (in_array('lecturer', $roles)) {
             $role = 'dosen';
             $this->app->update_status($id, 'approved_dosen');
@@ -149,5 +152,69 @@ class Applications extends MY_Controller
 
         $this->session->set_flashdata('error', 'Pengajuan PKL ditolak.');
         redirect('pkl/applications/approvals');
+    }
+
+    public function all_applications(): void
+    {
+        $this->data['title'] = 'Semua Pengajuan PKL';
+        $this->data['applications'] = $this->app->get_all_applications();
+        $this->render('applications_all');
+    }
+
+    public function upload_recommendation(int $id): void
+    {
+        // Check if application is in approved_kadep status
+        $application = $this->db->get_where('pkl_applications', ['id' => $id])->row();
+        if (!$application || $application->status !== 'approved_kadep') {
+            $this->session->set_flashdata('error', 'Pengajuan tidak valid atau belum disetujui oleh Ketua Departemen.');
+            redirect('pkl/applications/all_applications');
+        }
+
+        $this->data['title'] = 'Unggah Surat Rekomendasi';
+        $this->data['application_id'] = $id;
+
+        if ($this->input->method() === "post") {
+            $config = [
+                'upload_path' => './uploads/pkl/',
+                'allowed_types' => 'pdf',
+                'max_size' => 2048,
+                'file_name' => 'recommendation_letter_' . time(),
+            ];
+
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('recommendation_file')) {
+                $file = $this->upload->data();
+
+                // Insert document
+                $this->app->insert_document([
+                    'application_id' => $id,
+                    'doc_type' => 'recommendation_letter',
+                    'file_path' => 'Uploads/pkl/' . $file['file_name'],
+                    'status' => 'submitted',
+                ]);
+
+                // Update application status
+                $this->app->update_status($id, 'recommendation_uploaded');
+
+                // Log workflow
+                $this->app->insert_workflow([
+                    'application_id' => $id,
+                    'step_name' => 'Upload Surat Rekomendasi',
+                    'actor_id' => $this->session->userdata('id'),
+                    'role' => 'admin',
+                    'status' => 'done',
+                    'remarks' => 'Surat rekomendasi diunggah oleh admin',
+                ]);
+
+                $this->session->set_flashdata('success', 'Surat rekomendasi berhasil diunggah.');
+                redirect('pkl/applications/all_applications');
+            } else {
+                $this->session->set_flashdata('error', 'Gagal mengunggah surat rekomendasi: ' . $this->upload->display_errors());
+                redirect('pkl/applications/upload_recommendation/' . $id);
+            }
+        }
+
+        $this->render('applications_upload_recommendation');
     }
 }

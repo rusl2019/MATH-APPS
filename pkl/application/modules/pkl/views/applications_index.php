@@ -111,10 +111,9 @@
                                 'approved_dosen' => 'Disetujui Dosen Pembimbing',
                                 'approved_kps' => 'Disetujui KPS',
                                 'approved_kadep' => 'Disetujui Ketua Departemen',
-                                'approved_dekan' => 'Disetujui Dekan',
+                                'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
                                 'accepted_instansi' => 'Diterima Instansi',
                                 'ongoing' => 'Sedang PKL',
-                                'finished' => 'PKL Selesai',
                             ];
                             $currentStatus = $a->status ?? '';
                             foreach ($steps as $key => $label) :

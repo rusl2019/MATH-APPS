@@ -58,6 +58,8 @@ class Applications_model extends CI_Model
         if (in_array('head study program', $roles)) {
             $this->db->where('a.status', 'approved_dosen');
             $this->db->where('s.study_program_id', $id_kps[0]->id);
+        } elseif (in_array('head department', $roles)) {
+            $this->db->where('a.status', 'approved_kps');
         } elseif (in_array('lecturer', $roles)) {
             $this->db->where('a.status', 'submitted');
             $this->db->where('a.lecturer_id', $this->session->userdata('id'));
@@ -101,5 +103,15 @@ class Applications_model extends CI_Model
         }
         $app_id = $app_id->id;
         return $this->db->get_where('pkl_documents', ['application_id' => $app_id])->result();
+    }
+
+    public function get_all_applications(): array
+    {
+        return $this->db->select('a.*, s.name as student_name, p.name as place_name, p.address as place_address, l.name as lecturer_name')
+            ->from('pkl_applications a')
+            ->join('apps_students s', 'a.student_id = s.id')
+            ->join('pkl_places p', 'a.place_id = p.id', 'left')
+            ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left')
+            ->get()->result();
     }
 }

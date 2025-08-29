@@ -61,6 +61,7 @@ class Switch_user_model extends CI_Model
             'roles' => $roles,
             'role_names' => $role_names,
             'is_head_study_program' => in_array('5', $roles),
+            'is_head_department' => in_array('6', $roles),
         ];
         return $data;
     }

@@ -24,14 +24,15 @@ class Auth_model extends CI_Model
             $role_names[] = $this->db->get_where('apps_roles', ['id' => $role['role_id']])->row()->name;
         }
         $user_data = [
+            'is_logged_in' => TRUE,
+            'is_admin' => in_array('1', $roles),
             'id' => $user_data->id,
             'name' => $user_data->name,
             'email' => $user_data->email,
             'roles' => $roles,
             'role_names' => $role_names,
-            'is_logged_in' => TRUE,
-            'is_admin' => in_array('1', $roles),
             'is_head_study_program' => in_array('5', $roles),
+            'is_head_department' => in_array('6', $roles),
         ];
         $this->session->set_userdata($user_data);
     }
