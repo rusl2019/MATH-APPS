@@ -93,7 +93,7 @@ class Applications extends MY_Controller
 
             $this->_upload_document($application_id, 'portfolio_file', 'portofolio');
             $this->_upload_document($application_id, 'proposal_file', 'proposal');
-            $this->_upload_document($application_id, 'consultation_file', 'form_pengajuan');
+            $this->_upload_document($application_id, 'consultation_file', 'lembar_konsultasi');
 
             $this->session->set_flashdata('success', 'Pengajuan PKL berhasil disimpan!');
             redirect('pkl/applications');

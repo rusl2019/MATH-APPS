@@ -46,12 +46,6 @@ class Applications_model extends CI_Model
         return $this->db->get_where('pkl_semesters', ['is_active' => 1])->row();
     }
 
-    public function update_application(int $id, array $data): bool
-    {
-        $this->db->where('id', $id);
-        return $this->db->update('pkl_applications', $data);
-    }
-
     public function get_application_by_id(int $id)
     {
         return $this->db->get_where('pkl_applications', ['id' => $id])->row();
@@ -117,16 +111,6 @@ class Applications_model extends CI_Model
         return $this->db->get_where('apps_study_programs', ['lecturer_id' => $this->session->userdata('id')])->result();
     }
 
-    public function get_workflow(int $application_id): array
-    {
-        return $this->db->select('w.*, u.name as actor_name')
-            ->from('pkl_workflow w')
-            ->join('apps_lecturers u', 'w.actor_id = u.id', 'left') // dosen/lecturer
-            ->where('w.application_id', $application_id)
-            ->order_by('w.action_date', 'asc')
-            ->get()->result();
-    }
-
     public function get_student($student_id)
     {
         $this->db->select('s.*, sp.name as study_program');
@@ -138,15 +122,16 @@ class Applications_model extends CI_Model
 
     public function get_documents_by_student($student_id): array
     {
-        $app_id = $this->db->select('id')
-            ->from('pkl_applications')
-            ->where('student_id', $student_id)
-            ->get()->row();
-        if (!$app_id) {
+        // Get all application IDs for the student
+        $app_ids_query = $this->db->select('id')->from('pkl_applications')->where('student_id', $student_id)->get();
+        $app_ids = array_column($app_ids_query->result_array(), 'id');
+
+        if (empty($app_ids)) {
             return [];
         }
-        $app_id = $app_id->id;
-        return $this->db->get_where('pkl_documents', ['application_id' => $app_id])->result();
+
+        // Fetch all documents linked to those application IDs
+        return $this->db->where_in('application_id', $app_ids)->get('pkl_documents')->result();
     }
 
     public function get_all_applications(): array

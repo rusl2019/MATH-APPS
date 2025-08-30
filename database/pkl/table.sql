@@ -40,7 +40,7 @@ CREATE TABLE `pkl_applications` (
   `activity_period_start` date DEFAULT NULL,
   `activity_period_end` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `student_id` (`student_id`),
@@ -73,7 +73,7 @@ DROP TABLE IF EXISTS `pkl_documents`;
 CREATE TABLE `pkl_documents` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `application_id` int(11) NOT NULL,
-  `doc_type` enum('portofolio','proposal','form_pengajuan','surat_pengantar','sk_pembimbing','logbook','sertifikat','laporan','seminar','berita_acara','recommendation_letter','acceptance_letter') NOT NULL,
+  `doc_type` enum('portofolio','proposal','lembar_konsultasi','recommendation_letter','acceptance_letter','rejection_letter','logbook','sertifikat','laporan','seminar','berita_acara') NOT NULL,
   `file_path` varchar(255) NOT NULL,
   `status` enum('draft','submitted','approved','rejected') DEFAULT 'draft',
   `uploaded_at` timestamp NULL DEFAULT current_timestamp(),
@@ -103,7 +103,7 @@ CREATE TABLE `pkl_places` (
   `name` varchar(256) NOT NULL,
   `address` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

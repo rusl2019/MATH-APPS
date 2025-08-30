@@ -44,10 +44,7 @@
                                 'approved_kps' => 'Disetujui KPS',
                                 'approved_kadep' => 'Disetujui Kadep',
                                 'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
-                                'approved_dekan' => 'Disetujui Dekan',
                                 'rejected' => 'Ditolak',
-                                'accepted_instansi' => 'Diterima Instansi',
-                                'rejected_instansi' => 'Ditolak Instansi',
                                 'ongoing' => 'Sedang Berlangsung',
                                 'finished' => 'Selesai'
                             ];
