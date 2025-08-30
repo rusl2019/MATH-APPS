@@ -1,5 +1,5 @@
 <div class="container mt-5">
-    <h2 class="mb-4">Form Pengajuan PKL</h2>
+    <h2 class="mb-4"><?= ($form_data) ? 'Form Pengajuan Ulang PKL' : 'Form Pengajuan PKL' ?></h2>
 
     <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
     <?= form_open_multipart('pkl/applications/create'); ?>
@@ -31,12 +31,24 @@
         <input type="text" class="form-control" value="<?= html_escape($student_detail->study_program ?? '') ?>" readonly>
     </div>
 
+    <div class="mb-3">
+        <label class="form-label">Semester Pengajuan <span class="text-danger">*</span></label>
+        <select name="semester_id" class="form-select" required>
+            <option value="">-- Pilih Semester --</option>
+            <?php foreach ($semesters ?? [] as $semester) : ?>
+                <option value="<?= $semester->id ?>" <?= ($semester->id == ($form_data->semester_id ?? $active_semester_id)) ? 'selected' : '' ?>>
+                    <?= $semester->name ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
     <!-- Input Tambahan -->
     <div class="mb-3">
         <label class="form-label">Nomor Telepon / WhatsApp Aktif <span class="text-danger">*</span></label>
         <div class="input-group">
             <span class="input-group-text">+62</span>
-            <input type="tel" name="phone_number" class="form-control" required>
+            <input type="tel" name="phone_number" class="form-control" required value="<?= html_escape($form_data->phone_number ?? '') ?>">
         </div>
     </div>
 
@@ -45,7 +57,7 @@
         <select name="lecturer_id" class="form-select" required>
             <option value="">-- Pilih Dosen Pembimbing --</option>
             <?php foreach ($lecturers ?? [] as $d) : ?>
-                <option value="<?= $d->id ?? '' ?>"><?= $d->name ?? '' ?></option>
+                <option value="<?= $d->id ?? '' ?>" <?= ($d->id == ($form_data->lecturer_id ?? '')) ? 'selected' : '' ?>><?= $d->name ?? '' ?></option>
             <?php endforeach; ?>
         </select>
     </div>
@@ -55,40 +67,40 @@
         <select name="place_id" class="form-select" required>
             <option value="">-- Pilih Instansi --</option>
             <?php foreach ($places ?? [] as $p) : ?>
-                <option value="<?= $p->id ?? '' ?>"><?= $p->name ?? '' ?></option>
+                <option value="<?= $p->id ?? '' ?>" <?= ($p->id == ($form_data->place_id ?? '')) ? 'selected' : '' ?>><?= $p->name ?? '' ?></option>
             <?php endforeach; ?>
         </select>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Surat Ditujukan Kepada <span class="text-danger">*</span></label>
-        <input type="text" name="addressed_to" class="form-control" placeholder="Contoh: Kepala HRD / Direktur" required>
+        <input type="text" name="addressed_to" class="form-control" placeholder="Contoh: Kepala HRD / Direktur" required value="<?= html_escape($form_data->addressed_to ?? '') ?>">
     </div>
 
     <div class="mb-3">
         <label class="form-label">Kegiatan Setara (Opsional)</label>
-        <input type="text" name="equivalent_activity" class="form-control" placeholder="Isi jika kegiatan setara">
+        <input type="text" name="equivalent_activity" class="form-control" placeholder="Isi jika kegiatan setara" value="<?= html_escape($form_data->equivalent_activity ?? '') ?>">
     </div>
 
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Periode Kegiatan (Mulai) <span class="text-danger">*</span></label>
-            <input type="date" name="activity_period_start" class="form-control" required>
+            <input type="date" name="activity_period_start" class="form-control" required value="<?= html_escape($form_data->activity_period_start ?? '') ?>">
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label">Periode Kegiatan (Selesai) <span class="text-danger">*</span></label>
-            <input type="date" name="activity_period_end" class="form-control" required>
+            <input type="date" name="activity_period_end" class="form-control" required value="<?= html_escape($form_data->activity_period_end ?? '') ?>">
         </div>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Judul PKL <span class="text-danger">*</span></label>
-        <input type="text" name="title" class="form-control" required>
+        <input type="text" name="title" class="form-control" required value="<?= html_escape($form_data->title ?? '') ?>">
     </div>
 
     <div class="mb-3">
         <label class="form-label">Jenis Kegiatan <span class="text-danger">*</span></label>
-        <input type="text" name="type" class="form-control" required>
+        <input type="text" name="type" class="form-control" required value="<?= html_escape($form_data->type ?? '') ?>">
     </div>
 
     <!-- Upload Dokumen -->

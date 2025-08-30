@@ -1,134 +1,131 @@
 {
-  "id": "e2b644c4-e78c-4e28-b653-a982eed0a516",
+  "id": "041aef77-5a59-4602-a579-08d94ed14eb7",
   "version": "2.0",
   "name": "MATH-APPS",
-  "url": "http://localhost/",
+  "url": "http://localhost",
   "tests": [{
-    "id": "d44cf62f-c4b4-4609-bf80-3572a9c070c0",
-    "name": "PKL registration",
+    "id": "4dda0ce2-70b4-4c77-bea6-6909268ce090",
+    "name": "application",
     "commands": [{
-      "id": "c134e1af-a0db-4f5b-a2f3-3a6b7edd6581",
+      "id": "c561a779-00e7-4927-915d-585b63548093",
       "comment": "",
       "command": "open",
-      "target": "pkl/pkl_activity",
+      "target": "/pkl/pkl/applications/create",
       "targets": [],
       "value": ""
     }, {
-      "id": "f435e266-1c8c-4a13-a392-8146220512fe",
-      "comment": "",
-      "command": "click",
-      "target": "css=.btn-primary",
-      "targets": [
-        ["css=.btn-primary", "css:finder"],
-        ["xpath=//button[@onclick='createItem()']", "xpath:attributes"],
-        ["xpath=//button", "xpath:position"],
-        ["xpath=//button[contains(.,' Tambah Usulan')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "17cebe69-2b5a-4756-853d-0b42ca0c672a",
-      "comment": "",
-      "command": "click",
-      "target": "css=.form-group:nth-child(3)",
-      "targets": [
-        ["css=.form-group:nth-child(3)", "css:finder"],
-        ["xpath=//form[@id='formCreate']/div/div[2]/div[3]", "xpath:idRelative"],
-        ["xpath=//div[2]/div[3]", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "9f5e4ec2-3a36-493d-8c79-2c3d9c2b6ae7",
+      "id": "f9196aa8-388e-4a9c-9ee3-0014201a1b31",
       "comment": "",
       "command": "type",
-      "target": "id=student_phone_number_create",
+      "target": "name=phone_number",
       "targets": [
-        ["id=student_phone_number_create", "id"],
-        ["name=student_phone_number", "name"],
-        ["css=#student_phone_number_create", "css:finder"],
-        ["xpath=//input[@id='student_phone_number_create']", "xpath:attributes"],
-        ["xpath=//form[@id='formCreate']/div/div[2]/div[6]/div/input", "xpath:idRelative"],
-        ["xpath=//div[6]/div/input", "xpath:position"]
+        ["name=phone_number", "name"],
+        ["css=.input-group > .form-control", "css:finder"],
+        ["xpath=//input[@name='phone_number']", "xpath:attributes"],
+        ["xpath=//main[@id='main']/div/form/div[5]/div/input", "xpath:idRelative"],
+        ["xpath=//div[5]/div/input", "xpath:position"]
       ],
-      "value": "813-3885-1192"
+      "value": "81338851192"
     }, {
-      "id": "d94ea3c5-ad02-4210-a886-9a9b71796bbe",
+      "id": "c79232a0-5ed8-43e6-a9e4-16c6cc912934",
       "comment": "",
-      "command": "click",
-      "target": "id=addressed_to",
+      "command": "select",
+      "target": "name=lecturer_id",
+      "targets": [],
+      "value": "label=Prof.Dr. Agus Widodo, M.Kes"
+    }, {
+      "id": "1a65bb9d-bad6-4936-a8e3-e289294a296a",
+      "comment": "",
+      "command": "select",
+      "target": "name=place_id",
+      "targets": [],
+      "value": "label=PT Jasa Raharja Kota Malang"
+    }, {
+      "id": "d573f320-5fba-411e-a1a9-5e003b4493a7",
+      "comment": "",
+      "command": "type",
+      "target": "name=addressed_to",
       "targets": [
-        ["id=addressed_to", "id"],
         ["name=addressed_to", "name"],
-        ["css=#addressed_to", "css:finder"],
-        ["xpath=//input[@id='addressed_to']", "xpath:attributes"],
-        ["xpath=//form[@id='formCreate']/div/div[2]/div[8]/input", "xpath:idRelative"],
+        ["css=.mb-3:nth-child(8) > .form-control", "css:finder"],
+        ["xpath=//input[@name='addressed_to']", "xpath:attributes"],
+        ["xpath=//main[@id='main']/div/form/div[8]/input", "xpath:idRelative"],
         ["xpath=//div[8]/input", "xpath:position"]
       ],
-      "value": "Pak X"
+      "value": "Kepala HRD"
     }, {
-      "id": "fd607680-7f0d-4e19-b30b-ebb2c683bb1d",
+      "id": "1cdd50f2-fff2-427d-ba72-5450988883d8",
       "comment": "",
       "command": "type",
-      "target": "id=equivalent_activity",
+      "target": "name=equivalent_activity",
       "targets": [
-        ["id=equivalent_activity", "id"],
         ["name=equivalent_activity", "name"],
-        ["css=#equivalent_activity", "css:finder"],
-        ["xpath=//input[@id='equivalent_activity']", "xpath:attributes"],
-        ["xpath=//form[@id='formCreate']/div/div[2]/div[9]/input", "xpath:idRelative"],
+        ["css=.mb-3:nth-child(9) > .form-control", "css:finder"],
+        ["xpath=//input[@name='equivalent_activity']", "xpath:attributes"],
+        ["xpath=//main[@id='main']/div/form/div[9]/input", "xpath:idRelative"],
         ["xpath=//div[9]/input", "xpath:position"]
       ],
-      "value": "Gak Tau"
+      "value": "Tidak tau"
     }, {
-      "id": "d8ac665c-983e-4940-bace-243d7cb2c2d9",
+      "id": "08f00f99-5c3e-46c8-b22b-f250f9f7482c",
       "comment": "",
       "command": "type",
-      "target": "id=activity_period_start",
+      "target": "name=activity_period_start",
       "targets": [
-        ["id=activity_period_start", "id"],
         ["name=activity_period_start", "name"],
-        ["css=#activity_period_start", "css:finder"],
-        ["xpath=//input[@id='activity_period_start']", "xpath:attributes"],
-        ["xpath=//form[@id='formCreate']/div/div[2]/div[10]/div/div/input", "xpath:idRelative"],
-        ["xpath=//div[10]/div/div/input", "xpath:position"]
+        ["css=.col-md-6:nth-child(1) > .form-control", "css:finder"],
+        ["xpath=//input[@name='activity_period_start']", "xpath:attributes"],
+        ["xpath=//main[@id='main']/div/form/div[10]/div/input", "xpath:idRelative"],
+        ["xpath=//div[10]/div/input", "xpath:position"]
       ],
-      "value": "2025-07-27"
+      "value": "2024-07-29"
     }, {
-      "id": "ecc324a3-b462-4e4e-9f58-788586d33b5a",
+      "id": "77191519-f805-4a7a-acc7-357caf9a6f4a",
       "comment": "",
       "command": "type",
-      "target": "id=activity_period_end",
+      "target": "name=activity_period_end",
       "targets": [
-        ["id=activity_period_end", "id"],
         ["name=activity_period_end", "name"],
-        ["css=#activity_period_end", "css:finder"],
-        ["xpath=//input[@id='activity_period_end']", "xpath:attributes"],
-        ["xpath=//form[@id='formCreate']/div/div[2]/div[10]/div[2]/div/input", "xpath:idRelative"],
-        ["xpath=//div[10]/div[2]/div/input", "xpath:position"]
+        ["css=.col-md-6:nth-child(2) > .form-control", "css:finder"],
+        ["xpath=//input[@name='activity_period_end']", "xpath:attributes"],
+        ["xpath=//main[@id='main']/div/form/div[10]/div[2]/input", "xpath:idRelative"],
+        ["xpath=//div[10]/div[2]/input", "xpath:position"]
       ],
-      "value": "2025-08-27"
+      "value": "2024-07-29"
     }, {
-      "id": "e99074df-58aa-4b11-8eb4-163823e98617",
+      "id": "325e9ad0-cc45-459e-ac26-f488aea664bf",
       "comment": "",
       "command": "type",
-      "target": "id=addressed_to",
+      "target": "name=type",
       "targets": [
-        ["id=addressed_to", "id"],
-        ["name=addressed_to", "name"],
-        ["css=#addressed_to", "css:finder"],
-        ["xpath=//input[@id='addressed_to']", "xpath:attributes"],
-        ["xpath=//form[@id='formCreate']/div/div[2]/div[8]/input", "xpath:idRelative"],
-        ["xpath=//div[8]/input", "xpath:position"]
+        ["name=type", "name"],
+        ["css=.mb-3:nth-child(12) > .form-control", "css:finder"],
+        ["xpath=//input[@name='type']", "xpath:attributes"],
+        ["xpath=//main[@id='main']/div/form/div[12]/input", "xpath:idRelative"],
+        ["xpath=//div[12]/input", "xpath:position"]
       ],
-      "value": "Pak X"
+      "value": "Praktik"
+    }, {
+      "id": "77e9f18e-4689-453d-ba49-85e3d7b78124",
+      "comment": "",
+      "command": "type",
+      "target": "css=.mb-3:nth-child(12) > .form-control",
+      "targets": [
+        ["css=.mb-3:nth-child(12) > .form-control", "css:finder"],
+        ["xpath=//input[@name='title']", "xpath:attributes"],
+        ["xpath=//main[@id='main']/div/form/div[12]/input", "xpath:idRelative"],
+        ["xpath=//div[12]/input", "xpath:position"]
+      ],
+      "value": "Praktik"
     }]
   }],
   "suites": [{
-    "id": "f0b1a536-a212-41ce-b3ea-835af0e62c0d",
+    "id": "de0ccea3-31f3-4a8b-b115-3b0945445420",
     "name": "Default Suite",
     "persistSession": false,
     "parallel": false,
     "timeout": 300,
-    "tests": []
+    "tests": ["4dda0ce2-70b4-4c77-bea6-6909268ce090"]
   }],
   "urls": ["http://localhost/"],
   "plugins": []

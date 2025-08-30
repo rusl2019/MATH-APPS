@@ -4,6 +4,9 @@
     <?php if ($this->session->flashdata('success')) : ?>
         <div class="alert alert-success"><?= $this->session->flashdata('success'); ?></div>
     <?php endif; ?>
+    <?php if ($this->session->flashdata('error')) : ?>
+        <div class="alert alert-danger"><?= $this->session->flashdata('error'); ?></div>
+    <?php endif; ?>
 
     <?php if (empty($applications)) : ?>
         <!-- Jika belum ada pengajuan -->
@@ -54,6 +57,9 @@
 
                             <dt class="col-sm-4">Program Studi</dt>
                             <dd class="col-sm-8"><?= html_escape($student_detail->study_program ?? '') ?></dd>
+
+                            <dt class="col-sm-4">Semester</dt>
+                            <dd class="col-sm-8"><?= html_escape($a->semester_name ?? '-') ?></dd>
 
                             <dt class="col-sm-4">No. WA</dt>
                             <dd class="col-sm-8">+62<?= html_escape($a->phone_number ?? '-') ?></dd>
@@ -112,7 +118,7 @@
                                 'approved_kps' => 'Disetujui KPS',
                                 'approved_kadep' => 'Disetujui Ketua Departemen',
                                 'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
-                                'accepted_instansi' => 'Diterima Instansi',
+                                'rejected' => 'Ditolak',
                                 'ongoing' => 'Sedang PKL',
                             ];
                             $currentStatus = $a->status ?? '';
@@ -124,10 +130,37 @@
                                         <?= $label ?>
                                     </span>
                                 </li>
+                                <?php if ($key === 'rejected' && $currentStatus === 'rejected') break; ?>
                             <?php endforeach; ?>
                         </ul>
                     </div>
                 </div>
+
+                <?php if (($a->status ?? '') === 'recommendation_uploaded') : ?>
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-warning text-dark"><strong>Tindak Lanjut dari Instansi</strong></div>
+                        <div class="card-body text-center">
+                            <p class="card-text">Silakan laporkan hasil dari pengajuan surat rekomendasi ke instansi.</p>
+                            <a href="<?= site_url('pkl/applications/report_decision/' . ($a->id ?? '')) ?>" class="btn btn-primary">Laporkan Keputusan Instansi</a>
+                        </div>
+                    </div>
+                <?php elseif (in_array($a->status ?? '', ['rejected'])) : ?>
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-danger text-white"><strong>Tindak Lanjut Diperlukan</strong></div>
+                        <div class="card-body text-center">
+                            <p class="card-text">Pengajuan Anda ditolak. Silakan perbaiki data Anda dan ajukan kembali.</p>
+                            <a href="<?= site_url('pkl/applications/create/' . ($a->id ?? '')) ?>" class="btn btn-warning">Ajukan Ulang</a>
+                        </div>
+                    </div>
+                <?php elseif (($a->status ?? '') === 'ongoing') : ?>
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-primary text-white"><strong>Pelaksanaan PKL</strong></div>
+                        <div class="card-body text-center">
+                            <p class="card-text">Status PKL Anda sedang berlangsung. Silakan isi logbook harian dan laporkan penyelesaian PKL di halaman pelaksanaan.</p>
+                            <a href="<?= site_url('pkl/applications/pelaksanaan/' . ($a->id ?? '')) ?>" class="btn btn-info">Buka Halaman Pelaksanaan</a>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>

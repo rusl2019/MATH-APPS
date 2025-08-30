@@ -5,12 +5,14 @@ class Applications_model extends CI_Model
 {
     public function get_by_student($student_id): array
     {
-        return $this->db->select('a.*, l.name as lecturer_name, p.name as place_name, p.address as place_address')
-            ->from('pkl_applications a')
-            ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left')
-            ->join('pkl_places p', 'a.place_id = p.id', 'left')
-            ->where('a.student_id', $student_id)
-            ->get()->result();
+            return $this->db->select('a.*, l.name as lecturer_name, p.name as place_name, p.address as place_address, sem.name as semester_name')
+        ->from('pkl_applications a')
+        ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left')
+        ->join('pkl_places p', 'a.place_id = p.id', 'left')
+        ->join('pkl_semesters sem', 'a.semester_id = sem.id', 'left')
+        ->where('a.student_id', $student_id)
+        ->order_by('a.id', 'DESC')
+        ->get()->result();
     }
 
     public function insert_application(array $data): int
@@ -32,6 +34,48 @@ class Applications_model extends CI_Model
     public function get_places(): array
     {
         return $this->db->get('pkl_places')->result();
+    }
+
+    public function get_all_semesters(): array
+    {
+        return $this->db->get('pkl_semesters')->result();
+    }
+
+    public function get_active_semester()
+    {
+        return $this->db->get_where('pkl_semesters', ['is_active' => 1])->row();
+    }
+
+    public function update_application(int $id, array $data): bool
+    {
+        $this->db->where('id', $id);
+        return $this->db->update('pkl_applications', $data);
+    }
+
+    public function get_application_by_id(int $id)
+    {
+        return $this->db->get_where('pkl_applications', ['id' => $id])->row();
+    }
+
+    public function count_applications_by_semester(string $student_id, int $semester_id): int
+    {
+        return $this->db->from('pkl_applications')
+            ->where('student_id', $student_id)
+            ->where('semester_id', $semester_id)
+            ->count_all_results();
+    }
+
+    public function get_logs_by_application(int $application_id): array
+    {
+        return $this->db->from('pkl_logs')
+            ->where('application_id', $application_id)
+            ->order_by('log_date', 'DESC')
+            ->get()->result();
+    }
+
+    public function insert_log(array $data): bool
+    {
+        return $this->db->insert('pkl_logs', $data);
     }
 
     public function update_status(int $application_id, string $status): void
