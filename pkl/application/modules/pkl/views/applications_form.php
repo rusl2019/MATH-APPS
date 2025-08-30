@@ -10,7 +10,7 @@
         </div>
     <?php endif; ?>
 
-    <!-- Data Mahasiswa (readonly dari session) -->
+    <!-- Student Data (readonly from session) -->
     <div class="mb-3">
         <label class="form-label">Nama Mahasiswa</label>
         <input type="text" class="form-control" value="<?= html_escape($student_detail->name ?? '') ?>" readonly>
@@ -43,7 +43,7 @@
         </select>
     </div>
 
-    <!-- Input Tambahan -->
+    <!-- Additional Inputs -->
     <div class="mb-3">
         <label class="form-label">Nomor Telepon / WhatsApp Aktif <span class="text-danger">*</span></label>
         <div class="input-group">
@@ -56,8 +56,8 @@
         <label class="form-label">Dosen Pembimbing PKL <span class="text-danger">*</span></label>
         <select name="lecturer_id" class="form-select" required>
             <option value="">-- Pilih Dosen Pembimbing --</option>
-            <?php foreach ($lecturers ?? [] as $d) : ?>
-                <option value="<?= $d->id ?? '' ?>" <?= ($d->id == ($form_data->lecturer_id ?? '')) ? 'selected' : '' ?>><?= $d->name ?? '' ?></option>
+            <?php foreach ($lecturers ?? [] as $lecturer) : ?>
+                <option value="<?= $lecturer->id ?? '' ?>" <?= ($lecturer->id == ($form_data->lecturer_id ?? '')) ? 'selected' : '' ?>><?= $lecturer->name ?? '' ?></option>
             <?php endforeach; ?>
         </select>
     </div>
@@ -66,8 +66,8 @@
         <label class="form-label">Instansi / Perusahaan <span class="text-danger">*</span></label>
         <select name="place_id" class="form-select" required>
             <option value="">-- Pilih Instansi --</option>
-            <?php foreach ($places ?? [] as $p) : ?>
-                <option value="<?= $p->id ?? '' ?>" <?= ($p->id == ($form_data->place_id ?? '')) ? 'selected' : '' ?>><?= $p->name ?? '' ?></option>
+            <?php foreach ($places ?? [] as $place) : ?>
+                <option value="<?= $place->id ?? '' ?>" <?= ($place->id == ($form_data->place_id ?? '')) ? 'selected' : '' ?>><?= $place->name ?? '' ?></option>
             <?php endforeach; ?>
         </select>
     </div>
@@ -103,22 +103,32 @@
         <input type="text" name="type" class="form-control" required value="<?= html_escape($form_data->type ?? '') ?>">
     </div>
 
-    <!-- Upload Dokumen -->
+    <!-- Document Uploads -->
     <div class="mb-3">
         <label class="form-label">Unggah Portofolio (PDF) <span class="text-danger">*</span></label>
         <input type="file" name="portfolio_file" class="form-control" accept=".pdf" required>
+        <?php if (!empty($form_data->portfolio_file)) : ?>
+            <div class="form-text">File sebelumnya: <?= $form_data->portfolio_file ?></div>
+        <?php endif; ?>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Unggah Proposal (Opsional)</label>
         <input type="file" name="proposal_file" class="form-control" accept=".pdf">
+        <?php if (!empty($form_data->proposal_file)) : ?>
+            <div class="form-text">File sebelumnya: <?= $form_data->proposal_file ?></div>
+        <?php endif; ?>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Unggah Lembar Konsultasi Bimbingan PKL <span class="text-danger">*</span></label>
         <input type="file" name="consultation_file" class="form-control" accept=".pdf" required>
+        <?php if (!empty($form_data->consultation_file)) : ?>
+            <div class="form-text">File sebelumnya: <?= $form_data->consultation_file ?></div>
+        <?php endif; ?>
     </div>
 
     <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
+    <a href="<?= site_url('pkl/applications') ?>" class="btn btn-secondary">Batal</a>
     <?= form_close(); ?>
 </div>

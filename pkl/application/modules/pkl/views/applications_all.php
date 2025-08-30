@@ -13,56 +13,58 @@
             Tidak ada pengajuan PKL yang tersedia.
         </div>
     <?php else : ?>
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Mahasiswa</th>
-                    <th>Judul</th>
-                    <th>Dosen</th>
-                    <th>Instansi</th>
-                    <th>Tanggal Pengajuan</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($applications as $a) : ?>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
                     <tr>
-                        <td><?= html_escape($a->student_name ?? '-') ?></td>
-                        <td><?= html_escape($a->title ?? '-') ?></td>
-                        <td><?= html_escape($a->lecturer_name ?? '-') ?></td>
-                        <td><?= html_escape($a->place_name ?? '-') ?></td>
-                        <td>
-                            <?= $a->submission_date ? date('d-m-Y', strtotime($a->submission_date)) : '-' ?>
-                        </td>
-                        <td>
-                            <?php
-                            $status_labels = [
-                                'draft' => 'Draft',
-                                'submitted' => 'Dikirim',
-                                'approved_dosen' => 'Disetujui Dosen',
-                                'approved_kps' => 'Disetujui KPS',
-                                'approved_kadep' => 'Disetujui Kadep',
-                                'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
-                                'rejected' => 'Ditolak',
-                                'ongoing' => 'Sedang Berlangsung',
-                                'finished' => 'Selesai'
-                            ];
-                            $status = $a->status ?? '';
-                            $badge_class = ($status === 'rejected' || $status === 'rejected_instansi') ? 'bg-danger' : 'bg-success';
-                            ?>
-                            <span class="badge <?= $badge_class ?>">
-                                <?= $status_labels[$status] ?? $status ?>
-                            </span>
-                        </td>
-                        <td>
-                            <?php if ($a->status === 'approved_kadep') : ?>
-                                <a href="<?= site_url('pkl/applications/upload_recommendation/' . ($a->id ?? '')) ?>" class="btn btn-sm btn-primary">Unggah Surat Rekomendasi</a>
-                            <?php endif; ?>
-                        </td>
+                        <th>Mahasiswa</th>
+                        <th>Judul</th>
+                        <th>Dosen</th>
+                        <th>Instansi</th>
+                        <th>Tanggal Pengajuan</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php foreach ($applications as $application) : ?>
+                        <tr>
+                            <td><?= html_escape($application->student_name ?? '-') ?></td>
+                            <td><?= html_escape($application->title ?? '-') ?></td>
+                            <td><?= html_escape($application->lecturer_name ?? '-') ?></td>
+                            <td><?= html_escape($application->place_name ?? '-') ?></td>
+                            <td>
+                                <?= $application->submission_date ? date('d-m-Y', strtotime($application->submission_date)) : '-' ?>
+                            </td>
+                            <td>
+                                <?php
+                                $status_labels = [
+                                    'draft' => 'Draft',
+                                    'submitted' => 'Dikirim',
+                                    'approved_dosen' => 'Disetujui Dosen',
+                                    'approved_kps' => 'Disetujui KPS',
+                                    'approved_kadep' => 'Disetujui Kadep',
+                                    'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
+                                    'rejected' => 'Ditolak',
+                                    'ongoing' => 'Sedang Berlangsung',
+                                    'finished' => 'Selesai'
+                                ];
+                                $status = $application->status ?? '';
+                                $badge_class = ($status === 'rejected' || $status === 'rejected_instansi') ? 'bg-danger' : 'bg-success';
+                                ?>
+                                <span class="badge <?= $badge_class ?>">
+                                    <?= $status_labels[$status] ?? $status ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php if ($application->status === 'approved_kadep') : ?>
+                                    <a href="<?= site_url('pkl/applications/upload_recommendation/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-primary">Unggah Surat Rekomendasi</a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php endif; ?>
 </div>
