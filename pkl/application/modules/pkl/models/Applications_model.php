@@ -108,12 +108,29 @@ class Applications_model extends CI_Model
     }
 
     /**
+     * Insert batch assessments
+     */
+    public function insert_assessments($data)
+    {
+        return $this->db->insert_batch('pkl_assessments', $data);
+    }
+
+    /**
      * Update application status
      */
     public function update_status($application_id, $status)
     {
         $this->db->where('id', $application_id)
             ->update('pkl_applications', ['status' => $status]);
+    }
+
+    /**
+     * Update an application
+     */
+    public function update_application($id, $data)
+    {
+        $this->db->where('id', $id);
+        return $this->db->update('pkl_applications', $data);
     }
 
     /**

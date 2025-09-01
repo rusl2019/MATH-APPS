@@ -313,7 +313,121 @@ class Applications extends MY_Controller
         }
     }
 
+    /**
+     * Report PKL completion
+     */
+    public function finish_pkl($id)
+    {
+        $student_id = $this->session->userdata('id');
+
+        // Validate that the student can access this page
+        if (!$this->validate_application_access($id, $student_id, 'ongoing')) {
+            return;
+        }
+
+        $this->data['title'] = 'Form Penyelesaian PKL';
+        $this->data['application_id'] = $id;
+
+        // Set validation rules for all 7 criteria
+        $criteria = ['pengetahuan', 'keterampilan', 'inisiatif', 'tanggung_jawab', 'kerjasama_tim', 'kehadiran', 'laporan'];
+        foreach ($criteria as $criterion) {
+            $this->form_validation->set_rules($criterion, ucfirst(str_replace('_', ' ', $criterion)), 'required|numeric|less_than_or_equal_to[100]|greater_than_or_equal_to[0]');
+        }
+
+        if ($this->form_validation->run() === false) {
+            // If validation fails or it's the first visit, show the form
+            $this->render('applications_finish_form');
+        } else {
+            // Process the form submission
+            $user_id = $this->session->userdata('id');
+
+            // 1. Handle Certificate Upload
+            $certificate_path = $this->_do_upload('certificate_file', 'sertifikat_' . $id);
+            if (!$certificate_path) {
+                redirect('pkl/applications/finish_pkl/' . $id);
+                return;
+            }
+
+            // 2. Handle Evaluation Form Upload
+            $evaluation_path = $this->_do_upload('evaluation_file', 'penilaian_lapangan_' . $id);
+            if (!$evaluation_path) {
+                redirect('pkl/applications/finish_pkl/' . $id);
+                return;
+            }
+
+            // 3. Insert documents to DB
+            $this->app->insert_document([
+                'application_id' => $id,
+                'doc_type' => 'sertifikat',
+                'file_path' => $certificate_path,
+                'status' => 'submitted',
+            ]);
+            $this->app->insert_document([
+                'application_id' => $id,
+                'doc_type' => 'berita_acara', // Using 'berita_acara' for field evaluation form
+                'file_path' => $evaluation_path,
+                'status' => 'submitted',
+            ]);
+
+            // 4. Insert scores into pkl_assessments
+            $assessments = [];
+            foreach ($criteria as $criterion) {
+                $assessments[] = [
+                    'application_id' => $id,
+                    'assessor_type' => 'lapangan',
+                    'form_type' => $criterion,
+                    'score' => $this->input->post($criterion),
+                    'remarks' => 'Nilai dari pembimbing lapangan.',
+                ];
+            }
+            $this->app->insert_assessments($assessments);
+
+            // 5. Update application status
+            $this->app->update_application($id, [
+                'status' => 'finished'
+            ]);
+
+            // 6. Log workflow
+            $this->app->insert_workflow([
+                'application_id' => $id,
+                'step_name' => 'Penyelesaian PKL',
+                'actor_id' => $user_id,
+                'role' => 'mahasiswa',
+                'status' => 'done',
+                'remarks' => 'Mahasiswa melaporkan bahwa kegiatan PKL telah selesai. Nilai telah diinput.',
+            ]);
+
+            $this->session->set_flashdata('success', 'Selamat, Anda telah menyelesaikan PKL! Status PKL Anda telah diperbarui.');
+            redirect('pkl/applications');
+        }
+    }
+
     // PRIVATE HELPER METHODS
+
+    /**
+     * Handle a file upload
+     */
+    private function _do_upload($field_name, $file_name_prefix)
+    {
+        $config = [
+            'upload_path' => './uploads/pkl/',
+            'allowed_types' => 'pdf',
+            'max_size' => 2048,
+            'file_name' => $file_name_prefix . '_' . time(),
+        ];
+
+        // Load and initialize upload library for each upload
+        $this->load->library('upload');
+        $this->upload->initialize($config);
+
+        if ($this->upload->do_upload($field_name)) {
+            $file_data = $this->upload->data();
+            return 'uploads/pkl/' . $file_data['file_name'];
+        } else {
+            $this->session->set_flashdata('error', 'Gagal mengunggah file (' . $field_name . '): ' . $this->upload->display_errors('', ''));
+            return false;
+        }
+    }
 
     /**
      * Handle reapplication logic

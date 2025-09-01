@@ -157,8 +157,17 @@
                     <div class="card shadow-sm mt-4">
                         <div class="card-header bg-primary text-white"><strong>Pelaksanaan PKL</strong></div>
                         <div class="card-body text-center">
-                            <p class="card-text">Status PKL Anda sedang berlangsung. Silakan isi logbook harian dan laporkan penyelesaian PKL di halaman pelaksanaan.</p>
-                            <a href="<?= site_url('pkl/applications/pelaksanaan/' . ($application->id ?? '')) ?>" class="btn btn-info">Buka Halaman Pelaksanaan</a>
+                            <p class="card-text">Status PKL Anda sedang berlangsung. Silakan isi logbook harian. Jika telah selesai, laporkan penyelesaian PKL.</p>
+                            <a href="<?= site_url('pkl/applications/pelaksanaan/' . ($application->id ?? '')) ?>" class="btn btn-info">Buka Logbook</a>
+                            <a href="<?= site_url('pkl/applications/finish_pkl/' . ($application->id ?? '')) ?>" class="btn btn-success">Laporkan Selesai PKL</a>
+                        </div>
+                    </div>
+                <?php elseif (($application->status ?? '') === 'finished') : ?>
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-success text-white"><strong>PKL Selesai</strong></div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Selamat!</h5>
+                            <p class="card-text">Anda telah menyelesaikan seluruh rangkaian kegiatan PKL. Semua dokumen dan laporan telah tersimpan.</p>
                         </div>
                     </div>
                 <?php endif; ?>
