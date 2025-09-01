@@ -163,7 +163,8 @@ class Applications_model extends CI_Model
         } elseif (in_array('head department', $roles)) {
             $this->db->where('a.status', 'approved_kps');
         } elseif (in_array('lecturer', $roles)) {
-            $this->db->where('a.status', 'submitted');
+            $statuses = ['submitted', 'seminar_requested', 'seminar_approved', 'seminar_scheduled', 'seminar_completed', 'report_rejected', 'revision_submitted'];
+            $this->db->where_in('a.status', $statuses);
             $this->db->where('a.lecturer_id', $user_id);
         }
 
@@ -226,6 +227,48 @@ class Applications_model extends CI_Model
             ->join('pkl_places p', 'a.place_id = p.id', 'left')
             ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left')
             ->get()
+            ->result();
+    }
+
+    /**
+     * Get documents by application ID
+     */
+    public function get_documents_by_application($application_id)
+    {
+        return $this->db->where('application_id', $application_id)
+            ->get('pkl_documents')
+            ->result();
+    }
+
+    /**
+     * Get document by application ID and document type
+     */
+    public function get_document_by_type($application_id, $doc_type)
+    {
+        return $this->db->where('application_id', $application_id)
+            ->where('doc_type', $doc_type)
+            ->get('pkl_documents')
+            ->row();
+    }
+
+    /**
+     * Get assessments by application ID
+     */
+    public function get_assessments_by_application($application_id)
+    {
+        return $this->db->where('application_id', $application_id)
+            ->get('pkl_assessments')
+            ->result();
+    }
+
+    /**
+     * Get workflow by application ID
+     */
+    public function get_workflow_by_application($application_id)
+    {
+        return $this->db->where('application_id', $application_id)
+            ->order_by('action_date', 'ASC')
+            ->get('pkl_workflow')
             ->result();
     }
 }

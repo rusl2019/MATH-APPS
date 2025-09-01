@@ -22,6 +22,7 @@
                         <th>Dosen</th>
                         <th>Instansi</th>
                         <th>Tanggal</th>
+                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -34,19 +35,59 @@
                             <td><?= html_escape($application->place_name ?? '-') ?></td>
                             <td><?= $application->submission_date ? date('d-m-Y', strtotime($application->submission_date)) : '-' ?></td>
                             <td>
-                                <a href="<?= site_url('pkl/applications/approve/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-success" 
-                                   onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">Setujui</a>
+                                <?php
+                                $status_labels = [
+                                    'draft' => 'Draft',
+                                    'submitted' => 'Dikirim',
+                                    'approved_dosen' => 'Disetujui Dosen',
+                                    'approved_kps' => 'Disetujui KPS',
+                                    'approved_kadep' => 'Disetujui Kadep',
+                                    'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
+                                    'rejected' => 'Ditolak',
+                                    'rejected_instansi' => 'Ditolak Instansi',
+                                    'ongoing' => 'Sedang Berlangsung',
+                                    'field_work_completed' => 'Lapangan Selesai',
+                                    'seminar_requested' => 'Pengajuan Seminar',
+                                    'seminar_approved' => 'Seminar Disetujui',
+                                    'seminar_scheduled' => 'Seminar Dijadwalkan',
+                                    'seminar_completed' => 'Seminar Selesai',
+                                    'revision' => 'Revisi Laporan',
+                                    'revision_submitted' => 'Revisi Dikirim',
+                                    'revision_approved' => 'Revisi Disetujui',
+                                    'finished' => 'Selesai'
+                                ];
+                                $status = $application->status ?? '';
+                                $badge_class = ($status === 'rejected' || $status === 'rejected_instansi') ? 'bg-danger' : 'bg-success';
+                                ?>
+                                <span class="badge <?= $badge_class ?>">
+                                    <?= $status_labels[$status] ?? $status ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php if ($application->status === 'submitted') : ?>
+                                    <a href="<?= site_url('pkl/applications/approve/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-success" 
+                                       onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">Setujui Pengajuan</a>
+                                    
+                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?= $application->id ?? '' ?>">Tolak Pengajuan</button>
                                 
-                                <!-- Reject button with modal -->
-                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?= $application->id ?? '' ?>">Tolak</button>
+                                <?php elseif ($application->status === 'seminar_requested') : ?>
+                                    <a href="<?= site_url('pkl/seminar/approve/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-success" 
+                                       onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan ini untuk seminar?')">Setujui Seminar</a>
+                                    
+                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectReportModal<?= $application->id ?? '' ?>">Tolak Laporan</button>
 
-                                <!-- Reject Modal -->
+                                <?php elseif (in_array($application->status, ['seminar_approved', 'seminar_scheduled', 'seminar_completed', 'report_rejected', 'revision_submitted'])) : ?>
+                                    <a href="<?= site_url('pkl/seminar/manage/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-primary">Kelola Seminar</a>
+                                <?php endif; ?>
+
+
+                                <!-- Reject Modal for Application -->
                                 <div class="modal fade" id="rejectModal<?= $application->id ?? '' ?>" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <?= form_open(site_url('pkl/applications/reject/' . ($application->id ?? ''))) ?>
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title">Alasan Penolakan</h5>
+                                                    <h5 class="modal-title">Alasan Penolakan Pengajuan</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
@@ -63,7 +104,30 @@
                                         </div>
                                     </div>
                                 </div>
-                            </td>
+
+                                <!-- Reject Modal for Report -->
+                                <div class="modal fade" id="rejectReportModal<?= $application->id ?? '' ?>" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <?= form_open(site_url('pkl/seminar/reject_report/' . ($application->id ?? ''))) ?>
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Alasan Penolakan Laporan</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Berikan alasan atau catatan revisi:</label>
+                                                        <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan atau catatan untuk revisi..." required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-danger">Tolak Laporan</button>
+                                                </div>
+                                            <?= form_close(); ?>
+                                        </div>
+                                    </div>
+                                </div>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

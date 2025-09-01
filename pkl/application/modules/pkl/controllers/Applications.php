@@ -38,8 +38,10 @@ class Applications extends MY_Controller
 
         // Validate semester and submission limits
         $active_semester = $this->app->get_active_semester();
-        if (!$this->validate_semester($active_semester) || 
-            !$this->validate_submission_limit($student_id, $active_semester)) {
+        if (
+            !$this->validate_semester($active_semester) ||
+            !$this->validate_submission_limit($student_id, $active_semester)
+        ) {
             return;
         }
 
@@ -51,14 +53,14 @@ class Applications extends MY_Controller
             $this->render('applications_form');
         } else {
             $application_id = $this->process_application_submission($student_id);
-            
+
             if ($application_id) {
                 $this->process_documents($application_id);
                 $this->session->set_flashdata('success', 'Pengajuan PKL berhasil disimpan!');
             } else {
                 $this->session->set_flashdata('error', 'Gagal menyimpan pengajuan PKL.');
             }
-            
+
             redirect('pkl/applications');
         }
     }
@@ -69,7 +71,7 @@ class Applications extends MY_Controller
     public function pelaksanaan($id)
     {
         $student_id = $this->session->userdata('id');
-        
+
         if (!$this->validate_application_access($id, $student_id, 'ongoing')) {
             return;
         }
@@ -87,7 +89,7 @@ class Applications extends MY_Controller
     public function add_log($id)
     {
         $student_id = $this->session->userdata('id');
-        
+
         if (!$this->validate_application_access($id, $student_id, 'ongoing')) {
             return;
         }
@@ -103,14 +105,14 @@ class Applications extends MY_Controller
                 'log_date' => $this->input->post('log_date'),
                 'activity' => $this->input->post('activity'),
             ];
-            
+
             if ($this->app->insert_log($data)) {
                 $this->session->set_flashdata('success', 'Logbook berhasil disimpan.');
             } else {
                 $this->session->set_flashdata('error', 'Gagal menyimpan logbook.');
             }
         }
-        
+
         redirect('pkl/applications/pelaksanaan/' . $id);
     }
 
@@ -255,7 +257,7 @@ class Applications extends MY_Controller
     public function report_decision($id)
     {
         $student_id = $this->session->userdata('id');
-        
+
         // Validate application ownership and status
         $application = $this->app->get_application_by_id($id);
         if (!$this->validate_decision_report($application, $student_id)) {
@@ -268,7 +270,7 @@ class Applications extends MY_Controller
         // Handle form submission
         if ($this->input->method() === 'post') {
             $decision = $this->input->post('decision');
-            
+
             if (!$this->validate_decision_submission($decision)) {
                 redirect('pkl/applications/report_decision/' . $id);
                 return;
@@ -281,12 +283,12 @@ class Applications extends MY_Controller
                 'max_size' => 2048,
                 'file_name' => $doc_type . '_' . $id . '_' . time(),
             ];
-            
+
             $this->load->library('upload', $config);
 
             if ($this->upload->do_upload('response_letter')) {
                 $file = $this->upload->data();
-                
+
                 // Save document
                 $this->app->insert_document([
                     'application_id' => $id,
@@ -331,7 +333,7 @@ class Applications extends MY_Controller
         // Set validation rules for all 7 criteria
         $criteria = ['pengetahuan', 'keterampilan', 'inisiatif', 'tanggung_jawab', 'kerjasama_tim', 'kehadiran', 'laporan'];
         foreach ($criteria as $criterion) {
-            $this->form_validation->set_rules($criterion, ucfirst(str_replace('_', ' ', $criterion)), 'required|numeric|less_than_or_equal_to[100]|greater_than_or_equal_to[0]');
+            $this->form_validation->set_rules($criterion, ucfirst(str_replace('_', ' ', $criterion)), 'required|numeric|less_than_equal_to[100]|greater_than_equal_to[0]');
         }
 
         if ($this->form_validation->run() === false) {
@@ -384,20 +386,20 @@ class Applications extends MY_Controller
 
             // 5. Update application status
             $this->app->update_application($id, [
-                'status' => 'finished'
+                'status' => 'field_work_completed'
             ]);
 
             // 6. Log workflow
             $this->app->insert_workflow([
                 'application_id' => $id,
-                'step_name' => 'Penyelesaian PKL',
+                'step_name' => 'Penyelesaian PKL Lapangan',
                 'actor_id' => $user_id,
                 'role' => 'mahasiswa',
                 'status' => 'done',
-                'remarks' => 'Mahasiswa melaporkan bahwa kegiatan PKL telah selesai. Nilai telah diinput.',
+                'remarks' => 'Mahasiswa melaporkan bahwa kegiatan PKL di lapangan telah selesai. Nilai dari pembimbing lapangan telah diinput.',
             ]);
 
-            $this->session->set_flashdata('success', 'Selamat, Anda telah menyelesaikan PKL! Status PKL Anda telah diperbarui.');
+            $this->session->set_flashdata('success', 'Selamat, Anda telah menyelesaikan PKL di lapangan! Status PKL Anda telah diperbarui. Silakan lanjutkan ke tahap seminar.');
             redirect('pkl/applications');
         }
     }
@@ -435,7 +437,7 @@ class Applications extends MY_Controller
     private function handle_reapplication($source_app_id, $student_id)
     {
         $old_app = $this->app->get_application_by_id($source_app_id);
-        
+
         // Security check: ensure the student owns the application and it was rejected
         if ($old_app && $old_app->student_id == $student_id && in_array($old_app->status, ['rejected', 'rejected_instansi'])) {
             $this->data['form_data'] = $old_app;
@@ -523,7 +525,7 @@ class Applications extends MY_Controller
             'activity_period_end' => $this->input->post('activity_period_end'),
             'semester_id' => $this->input->post('semester_id'),
         ];
-        
+
         return $this->app->insert_application($insert);
     }
 
@@ -555,7 +557,7 @@ class Applications extends MY_Controller
             if ($this->upload->do_upload($field_name)) {
                 $file = $this->upload->data();
                 $user_id = $this->session->userdata('id');
-                
+
                 $this->app->insert_workflow([
                     'application_id' => $application_id,
                     'step_name' => 'Pengajuan PKL',
@@ -564,7 +566,7 @@ class Applications extends MY_Controller
                     'status' => 'submitted',
                     'remarks' => 'Formulir pengajuan diajukan',
                 ]);
-                
+
                 $this->app->insert_document([
                     'application_id' => $application_id,
                     'doc_type' => $doc_type,
@@ -583,13 +585,13 @@ class Applications extends MY_Controller
     private function validate_application_access($application_id, $student_id, $required_status)
     {
         $application = $this->app->get_application_by_id($application_id);
-        
+
         if (!$application || $application->student_id != $student_id || $application->status !== $required_status) {
             $this->session->set_flashdata('error', 'Halaman tidak valid atau Anda tidak diizinkan.');
             redirect('pkl/applications');
             return false;
         }
-        
+
         return true;
     }
 
@@ -620,7 +622,7 @@ class Applications extends MY_Controller
                 'remarks' => 'Disetujui oleh Dosen',
             ];
         }
-        
+
         return false;
     }
 
@@ -639,7 +641,7 @@ class Applications extends MY_Controller
             redirect('pkl/applications');
             return false;
         }
-        
+
         return true;
     }
 
@@ -657,7 +659,7 @@ class Applications extends MY_Controller
             $this->session->set_flashdata('error', 'Surat balasan dari instansi wajib diunggah.');
             return false;
         }
-        
+
         return true;
     }
 
@@ -667,7 +669,7 @@ class Applications extends MY_Controller
     private function process_accepted_decision($application_id)
     {
         $user_id = $this->session->userdata('id');
-        
+
         $this->app->update_status($application_id, 'ongoing');
         $this->app->insert_workflow([
             'application_id' => $application_id,
@@ -677,7 +679,7 @@ class Applications extends MY_Controller
             'status' => 'accepted',
             'remarks' => 'Mahasiswa melaporkan bahwa pengajuan diterima oleh instansi dan kegiatan PKL telah dimulai.',
         ]);
-        
+
         $this->session->set_flashdata('success', 'Status penerimaan oleh instansi berhasil dilaporkan. Status PKL Anda telah diperbarui menjadi \'Sedang Berlangsung\'.');
     }
 
@@ -687,8 +689,8 @@ class Applications extends MY_Controller
     private function process_rejected_decision($application_id)
     {
         $user_id = $this->session->userdata('id');
-        
-        $this->app->update_status($application_id, 'rejected');
+
+        $this->app->update_status($application_id, 'rejected_instansi');
         $this->app->insert_workflow([
             'application_id' => $application_id,
             'step_name' => 'Penolakan Instansi',
@@ -697,7 +699,7 @@ class Applications extends MY_Controller
             'status' => 'rejected',
             'remarks' => 'Mahasiswa melaporkan bahwa pengajuan ditolak oleh instansi.',
         ]);
-        
+
         $this->session->set_flashdata('success', 'Status penolakan oleh instansi berhasil dilaporkan.');
     }
 }

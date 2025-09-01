@@ -28,8 +28,8 @@
                     <div class="card-body text-center">
                         <h5 class="card-title text-info">Pelacakan Progress PKL</h5>
                         <p class="card-text">
-                            Setelah Anda mendaftar, progress PKL (tahap 1–18) akan ditampilkan di sini
-                            dalam bentuk timeline.
+                            Setelah Anda mendaftar, progress PKL akan ditampilkan di sini
+                            dalam bentuk timeline sesuai dengan 5 tahap PKL.
                         </p>
                     </div>
                 </div>
@@ -43,7 +43,8 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-dark text-white">Data Formulir Pengajuan PKL</div>
                     <div class="card-body">
-                        <?php $application = $applications[0] ?? null; // Get first application ?>
+                        <?php $application = $applications[0] ?? null; // Get first application 
+                        ?>
                         <dl class="row">
                             <dt class="col-sm-4">Nama</dt>
                             <dd class="col-sm-8"><?= html_escape($student_detail->name ?? '') ?></dd>
@@ -113,26 +114,58 @@
                     <div class="card-body">
                         <ul class="timeline">
                             <?php
-                            $steps = [
-                                'submitted' => 'Pengajuan Dikirim',
-                                'approved_dosen' => 'Disetujui Dosen Pembimbing',
-                                'approved_kps' => 'Disetujui KPS',
-                                'approved_kadep' => 'Disetujui Ketua Departemen',
-                                'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
-                                'rejected' => 'Ditolak',
-                                'ongoing' => 'Sedang PKL',
+                            // Define the 5 stages of PKL
+                            $stages = [
+                                1 => [
+                                    'name' => 'Tahap 1: Pengajuan Tempat PKL',
+                                    'statuses' => ['submitted', 'approved_dosen', 'approved_kps', 'approved_kadep', 'recommendation_uploaded', 'rejected', 'rejected_instansi']
+                                ],
+                                2 => [
+                                    'name' => 'Tahap 2: Pelaksanaan PKL',
+                                    'statuses' => ['ongoing']
+                                ],
+                                3 => [
+                                    'name' => 'Tahap 3: Pembuatan Laporan PKL',
+                                    'statuses' => ['field_work_completed']
+                                ],
+                                4 => [
+                                    'name' => 'Tahap 4: Seminar PKL',
+                                    'statuses' => ['seminar_requested', 'seminar_approved', 'seminar_scheduled', 'seminar_completed']
+                                ],
+                                5 => [
+                                    'name' => 'Tahap 5: Penyelesaian Administrasi PKL',
+                                    'statuses' => ['revision', 'revision_submitted', 'revision_approved', 'finished']
+                                ]
                             ];
+
                             $currentStatus = $application->status ?? '';
-                            foreach ($steps as $key => $label) :
-                                $active = ($key === $currentStatus) ? 'active' : '';
+                            $currentStage = 0;
+
+                            // Determine current stage
+                            foreach ($stages as $stageNum => $stage) {
+                                if (in_array($currentStatus, $stage['statuses'])) {
+                                    $currentStage = $stageNum;
+                                    break;
+                                }
+                            }
+
+                            // Display stages
+                            foreach ($stages as $stageNum => $stage) {
+                                $isCurrentStage = ($stageNum == $currentStage);
+                                $isCompletedStage = ($stageNum < $currentStage);
+                                $stageClass = $isCurrentStage ? 'active' : ($isCompletedStage ? 'completed' : '');
                             ?>
-                                <li class="timeline-item <?= $active ?>">
-                                    <span class="badge <?= $active ? 'bg-success' : 'bg-secondary' ?>">
-                                        <?= $label ?>
+                                <li class="timeline-item <?= $stageClass ?>">
+                                    <span class="badge <?= $isCurrentStage ? 'bg-warning' : ($isCompletedStage ? 'bg-success' : 'bg-secondary') ?>">
+                                        <?= $stage['name'] ?>
                                     </span>
+                                    <?php if ($isCurrentStage) : ?>
+                                        <div class="mt-2">
+                                            <small>Status saat ini: <strong><?= get_status_label($currentStatus) ?></strong></small>
+                                        </div>
+                                    <?php endif; ?>
                                 </li>
-                                <?php if ($key === 'rejected' && $currentStatus === 'rejected') break; ?>
-                            <?php endforeach; ?>
+                            <?php } ?>
                         </ul>
                     </div>
                 </div>
@@ -145,7 +178,7 @@
                             <a href="<?= site_url('pkl/applications/report_decision/' . ($application->id ?? '')) ?>" class="btn btn-primary">Laporkan Keputusan Instansi</a>
                         </div>
                     </div>
-                <?php elseif (in_array($application->status ?? '', ['rejected'])) : ?>
+                <?php elseif (in_array($application->status ?? '', ['rejected', 'rejected_instansi'])) : ?>
                     <div class="card shadow-sm mt-4">
                         <div class="card-header bg-danger text-white"><strong>Tindak Lanjut Diperlukan</strong></div>
                         <div class="card-body text-center">
@@ -160,6 +193,14 @@
                             <p class="card-text">Status PKL Anda sedang berlangsung. Silakan isi logbook harian. Jika telah selesai, laporkan penyelesaian PKL.</p>
                             <a href="<?= site_url('pkl/applications/pelaksanaan/' . ($application->id ?? '')) ?>" class="btn btn-info">Buka Logbook</a>
                             <a href="<?= site_url('pkl/applications/finish_pkl/' . ($application->id ?? '')) ?>" class="btn btn-success">Laporkan Selesai PKL</a>
+                        </div>
+                    </div>
+                <?php elseif (($application->status ?? '') === 'field_work_completed') : ?>
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-primary text-white"><strong>Tahap Seminar & Laporan</strong></div>
+                        <div class="card-body text-center">
+                            <p class="card-text">Anda telah menyelesaikan kegiatan PKL di lapangan. Tahap selanjutnya adalah penulisan laporan dan seminar PKL.</p>
+                            <a href="<?= site_url('pkl/seminar/index/' . ($application->id ?? '')) ?>" class="btn btn-primary">Mulai Proses Seminar</a>
                         </div>
                     </div>
                 <?php elseif (($application->status ?? '') === 'finished') : ?>
@@ -210,6 +251,10 @@
     }
 
     .timeline-item.active::before {
+        background: #ffc107;
+    }
+
+    .timeline-item.completed::before {
         background: #198754;
     }
 </style>

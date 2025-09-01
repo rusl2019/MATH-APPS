@@ -46,7 +46,16 @@
                                     'approved_kadep' => 'Disetujui Kadep',
                                     'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
                                     'rejected' => 'Ditolak',
+                                    'rejected_instansi' => 'Ditolak Instansi',
                                     'ongoing' => 'Sedang Berlangsung',
+                                    'field_work_completed' => 'Lapangan Selesai',
+                                    'seminar_requested' => 'Pengajuan Seminar',
+                                    'seminar_approved' => 'Seminar Disetujui',
+                                    'seminar_scheduled' => 'Seminar Dijadwalkan',
+                                    'seminar_completed' => 'Seminar Selesai',
+                                    'revision' => 'Revisi Laporan',
+                                    'revision_submitted' => 'Revisi Dikirim',
+                                    'revision_approved' => 'Revisi Disetujui',
                                     'finished' => 'Selesai'
                                 ];
                                 $status = $application->status ?? '';

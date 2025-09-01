@@ -36,3 +36,37 @@ if (!function_exists('is_active')) {
         return ($current_url === $menu) ? $activeClass : $inactiveClass;
     }
 }
+
+if (!function_exists('get_status_label')) {
+    /**
+     * Get human-readable label for PKL application status
+     *
+     * @param string $status The status code
+     * @return string
+     */
+    function get_status_label(string $status): string
+    {
+        $status_labels = [
+            'draft' => 'Draft',
+            'submitted' => 'Dikirim',
+            'approved_dosen' => 'Disetujui Dosen',
+            'approved_kps' => 'Disetujui KPS',
+            'approved_kadep' => 'Disetujui Kadep',
+            'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
+            'rejected' => 'Ditolak',
+            'rejected_instansi' => 'Ditolak Instansi',
+            'ongoing' => 'Sedang Berlangsung',
+            'field_work_completed' => 'Lapangan Selesai',
+            'seminar_requested' => 'Pengajuan Seminar',
+            'seminar_approved' => 'Seminar Disetujui',
+            'seminar_scheduled' => 'Seminar Dijadwalkan',
+            'seminar_completed' => 'Seminar Selesai',
+            'revision' => 'Revisi Laporan',
+            'revision_submitted' => 'Revisi Dikirim',
+            'revision_approved' => 'Revisi Disetujui',
+            'finished' => 'Selesai'
+        ];
+        
+        return $status_labels[$status] ?? $status;
+    }
+}
