@@ -73,7 +73,14 @@ class Applications_model extends CI_Model
      */
     public function get_application_by_id($id)
     {
-        return $this->db->get_where('pkl_applications', ['id' => $id])->row();
+        return $this->db->select('a.*, l.name as lecturer_name, p.name as place_name, p.address as place_address, sem.name as semester_name')
+            ->from('pkl_applications a')
+            ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left')
+            ->join('pkl_places p', 'a.place_id = p.id', 'left')
+            ->join('pkl_semesters sem', 'a.semester_id = sem.id', 'left')
+            ->where('a.id', $id)
+            ->get()
+            ->row();
     }
 
     /**
@@ -270,5 +277,39 @@ class Applications_model extends CI_Model
             ->order_by('action_date', 'ASC')
             ->get('pkl_workflow')
             ->result();
+    }
+
+    /**
+     * Get logs by application ID and date range
+     */
+    public function get_logs_by_date_range($application_id, $start_date, $end_date)
+    {
+        return $this->db->from('pkl_logs')
+            ->where('application_id', $application_id)
+            ->where('log_date >=', $start_date)
+            ->where('log_date <=', $end_date)
+            ->order_by('log_date', 'ASC')
+            ->get()
+            ->result();
+    }
+
+    /**
+     * Get all weekly logbook submissions for an application
+     */
+    public function get_weekly_logbooks($application_id)
+    {
+        return $this->db->from('pkl_logbook_weekly')
+            ->where('application_id', $application_id)
+            ->order_by('week_number', 'ASC')
+            ->get()
+            ->result();
+    }
+
+    /**
+     * Insert a new weekly logbook submission
+     */
+    public function insert_weekly_logbook($data)
+    {
+        return $this->db->insert('pkl_logbook_weekly', $data);
     }
 }

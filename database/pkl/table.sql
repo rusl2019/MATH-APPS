@@ -55,6 +55,22 @@ CREATE TABLE `pkl_applications` (
   CONSTRAINT `fk_applications_semester` FOREIGN KEY (`semester_id`) REFERENCES `pkl_semesters` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `pkl_logbook_weekly` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `application_id` int(11) NOT NULL,
+  `week_number` tinyint(4) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `status` enum('uploaded','approved','rejected') DEFAULT 'uploaded',
+  `remarks` text DEFAULT NULL,
+  `uploaded_at` timestamp NULL DEFAULT current_timestamp(),
+  `approved_by` varchar(20) DEFAULT NULL,
+  `approved_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `application_id` (`application_id`),
+  CONSTRAINT `fk_logbook_weekly_application` FOREIGN KEY (`application_id`) REFERENCES `pkl_applications` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `pkl_assessments`;
 CREATE TABLE `pkl_assessments` (

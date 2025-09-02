@@ -8,6 +8,8 @@ class Applications extends MY_Controller
         parent::__construct();
         $this->load->model('Applications_model', 'app');
         $this->load->library('form_validation');
+        $this->load->helper('url');
+        $this->load->helper('html');
     }
 
     /**
@@ -79,7 +81,45 @@ class Applications extends MY_Controller
         $application = $this->app->get_application_by_id($id);
         $this->data['title'] = 'Pelaksanaan PKL & Logbook';
         $this->data['application'] = $application;
-        $this->data['logs'] = $this->app->get_logs_by_application($id);
+
+        // Get all weekly uploaded logs
+        $weekly_logs_db = $this->app->get_weekly_logbooks($id);
+        $weekly_logs = [];
+        foreach ($weekly_logs_db as $log) {
+            $weekly_logs[$log->week_number] = $log;
+        }
+
+        // Generate weekly structure
+        $start_date = new DateTime($application->activity_period_start);
+        $end_date = new DateTime($application->activity_period_end);
+        $weeks = [];
+        $week_number = 1;
+
+        while ($start_date <= $end_date) {
+            $period_start = clone $start_date;
+            $period_end = clone $start_date;
+            $period_end->modify('+6 days');
+
+            if ($period_end > $end_date) {
+                $period_end = $end_date;
+            }
+
+            $start_date_str = $period_start->format('Y-m-d');
+            $end_date_str = $period_end->format('Y-m-d');
+
+            $weeks[$week_number] = [
+                'week_number' => $week_number,
+                'start_date' => $start_date_str,
+                'end_date' => $end_date_str,
+                'daily_logs' => $this->app->get_logs_by_date_range($id, $start_date_str, $end_date_str),
+                'weekly_upload' => $weekly_logs[$week_number] ?? null
+            ];
+
+            $start_date->modify('+7 days');
+            $week_number++;
+        }
+
+        $this->data['weeks'] = $weeks;
         $this->render('applications_pelaksanaan');
     }
 
@@ -117,6 +157,70 @@ class Applications extends MY_Controller
     }
 
     /**
+     * Print weekly logbook
+     */
+    public function print_logbook_weekly($application_id, $week_number)
+    {
+        $student_id = $this->session->userdata('id');
+        if (!$this->validate_application_access($application_id, $student_id, 'ongoing')) {
+            return;
+        }
+
+        $application = $this->app->get_application_by_id($application_id);
+        $start_date = new DateTime($application->activity_period_start);
+        $start_date->modify('+ ' . (($week_number - 1) * 7) . ' days');
+        
+        $end_date = clone $start_date;
+        $end_date->modify('+6 days');
+
+        $this->data['title'] = "Cetak Logbook Minggu Ke-{$week_number}";
+        $this->data['application'] = $application;
+        $this->data['student'] = $this->app->get_student($student_id);
+        $this->data['place'] = $this->app->get_places($application->place_id);
+        $this->data['week_number'] = $week_number;
+        $this->data['start_date_period'] = $start_date->format('d M Y');
+        $this->data['end_date_period'] = $end_date->format('d M Y');
+        $this->data['logs'] = $this->app->get_logs_by_date_range($application_id, $start_date->format('Y-m-d'), $end_date->format('Y-m-d'));
+
+        $this->load->view('logbook_print_template', $this->data);
+    }
+
+    /**
+     * Upload signed weekly logbook
+     */
+    public function upload_logbook_weekly($application_id)
+    {
+        $student_id = $this->session->userdata('id');
+        if (!$this->validate_application_access($application_id, $student_id, 'ongoing')) {
+            return;
+        }
+
+        $week_number = $this->input->post('week_number');
+        $start_date = $this->input->post('start_date');
+        $end_date = $this->input->post('end_date');
+
+        $file_path = $this->_do_upload('logbook_file', "logbook_weekly_{$application_id}_{$week_number}");
+
+        if ($file_path) {
+            $data = [
+                'application_id' => $application_id,
+                'week_number' => $week_number,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'file_path' => $file_path,
+                'status' => 'uploaded'
+            ];
+            $this->app->insert_weekly_logbook($data);
+            $this->session->set_flashdata('success', "Logbook minggu ke-{$week_number} berhasil diunggah.");
+        } else {
+            // Error message is set in _do_upload()
+        }
+
+        redirect('pkl/applications/pelaksanaan/' . $application_id);
+    }
+
+
+    /**
      * Display applications for approval based on user roles
      */
     public function approvals()
@@ -125,6 +229,47 @@ class Applications extends MY_Controller
         $this->data['title'] = 'Daftar Pengajuan PKL untuk Approval';
         $this->data['applications'] = $this->app->get_applications_for_role($roles);
         $this->render('applications_approvals');
+    }
+
+    /**
+     * Get detailed application information for approval
+     */
+    public function get_application_detail($id)
+    {
+        // Security check - only allow users with approval roles
+        $roles = $this->session->userdata('role_names');
+        $allowed_roles = array('head study program', 'head department', 'lecturer');
+        if (empty(array_intersect($roles, $allowed_roles))) {
+            show_error('Tidak diizinkan');
+            return;
+        }
+        
+        // Get detailed application data
+        $application = $this->app->get_application_by_id($id);
+        
+        // Check if application exists
+        if (!$application) {
+            header('Content-Type: application/json');
+            echo json_encode(array('error' => 'Pengajuan tidak ditemukan'));
+            return;
+        }
+        
+        // Get student details
+        $student = $this->app->get_student($application->student_id);
+        
+        // Get documents
+        $documents = $this->app->get_documents_by_application($id);
+        
+        // Prepare response data
+        $data = array(
+            'application' => $application,
+            'student' => $student,
+            'documents' => $documents
+        );
+        
+        // Return JSON response
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
 
     /**

@@ -43,7 +43,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label for="log_date" class="form-label">Tanggal Kegiatan <span class="text-danger">*</span></label>
-                        <input type="date" name="log_date" class="form-control" required max="<?= date('Y-m-d') ?>">
+                        <input type="date" name="log_date" class="form-control" required min="<?= $application->activity_period_start ?>" max="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-9 mb-3">
                         <label for="activity" class="form-label">Uraian Kegiatan <span class="text-danger">*</span></label>
@@ -56,41 +56,101 @@ defined('BASEPATH') or exit('No direct script access allowed');
             </div>
         </div>
 
-        <!-- Logbook History -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-info text-white">Riwayat Logbook</div>
-            <div class="card-body">
-                <?php if (empty($logs)) : ?>
-                    <p class="text-center text-muted">Belum ada logbook yang diisi.</p>
-                <?php else : ?>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th style="width: 15%;">Tanggal</th>
-                                    <th>Uraian Kegiatan</th>
-                                    <th style="width: 15%;">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($logs as $log) : ?>
-                                    <tr>
-                                        <td><?= date('d-m-Y', strtotime($log->log_date)) ?></td>
-                                        <td><?= nl2br(html_escape($log->activity)) ?></td>
-                                        <td>
-                                            <?php if ($log->is_approved ?? false) : ?>
-                                                <span class="badge bg-success">Disetujui</span>
-                                            <?php else : ?>
-                                                <span class="badge bg-secondary">Pending</span>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+        <!-- Weekly Logbook Accordion -->
+        <div class="accordion" id="weeklyLogbookAccordion">
+            <?php if (empty($weeks)) : ?>
+                <div class="alert alert-info">Belum ada data minggu PKL yang bisa ditampilkan.</div>
+            <?php else : ?>
+                <?php foreach ($weeks as $week_number => $week) : ?>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading<?= $week_number ?>">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $week_number ?>" aria-expanded="false" aria-controls="collapse<?= $week_number ?>">
+                                <strong>Minggu ke-<?= $week_number ?></strong> (<?= date('d M Y', strtotime($week['start_date'])) ?> - <?= date('d M Y', strtotime($week['end_date'])) ?>)
+                            </button>
+                        </h2>
+                        <div id="collapse<?= $week_number ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $week_number ?>" data-bs-parent="#weeklyLogbookAccordion">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h5>Aktivitas Harian</h5>
+                                        <?php if (empty($week['daily_logs'])) : ?>
+                                            <p class="text-muted">Belum ada aktivitas yang dicatat minggu ini.</p>
+                                        <?php else : ?>
+                                            <table class="table table-sm table-bordered">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Tanggal</th>
+                                                        <th>Aktivitas</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($week['daily_logs'] as $log) : ?>
+                                                        <tr>
+                                                            <td style="width:120px;"><?= date('d/m/Y', strtotime($log->log_date)) ?></td>
+                                                            <td><?= nl2br(html_escape($log->activity)) ?></td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                            </table>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h5>Logbook Mingguan (TTD)</h5>
+                                        <a href="<?= site_url('pkl/applications/print_logbook_weekly/' . $application->id . '/' . $week_number) ?>" target="_blank" class="btn btn-sm btn-info mb-3 w-100"><i class="fas fa-print"></i> Cetak Logbook Minggu Ini</a>
+
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <?php if ($week['weekly_upload']) : ?>
+                                                    <p class="mb-2"><strong>Status:</strong> 
+                                                        <?php 
+                                                            $status = $week['weekly_upload']->status;
+                                                            $badge_class = 'bg-secondary';
+                                                            if ($status == 'approved') $badge_class = 'bg-success';
+                                                            if ($status == 'rejected') $badge_class = 'bg-danger';
+                                                        ?>
+                                                        <span class="badge <?= $badge_class ?>"><?= ucfirst($status) ?></span>
+                                                    </p>
+                                                    <p class="mb-2"><strong>Diunggah pada:</strong> <?= date('d M Y H:i', strtotime($week['weekly_upload']->uploaded_at)) ?></p>
+                                                    <a href="<?= base_url($week['weekly_upload']->file_path) ?>" target="_blank" class="btn btn-sm btn-success w-100">Lihat File</a>
+                                                    <?php if($status == 'rejected'): ?>
+                                                        <p class="mt-2 text-danger"><small><strong>Catatan:</strong> <?= html_escape($week['weekly_upload']->remarks) ?></small></p>
+                                                        <hr>
+                                                        <p class="text-center">Silakan unggah revisi:</p>
+                                                        <!-- Revision Upload Form -->
+                                                        <?= form_open_multipart('pkl/applications/upload_logbook_weekly/' . $application->id) ?>
+                                                            <input type="hidden" name="week_number" value="<?= $week_number ?>">
+                                                            <input type="hidden" name="start_date" value="<?= $week['start_date'] ?>">
+                                                            <input type="hidden" name="end_date" value="<?= $week['end_date'] ?>">
+                                                            <div class="mb-2">
+                                                                <input type="file" name="logbook_file" class="form-control form-control-sm" required>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-sm btn-warning w-100">Unggah Ulang</button>
+                                                        <?= form_close() ?>
+                                                    <?php endif; ?>
+                                                <?php else : ?>
+                                                    <p class="text-muted text-center">Belum ada bukti logbook yang diunggah untuk minggu ini.</p>
+                                                    <hr>
+                                                    <!-- Upload Form -->
+                                                    <?= form_open_multipart('pkl/applications/upload_logbook_weekly/' . $application->id) ?>
+                                                        <input type="hidden" name="week_number" value="<?= $week_number ?>">
+                                                        <input type="hidden" name="start_date" value="<?= $week['start_date'] ?>">
+                                                        <input type="hidden" name="end_date" value="<?= $week['end_date'] ?>">
+                                                        <div class="mb-2">
+                                                            <label class="form-label"><small>Unggah Bukti TTD (PDF):</small></label>
+                                                            <input type="file" name="logbook_file" class="form-control form-control-sm" required accept=".pdf">
+                                                        </div>
+                                                        <button type="submit" class="btn btn-sm btn-primary w-100">Unggah</button>
+                                                    <?= form_close() ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                <?php endif; ?>
-            </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
     <!--end::Container-->
