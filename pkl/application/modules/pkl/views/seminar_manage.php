@@ -33,7 +33,7 @@
             <?php endif; ?>
 
             <!-- Assessment Form -->
-            <?php if ($application->status === 'seminar_scheduled' && strtotime($application->seminar_date) < time()) : ?>
+            <?php if ($application->status === 'seminar_scheduled') : ?>
                  <div class="card shadow-sm mt-4">
                     <div class="card-header bg-dark text-white">Langkah 3: Penilaian Seminar</div>
                     <div class="card-body">

@@ -203,6 +203,20 @@
                             <a href="<?= site_url('pkl/seminar/index/' . ($application->id ?? '')) ?>" class="btn btn-primary">Mulai Proses Seminar</a>
                         </div>
                     </div>
+                <?php
+                elseif (in_array($application->status ?? '', [
+                    'seminar_requested', 'seminar_approved', 'seminar_scheduled',
+                    'seminar_completed', 'report_rejected', 'revision',
+                    'revision_submitted', 'revision_approved'
+                ])) :
+                ?>
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-info text-white"><strong>Proses Seminar Berlangsung</strong></div>
+                        <div class="card-body text-center">
+                            <p class="card-text">Anda sedang dalam tahap seminar dan revisi laporan. Klik tombol di bawah untuk melihat detail dan melanjutkan proses.</p>
+                            <a href="<?= site_url('pkl/seminar/index/' . ($application->id ?? '')) ?>" class="btn btn-info">Lanjutkan Proses Seminar</a>
+                        </div>
+                    </div>
                 <?php elseif (($application->status ?? '') === 'finished') : ?>
                     <div class="card shadow-sm mt-4">
                         <div class="card-header bg-success text-white"><strong>PKL Selesai</strong></div>

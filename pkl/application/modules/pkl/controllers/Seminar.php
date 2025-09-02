@@ -470,7 +470,7 @@ class Seminar extends MY_Controller
         ]);
 
         $this->session->set_flashdata('success', 'Laporan PKL disetujui untuk seminar.');
-        redirect('pkl/applications/approvals');
+        redirect('pkl/seminar/manage/' . $application_id);
     }
 
     /**
@@ -508,6 +508,6 @@ class Seminar extends MY_Controller
         ]);
 
         $this->session->set_flashdata('error', 'Laporan PKL ditolak.');
-        redirect('pkl/applications/approvals');
+        redirect('pkl/seminar/manage/' . $application_id);
     }
 }

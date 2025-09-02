@@ -203,7 +203,7 @@ class Applications_model extends CI_Model
             ->from('pkl_applications')
             ->where('student_id', $student_id)
             ->get();
-            
+
         $app_ids = array_column($app_ids_query->result_array(), 'id');
 
         if (empty($app_ids)) {

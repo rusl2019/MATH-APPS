@@ -1,6 +1,6 @@
 <div class="container mt-5">
     <h2 class="mb-4"><?= $title ?></h2>
-    
+
     <?php if ($this->session->flashdata('success')) : ?>
         <div class="alert alert-success"><?= $this->session->flashdata('success') ?></div>
     <?php endif; ?>
@@ -64,16 +64,14 @@
                                 </span>
                             </td>
                             <td>
-                                <?php if ($application->status === 'submitted') : ?>
-                                    <a href="<?= site_url('pkl/applications/approve/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-success" 
-                                       onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">Setujui Pengajuan</a>
-                                    
+                                <?php if ($application->status === 'submitted' || str_contains($application->status, 'approved')) : ?>
+                                    <a href="<?= site_url('pkl/applications/approve/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">Setujui Pengajuan</a>
+
                                     <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?= $application->id ?? '' ?>">Tolak Pengajuan</button>
-                                
+
                                 <?php elseif ($application->status === 'seminar_requested') : ?>
-                                    <a href="<?= site_url('pkl/seminar/approve/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-success" 
-                                       onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan ini untuk seminar?')">Setujui Seminar</a>
-                                    
+                                    <a href="<?= site_url('pkl/seminar/approve/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan ini untuk seminar?')">Setujui Seminar</a>
+
                                     <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectReportModal<?= $application->id ?? '' ?>">Tolak Laporan</button>
 
                                 <?php elseif (in_array($application->status, ['seminar_approved', 'seminar_scheduled', 'seminar_completed', 'report_rejected', 'revision_submitted'])) : ?>
@@ -86,20 +84,20 @@
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <?= form_open(site_url('pkl/applications/reject/' . ($application->id ?? ''))) ?>
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Alasan Penolakan Pengajuan</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Alasan Penolakan Pengajuan</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Berikan alasan penolakan:</label>
+                                                    <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan..." required></textarea>
                                                 </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Berikan alasan penolakan:</label>
-                                                        <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan..." required></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-danger">Tolak Pengajuan</button>
-                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-danger">Tolak Pengajuan</button>
+                                            </div>
                                             <?= form_close(); ?>
                                         </div>
                                     </div>
@@ -110,20 +108,20 @@
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <?= form_open(site_url('pkl/seminar/reject_report/' . ($application->id ?? ''))) ?>
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Alasan Penolakan Laporan</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Alasan Penolakan Laporan</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Berikan alasan atau catatan revisi:</label>
+                                                    <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan atau catatan untuk revisi..." required></textarea>
                                                 </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Berikan alasan atau catatan revisi:</label>
-                                                        <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan atau catatan untuk revisi..." required></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-danger">Tolak Laporan</button>
-                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-danger">Tolak Laporan</button>
+                                            </div>
                                             <?= form_close(); ?>
                                         </div>
                                     </div>

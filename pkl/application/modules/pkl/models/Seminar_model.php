@@ -9,10 +9,10 @@ class Seminar_model extends CI_Model
     public function get_seminar_documents($application_id)
     {
         $doc_types = [
-            'laporan_pkl_draft', 
-            'laporan_pkl_revised', 
-            'lembar_persetujuan_seminar', 
-            'berita_acara_seminar', 
+            'laporan_pkl_draft',
+            'laporan_pkl_revised',
+            'lembar_persetujuan_seminar',
+            'berita_acara_seminar',
             'lembar_pengesahan',
             'form_c1',
             'form_d1',
@@ -20,13 +20,13 @@ class Seminar_model extends CI_Model
             'form_d4',
             'form_e1'
         ];
-        
+
         return $this->db->from('pkl_documents')
-                        ->where('application_id', $application_id)
-                        ->where_in('doc_type', $doc_types)
-                        ->order_by('created_at', 'DESC')
-                        ->get()
-                        ->result();
+            ->where('application_id', $application_id)
+            ->where_in('doc_type', $doc_types)
+            ->order_by('uploaded_at', 'DESC')
+            ->get()
+            ->result();
     }
 
     /**
@@ -35,11 +35,11 @@ class Seminar_model extends CI_Model
     public function get_revision_notes($application_id)
     {
         return $this->db->from('pkl_workflow')
-                        ->where('application_id', $application_id)
-                        ->where('step_name', 'Mulai Revisi')
-                        ->order_by('created_at', 'DESC')
-                        ->get()
-                        ->row();
+            ->where('application_id', $application_id)
+            ->where('step_name', 'Mulai Revisi')
+            ->order_by('action_date', 'DESC')
+            ->get()
+            ->row();
     }
 
     /**

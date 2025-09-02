@@ -14,10 +14,10 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-info text-white">Progress Seminar</div>
                 <div class="card-body">
-                    <p>Status saat ini: 
+                    <p>Status saat ini:
                         <span class="badge bg-primary"><?= get_status_label($application->status) ?></span>
                     </p>
-                    
+
                     <!-- Detailed timeline for seminar process -->
                     <ul class="timeline mt-3">
                         <?php
@@ -32,11 +32,11 @@
                             'revision_approved' => 'Revisi Disetujui',
                             'finished' => 'Selesai'
                         ];
-                        
+
                         $current_status = $application->status;
                         $step_order = array_keys($seminar_steps);
                         $current_index = array_search($current_status, $step_order);
-                        
+
                         foreach ($seminar_steps as $status => $label) {
                             $step_index = array_search($status, $step_order);
                             $is_active = ($status === $current_status);
@@ -52,7 +52,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <!-- Workflow History -->
             <div class="card shadow-sm mt-4">
                 <div class="card-header bg-secondary text-white">Riwayat Proses</div>
@@ -100,13 +100,13 @@
                         <?php else : ?>
                             <p>Silakan unggah draft laporan PKL Anda untuk meminta persetujuan seminar dari dosen pembimbing.</p>
                         <?php endif; ?>
-                        
+
                         <?= form_open_multipart('pkl/seminar/upload_report/' . $application->id); ?>
-                            <div class="mb-3">
-                                <label for="report_file" class="form-label">File Laporan PKL (PDF, max 5MB) <span class="text-danger">*</span></label>
-                                <input type="file" name="report_file" class="form-control" accept=".pdf" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Unggah & Ajukan Seminar</button>
+                        <div class="mb-3">
+                            <label for="report_file" class="form-label">File Laporan PKL (PDF, max 5MB) <span class="text-danger">*</span></label>
+                            <input type="file" name="report_file" class="form-control" accept=".pdf" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Unggah & Ajukan Seminar</button>
                         <?= form_close(); ?>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
 
             <!-- Status: Menunggu Persetujuan Dosen -->
             <?php if ($application->status === 'seminar_requested') : ?>
-                 <div class="card shadow-sm">
+                <div class="card shadow-sm">
                     <div class="card-header bg-dark text-white">Status: Menunggu Persetujuan</div>
                     <div class="card-body">
                         <p>Draft laporan Anda telah dikirim. Saat ini sedang menunggu persetujuan dari Dosen Pembimbing untuk pelaksanaan seminar.</p>
@@ -124,7 +124,7 @@
 
             <!-- Status: Seminar Dijadwalkan -->
             <?php if ($application->status === 'seminar_scheduled') : ?>
-                 <div class="card shadow-sm">
+                <div class="card shadow-sm">
                     <div class="card-header bg-success text-white">Status: Seminar Dijadwalkan</div>
                     <div class="card-body">
                         <p>Selamat! Seminar Anda telah dijadwalkan. Berikut detailnya:</p>
@@ -139,7 +139,7 @@
 
             <!-- Status: Seminar Selesai -->
             <?php if ($application->status === 'seminar_completed') : ?>
-                 <div class="card shadow-sm">
+                <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">Status: Seminar Telah Dilaksanakan</div>
                     <div class="card-body">
                         <p>Anda telah melaksanakan seminar. Dosen pembimbing akan segera memberikan hasil penilaian dan catatan revisi (jika ada).</p>
@@ -155,18 +155,18 @@
                     <div class="card-body">
                         <p>Dosen pembimbing Anda telah memberikan catatan revisi. Silakan perbaiki laporan Anda dan unggah versi terbarunya.</p>
                         <?php if (!empty($revision_notes->remarks)) : ?>
-                        <div class="alert alert-info">
-                            <strong>Catatan dari Dosen:</strong>
-                            <p><?= nl2br(html_escape($revision_notes->remarks)) ?></p>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <?= form_open_multipart('pkl/seminar/upload_revision/' . $application->id); ?>
-                            <div class="mb-3">
-                                <label class="form-label">Unggah Laporan Hasil Revisi (PDF) <span class="text-danger">*</span></label>
-                                <input type="file" name="revision_file" class="form-control" accept=".pdf" required>
+                            <div class="alert alert-info">
+                                <strong>Catatan dari Dosen:</strong>
+                                <p><?= nl2br(html_escape($revision_notes->remarks)) ?></p>
                             </div>
-                            <button type="submit" class="btn btn-primary">Kirim Laporan Revisi</button>
+                        <?php endif; ?>
+
+                        <?= form_open_multipart('pkl/seminar/upload_revision/' . $application->id); ?>
+                        <div class="mb-3">
+                            <label class="form-label">Unggah Laporan Hasil Revisi (PDF) <span class="text-danger">*</span></label>
+                            <input type="file" name="revision_file" class="form-control" accept=".pdf" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Kirim Laporan Revisi</button>
                         <?= form_close(); ?>
                     </div>
                 </div>
@@ -179,11 +179,11 @@
                     <div class="card-body">
                         <p>Selamat, laporan akhir Anda telah disetujui! Langkah terakhir adalah mengunggah Lembar Pengesahan yang telah ditandatangani lengkap.</p>
                         <?= form_open_multipart('pkl/seminar/upload_final_sheet/' . $application->id); ?>
-                            <div class="mb-3">
-                                <label class="form-label">Unggah Lembar Pengesahan (PDF) <span class="text-danger">*</span></label>
-                                <input type="file" name="final_sheet_file" class="form-control" accept=".pdf" required>
-                            </div>
-                            <button type="submit" class="btn btn-success">Selesaikan PKL</button>
+                        <div class="mb-3">
+                            <label class="form-label">Unggah Lembar Pengesahan (PDF) <span class="text-danger">*</span></label>
+                            <input type="file" name="final_sheet_file" class="form-control" accept=".pdf" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Selesaikan PKL</button>
                         <?= form_close(); ?>
                     </div>
                 </div>
@@ -191,7 +191,7 @@
 
             <!-- Status: Finished -->
             <?php if ($application->status === 'finished') : ?>
-                 <div class="card shadow-sm">
+                <div class="card shadow-sm">
                     <div class="card-header bg-success text-white">PKL Selesai</div>
                     <div class="card-body text-center">
                         <h4 class="card-title">Selamat!</h4>
@@ -215,7 +215,7 @@
                             <a href="<?= base_url($doc->file_path) ?>" target="_blank">
                                 <?= ucfirst(str_replace('_', ' ', $doc->doc_type)) ?>
                             </a>
-                            <span class="badge bg-info rounded-pill"><?= date('d-m-Y H:i', strtotime($doc->created_at)) ?></span>
+                            <span class="badge bg-info rounded-pill"><?= date('d-m-Y H:i', strtotime($doc->uploaded_at)) ?></span>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -223,7 +223,7 @@
         </div>
     </div>
 
-     <div class="mt-4">
+    <div class="mt-4">
         <a href="<?= site_url('pkl/applications') ?>" class="btn btn-light">Kembali ke Dashboard PKL</a>
     </div>
 </div>
@@ -264,7 +264,7 @@
     .timeline-item.active::before {
         background: #ffc107;
     }
-    
+
     .timeline-item.completed::before {
         background: #198754;
     }
