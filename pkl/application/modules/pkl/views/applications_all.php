@@ -45,7 +45,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     <thead class="table-dark">
                         <tr>
                             <th>Mahasiswa</th>
-                            <th>Judul</th>
                             <th>Dosen</th>
                             <th>Instansi</th>
                             <th>Tanggal Pengajuan</th>
@@ -57,7 +56,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <?php foreach ($applications as $application) : ?>
                             <tr>
                                 <td><?= html_escape($application->student_name ?? '-') ?></td>
-                                <td><?= html_escape($application->title ?? '-') ?></td>
                                 <td><?= html_escape($application->lecturer_name ?? '-') ?></td>
                                 <td><?= html_escape($application->place_name ?? '-') ?></td>
                                 <td>

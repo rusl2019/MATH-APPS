@@ -120,16 +120,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
             </div>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Judul PKL <span class="text-danger">*</span></label>
-            <input type="text" name="title" class="form-control" required value="<?= html_escape($form_data->title ?? '') ?>">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Jenis Kegiatan <span class="text-danger">*</span></label>
-            <input type="text" name="type" class="form-control" required value="<?= html_escape($form_data->type ?? '') ?>">
-        </div>
-
         <!-- Document Uploads -->
         <div class="mb-3">
             <label class="form-label">Unggah Portofolio (PDF) <span class="text-danger">*</span></label>

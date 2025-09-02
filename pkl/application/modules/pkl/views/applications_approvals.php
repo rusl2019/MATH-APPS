@@ -2,7 +2,8 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 if (!function_exists('get_status_label')) {
-    function get_status_label($status) {
+    function get_status_label($status)
+    {
         $status_labels = array(
             'draft' => 'Draft',
             'submitted' => 'Dikirim',
@@ -71,7 +72,6 @@ if (!function_exists('get_status_label')) {
                     <thead class="table-dark">
                         <tr>
                             <th>Mahasiswa</th>
-                            <th>Judul</th>
                             <th>Dosen</th>
                             <th>Instansi</th>
                             <th>Tanggal</th>
@@ -83,7 +83,6 @@ if (!function_exists('get_status_label')) {
                         <?php foreach ($applications as $application) : ?>
                             <tr>
                                 <td><?php echo html_escape(isset($application->student_name) ? $application->student_name : '-'); ?></td>
-                                <td><?php echo html_escape(isset($application->title) ? $application->title : '-'); ?></td>
                                 <td><?php echo html_escape(isset($application->lecturer_name) ? $application->lecturer_name : '-'); ?></td>
                                 <td><?php echo html_escape(isset($application->place_name) ? $application->place_name : '-'); ?></td>
                                 <td><?php echo isset($application->submission_date) ? date('d-m-Y', strtotime($application->submission_date)) : '-'; ?></td>
@@ -220,172 +219,172 @@ if (!function_exists('get_status_label')) {
 <!--end::App Content-->
 
 <script>
-// Status label helper function
-function getStatusLabel(status) {
-    var statusLabels = {
-        'draft': 'Draft',
-        'submitted': 'Dikirim',
-        'approved_dosen': 'Disetujui Dosen',
-        'approved_kps': 'Disetujui KPS',
-        'approved_kadep': 'Disetujui Kadep',
-        'recommendation_uploaded': 'Surat Rekomendasi Diunggah',
-        'rejected': 'Ditolak',
-        'rejected_instansi': 'Ditolak Instansi',
-        'ongoing': 'Sedang Berlangsung',
-        'field_work_completed': 'Lapangan Selesai',
-        'seminar_requested': 'Pengajuan Seminar',
-        'seminar_approved': 'Seminar Disetujui',
-        'seminar_scheduled': 'Seminar Dijadwalkan',
-        'seminar_completed': 'Seminar Selesai',
-        'revision': 'Revisi Laporan',
-        'revision_submitted': 'Revisi Dikirim',
-        'revision_approved': 'Revisi Disetujui',
-        'finished': 'Selesai'
-    };
-    return statusLabels[status] || status;
-}
+    // Status label helper function
+    function getStatusLabel(status) {
+        var statusLabels = {
+            'draft': 'Draft',
+            'submitted': 'Dikirim',
+            'approved_dosen': 'Disetujui Dosen',
+            'approved_kps': 'Disetujui KPS',
+            'approved_kadep': 'Disetujui Kadep',
+            'recommendation_uploaded': 'Surat Rekomendasi Diunggah',
+            'rejected': 'Ditolak',
+            'rejected_instansi': 'Ditolak Instansi',
+            'ongoing': 'Sedang Berlangsung',
+            'field_work_completed': 'Lapangan Selesai',
+            'seminar_requested': 'Pengajuan Seminar',
+            'seminar_approved': 'Seminar Disetujui',
+            'seminar_scheduled': 'Seminar Dijadwalkan',
+            'seminar_completed': 'Seminar Selesai',
+            'revision': 'Revisi Laporan',
+            'revision_submitted': 'Revisi Dikirim',
+            'revision_approved': 'Revisi Disetujui',
+            'finished': 'Selesai'
+        };
+        return statusLabels[status] || status;
+    }
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners to all detail buttons
-    var detailButtons = document.querySelectorAll('button[data-bs-toggle="modal"][data-bs-target^="#detailModal"]');
-    
-    detailButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            var row = this.closest('tr');
-            var applicationId = '';
-            
-            // Try to get the application ID from the approve link
-            var approveLink = row.querySelector('a[href*="approve"]');
-            if (approveLink) {
-                var match = approveLink.href.match(/\/(\d+)$/);
-                if (match) {
-                    applicationId = match[1];
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners to all detail buttons
+        var detailButtons = document.querySelectorAll('button[data-bs-toggle="modal"][data-bs-target^="#detailModal"]');
+
+        detailButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var row = this.closest('tr');
+                var applicationId = '';
+
+                // Try to get the application ID from the approve link
+                var approveLink = row.querySelector('a[href*="approve"]');
+                if (approveLink) {
+                    var match = approveLink.href.match(/\/(\d+)$/);
+                    if (match) {
+                        applicationId = match[1];
+                    }
                 }
-            }
-            
-            // If not found, try to get it from the modal target
-            if (!applicationId) {
-                var modalTarget = this.dataset.bsTarget;
-                var match = modalTarget.match(/(\d+)/);
-                if (match) {
-                    applicationId = match[1];
+
+                // If not found, try to get it from the modal target
+                if (!applicationId) {
+                    var modalTarget = this.dataset.bsTarget;
+                    var match = modalTarget.match(/(\d+)/);
+                    if (match) {
+                        applicationId = match[1];
+                    }
                 }
-            }
-            
-            if (applicationId) {
-                fetchDetail(applicationId);
-            }
+
+                if (applicationId) {
+                    fetchDetail(applicationId);
+                }
+            });
         });
+
+        function fetchDetail(applicationId) {
+            fetch('<?php echo site_url('pkl/applications/get_application_detail/'); ?>' + applicationId)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    displayDetail(applicationId, data);
+                })
+                .catch(function(error) {
+                    console.error('Error fetching detail:', error);
+                    document.getElementById('detail-content-' + applicationId).innerHTML =
+                        '<div class="alert alert-danger">Gagal memuat detail pengajuan.</div>';
+                });
+        }
+
+        function displayDetail(applicationId, data) {
+            var contentDiv = document.getElementById('detail-content-' + applicationId);
+
+            if (!data.application) {
+                contentDiv.innerHTML = '<div class="alert alert-danger">Data pengajuan tidak ditemukan.</div>';
+                return;
+            }
+
+            // Format dates
+            var submissionDate = '-';
+            if (data.application.submission_date) {
+                var submissionDateObj = new Date(data.application.submission_date);
+                submissionDate = submissionDateObj.toLocaleDateString('id-ID');
+            }
+
+            var periodStart = '-';
+            if (data.application.activity_period_start) {
+                var periodStartObj = new Date(data.application.activity_period_start);
+                periodStart = periodStartObj.toLocaleDateString('id-ID');
+            }
+
+            var periodEnd = '-';
+            if (data.application.activity_period_end) {
+                var periodEndObj = new Date(data.application.activity_period_end);
+                periodEnd = periodEndObj.toLocaleDateString('id-ID');
+            }
+
+            // Build document list
+            var documentsHtml = '';
+            if (data.documents && data.documents.length > 0) {
+                documentsHtml = '<ul class="list-group">';
+                data.documents.forEach(function(doc) {
+                    var docName = 'Dokumen';
+                    if (doc.doc_type) {
+                        docName = doc.doc_type.replace(/_/g, ' ')
+                            .replace(/\b\w/g, function(l) {
+                                return l.toUpperCase();
+                            });
+                    }
+                    documentsHtml += '<li class="list-group-item">' +
+                        '<a href="<?php echo base_url(); ?>' + doc.file_path + '" target="_blank">' + docName + '</a>' +
+                        (doc.status ? '<span class="badge bg-secondary ms-2">' + doc.status + '</span>' : '') +
+                        '</li>';
+                });
+                documentsHtml += '</ul>';
+            } else {
+                documentsHtml = '<p class="text-muted">Tidak ada dokumen yang diunggah.</p>';
+            }
+
+            contentDiv.innerHTML =
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<h6>Data Mahasiswa</h6>' +
+                '<hr>' +
+                '<dl class="row">' +
+                '<dt class="col-sm-4">Nama</dt>' +
+                '<dd class="col-sm-8">' + (data.student && data.student.name ? data.student.name : '-') + '</dd>' +
+                '<dt class="col-sm-4">NIM</dt>' +
+                '<dd class="col-sm-8">' + (data.student && data.student.id ? data.student.id : '-') + '</dd>' +
+                '<dt class="col-sm-4">Email</dt>' +
+                '<dd class="col-sm-8">' + (data.student && data.student.email ? data.student.email : '-') + '</dd>' +
+                '<dt class="col-sm-4">Program Studi</dt>' +
+                '<dd class="col-sm-8">' + (data.student && data.student.study_program ? data.student.study_program : '-') + '</dd>' +
+                '</dl>' +
+                '<h6>Data Pengajuan</h6>' +
+                '<hr>' +
+                '<dl class="row">' +
+                '<dt class="col-sm-4">Dosen Pembimbing</dt>' +
+                '<dd class="col-sm-8">' + (data.application.lecturer_name || '-') + '</dd>' +
+                '<dt class="col-sm-4">Instansi</dt>' +
+                '<dd class="col-sm-8">' + (data.application.place_name || '-') + '</dd>' +
+                '<dt class="col-sm-4">Alamat Instansi</dt>' +
+                '<dd class="col-sm-8">' + (data.application.place_address || '-') + '</dd>' +
+                '<dt class="col-sm-4">Tanggal Pengajuan</dt>' +
+                '<dd class="col-sm-8">' + submissionDate + '</dd>' +
+                '<dt class="col-sm-4">Status</dt>' +
+                '<dd class="col-sm-8"><span class="badge ' + (data.application.status && data.application.status.includes('rejected') ? 'bg-danger' : 'bg-success') + '">' + getStatusLabel(data.application.status) + '</span></dd>' +
+                '<dt class="col-sm-4">Periode Kegiatan</dt>' +
+                '<dd class="col-sm-8">' + periodStart + ' s/d ' + periodEnd + '</dd>' +
+                '<dt class="col-sm-4">Nomor Telepon</dt>' +
+                '<dd class="col-sm-8">+62' + (data.application.phone_number || '-') + '</dd>' +
+                '<dt class="col-sm-4">Surat Ditujukan Kepada</dt>' +
+                '<dd class="col-sm-8">' + (data.application.addressed_to || '-') + '</dd>' +
+                '<dt class="col-sm-4">Kegiatan Setara</dt>' +
+                '<dd class="col-sm-8">' + (data.application.equivalent_activity || '-') + '</dd>' +
+                '</dl>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<h6>Dokumen Pengajuan</h6>' +
+                '<hr>' +
+                documentsHtml +
+                '</div>' +
+                '</div>';
+        }
     });
-    
-    function fetchDetail(applicationId) {
-        fetch('<?php echo site_url('pkl/applications/get_application_detail/'); ?>' + applicationId)
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                displayDetail(applicationId, data);
-            })
-            .catch(function(error) {
-                console.error('Error fetching detail:', error);
-                document.getElementById('detail-content-' + applicationId).innerHTML = 
-                    '<div class="alert alert-danger">Gagal memuat detail pengajuan.</div>';
-            });
-    }
-    
-    function displayDetail(applicationId, data) {
-        var contentDiv = document.getElementById('detail-content-' + applicationId);
-        
-        if (!data.application) {
-            contentDiv.innerHTML = '<div class="alert alert-danger">Data pengajuan tidak ditemukan.</div>';
-            return;
-        }
-        
-        // Format dates
-        var submissionDate = '-';
-        if (data.application.submission_date) {
-            var submissionDateObj = new Date(data.application.submission_date);
-            submissionDate = submissionDateObj.toLocaleDateString('id-ID');
-        }
-        
-        var periodStart = '-';
-        if (data.application.activity_period_start) {
-            var periodStartObj = new Date(data.application.activity_period_start);
-            periodStart = periodStartObj.toLocaleDateString('id-ID');
-        }
-            
-        var periodEnd = '-';
-        if (data.application.activity_period_end) {
-            var periodEndObj = new Date(data.application.activity_period_end);
-            periodEnd = periodEndObj.toLocaleDateString('id-ID');
-        }
-        
-        // Build document list
-        var documentsHtml = '';
-        if (data.documents && data.documents.length > 0) {
-            documentsHtml = '<ul class="list-group">';
-            data.documents.forEach(function(doc) {
-                var docName = 'Dokumen';
-                if (doc.doc_type) {
-                    docName = doc.doc_type.replace(/_/g, ' ')
-                        .replace(/\b\w/g, function(l) { return l.toUpperCase(); });
-                }
-                documentsHtml += '<li class="list-group-item">' +
-                    '<a href="<?php echo base_url(); ?>' + doc.file_path + '" target="_blank">' + docName + '</a>' +
-                    (doc.status ? '<span class="badge bg-secondary ms-2">' + doc.status + '</span>' : '') +
-                    '</li>';
-            });
-            documentsHtml += '</ul>';
-        } else {
-            documentsHtml = '<p class="text-muted">Tidak ada dokumen yang diunggah.</p>';
-        }
-        
-        contentDiv.innerHTML = 
-            '<div class="row">' +
-                '<div class="col-md-6">' +
-                    '<h6>Data Mahasiswa</h6>' +
-                    '<hr>' +
-                    '<dl class="row">' +
-                        '<dt class="col-sm-4">Nama</dt>' +
-                        '<dd class="col-sm-8">' + (data.student && data.student.name ? data.student.name : '-') + '</dd>' +
-                        '<dt class="col-sm-4">NIM</dt>' +
-                        '<dd class="col-sm-8">' + (data.student && data.student.id ? data.student.id : '-') + '</dd>' +
-                        '<dt class="col-sm-4">Email</dt>' +
-                        '<dd class="col-sm-8">' + (data.student && data.student.email ? data.student.email : '-') + '</dd>' +
-                        '<dt class="col-sm-4">Program Studi</dt>' +
-                        '<dd class="col-sm-8">' + (data.student && data.student.study_program ? data.student.study_program : '-') + '</dd>' +
-                    '</dl>' +
-                    '<h6>Data Pengajuan</h6>' +
-                    '<hr>' +
-                    '<dl class="row">' +
-                        '<dt class="col-sm-4">Judul PKL</dt>' +
-                        '<dd class="col-sm-8">' + (data.application.title || '-') + '</dd>' +
-                        '<dt class="col-sm-4">Jenis Kegiatan</dt>' +
-                        '<dd class="col-sm-8">' + (data.application.type || '-') + '</dd>' +
-                        '<dt class="col-sm-4">Dosen Pembimbing</dt>' +
-                        '<dd class="col-sm-8">' + (data.application.lecturer_name || '-') + '</dd>' +
-                        '<dt class="col-sm-4">Instansi</dt>' +
-                        '<dd class="col-sm-8">' + (data.application.place_name || '-') + '</dd>' +
-                        '<dt class="col-sm-4">Alamat Instansi</dt>' +
-                        '<dd class="col-sm-8">' + (data.application.place_address || '-') + '</dd>' +
-                        '<dt class="col-sm-4">Tanggal Pengajuan</dt>' +
-                        '<dd class="col-sm-8">' + submissionDate + '</dd>' +
-                        '<dt class="col-sm-4">Status</dt>' +
-                        '<dd class="col-sm-8"><span class="badge ' + (data.application.status && data.application.status.includes('rejected') ? 'bg-danger' : 'bg-success') + '">' + getStatusLabel(data.application.status) + '</span></dd>' +
-                        '<dt class="col-sm-4">Periode Kegiatan</dt>' +
-                        '<dd class="col-sm-8">' + periodStart + ' s/d ' + periodEnd + '</dd>' +
-                        '<dt class="col-sm-4">Nomor Telepon</dt>' +
-                        '<dd class="col-sm-8">+62' + (data.application.phone_number || '-') + '</dd>' +
-                        '<dt class="col-sm-4">Surat Ditujukan Kepada</dt>' +
-                        '<dd class="col-sm-8">' + (data.application.addressed_to || '-') + '</dd>' +
-                        '<dt class="col-sm-4">Kegiatan Setara</dt>' +
-                        '<dd class="col-sm-8">' + (data.application.equivalent_activity || '-') + '</dd>' +
-                    '</dl>' +
-                '</div>' +
-                '<div class="col-md-6">' +
-                    '<h6>Dokumen Pengajuan</h6>' +
-                    '<hr>' +
-                    documentsHtml +
-                '</div>' +
-            '</div>';
-    }
-});
 </script>

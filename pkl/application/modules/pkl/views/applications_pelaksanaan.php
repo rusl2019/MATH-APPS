@@ -42,12 +42,37 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <?= form_open('pkl/applications/add_log/' . $application->id); ?>
                 <div class="row">
                     <div class="col-md-3 mb-3">
-                        <label for="log_date" class="form-label">Tanggal Kegiatan <span class="text-danger">*</span></label>
-                        <input type="date" name="log_date" class="form-control" required min="<?= $application->activity_period_start ?>" max="<?= date('Y-m-d') ?>">
+                        <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                        <input type="date" name="date" id="date" class="form-control" required min="<?= $application->activity_period_start ?>" max="<?= date('Y-m-d') ?>">
                     </div>
-                    <div class="col-md-9 mb-3">
-                        <label for="activity" class="form-label">Uraian Kegiatan <span class="text-danger">*</span></label>
-                        <textarea name="activity" class="form-control" rows="3" placeholder="Deskripsikan kegiatan yang Anda lakukan..." required></textarea>
+                    <div class="col-md-2 mb-3">
+                        <label for="start_time" class="form-label">Jam Mulai <span class="text-danger">*</span></label>
+                        <input type="time" name="start_time" id="start_time" class="form-control" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label for="end_time" class="form-label">Jam Selesai <span class="text-danger">*</span></label>
+                        <input type="time" name="end_time" id="end_time" class="form-control" required>
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label for="activity_title" class="form-label">Judul Kegiatan <span class="text-danger">*</span></label>
+                        <input type="text" name="activity_title" id="activity_title" class="form-control" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="activity_description" class="form-label">Penjelasan Kegiatan <span class="text-danger">*</span></label>
+                    <textarea name="activity_description" id="activity_description" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Relevansi Keilmuan <span class="text-danger">*</span></label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_relevant" id="relevant_yes" value="1" required>
+                            <label class="form-check-label" for="relevant_yes">Ya</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_relevant" id="relevant_no" value="0" required>
+                            <label class="form-check-label" for="relevant_no">Tidak</label>
+                        </div>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Simpan Logbook</button>
@@ -80,14 +105,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                                 <thead class="table-light">
                                                     <tr>
                                                         <th>Tanggal</th>
-                                                        <th>Aktivitas</th>
+                                                        <th>Jam</th>
+                                                        <th>Judul Kegiatan</th>
+                                                        <th>Penjelasan</th>
+                                                        <th>Relevan</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($week['daily_logs'] as $log) : ?>
                                                         <tr>
-                                                            <td style="width:120px;"><?= date('d/m/Y', strtotime($log->log_date)) ?></td>
-                                                            <td><?= nl2br(html_escape($log->activity)) ?></td>
+                                                            <td style="width:100px;"><?= date('d/m/Y', strtotime($log->date)) ?></td>
+                                                            <td style="width:120px;"><?= html_escape($log->start_time) ?> - <?= html_escape($log->end_time) ?></td>
+                                                            <td><?= html_escape($log->activity_title) ?></td>
+                                                            <td><?= nl2br(html_escape($log->activity_description)) ?></td>
+                                                            <td style="width:80px;"><?= $log->is_relevant ? 'Ya' : 'Tidak' ?></td>
                                                         </tr>
                                                     <?php endforeach; ?>
                                                 </tbody>

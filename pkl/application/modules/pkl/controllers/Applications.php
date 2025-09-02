@@ -134,16 +134,25 @@ class Applications extends MY_Controller
             return;
         }
 
-        $this->form_validation->set_rules('log_date', 'Tanggal Kegiatan', 'required');
-        $this->form_validation->set_rules('activity', 'Uraian Kegiatan', 'required');
+        $this->form_validation->set_rules('date', 'Tanggal Kegiatan', 'required');
+        $this->form_validation->set_rules('start_time', 'Jam Mulai', 'required');
+        $this->form_validation->set_rules('end_time', 'Jam Selesai', 'required');
+        $this->form_validation->set_rules('activity_title', 'Judul Kegiatan', 'required');
+        $this->form_validation->set_rules('activity_description', 'Penjelasan Kegiatan', 'required');
+        $this->form_validation->set_rules('is_relevant', 'Relevansi Keilmuan', 'required');
+
 
         if ($this->form_validation->run() === false) {
             $this->session->set_flashdata('error', validation_errors());
         } else {
             $data = [
                 'application_id' => $id,
-                'log_date' => $this->input->post('log_date'),
-                'activity' => $this->input->post('activity'),
+                'date' => $this->input->post('date'),
+                'start_time' => $this->input->post('start_time'),
+                'end_time' => $this->input->post('end_time'),
+                'activity_title' => $this->input->post('activity_title'),
+                'activity_description' => $this->input->post('activity_description'),
+                'is_relevant' => $this->input->post('is_relevant'),
             ];
 
             if ($this->app->insert_log($data)) {
@@ -626,8 +635,6 @@ class Applications extends MY_Controller
      */
     private function set_application_validation_rules()
     {
-        $this->form_validation->set_rules('title', 'Judul PKL', 'required');
-        $this->form_validation->set_rules('type', 'Jenis Kegiatan', 'required');
         $this->form_validation->set_rules('lecturer_id', 'Dosen Pembimbing', 'required');
         $this->form_validation->set_rules('place_id', 'Instansi', 'required');
         $this->form_validation->set_rules('phone_number', 'Nomor Telepon', 'required');
@@ -662,8 +669,6 @@ class Applications extends MY_Controller
             'phone_number' => $this->input->post('phone_number'),
             'addressed_to' => $this->input->post('addressed_to'),
             'equivalent_activity' => $this->input->post('equivalent_activity'),
-            'title' => $this->input->post('title'),
-            'type' => $this->input->post('type'),
             'status' => 'submitted',
             'submission_date' => date('Y-m-d'),
             'activity_period_start' => $this->input->post('activity_period_start'),

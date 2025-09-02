@@ -101,7 +101,7 @@ class Applications_model extends CI_Model
     {
         return $this->db->from('pkl_logs')
             ->where('application_id', $application_id)
-            ->order_by('log_date', 'DESC')
+            ->order_by('date', 'DESC')
             ->get()
             ->result();
     }
@@ -286,9 +286,9 @@ class Applications_model extends CI_Model
     {
         return $this->db->from('pkl_logs')
             ->where('application_id', $application_id)
-            ->where('log_date >=', $start_date)
-            ->where('log_date <=', $end_date)
-            ->order_by('log_date', 'ASC')
+            ->where('date >=', $start_date)
+            ->where('date <=', $end_date)
+            ->order_by('date', 'ASC')
             ->get()
             ->result();
     }
