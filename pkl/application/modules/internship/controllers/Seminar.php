@@ -42,6 +42,7 @@ class Seminar extends MY_Controller
         $this->data['workflow'] = $this->app->get_workflow_by_application($application_id);
         $this->data['assessments'] = $this->app->get_assessments_by_application($application_id);
         $this->data['documents'] = $this->app->get_documents_by_application($application_id);
+        $this->data['lembar_konsultasi'] = $this->seminar->get_lembar_konsultasi($application_id);
         $this->render('seminar_index');
     }
 
@@ -129,6 +130,7 @@ class Seminar extends MY_Controller
         $this->data['workflow'] = $this->app->get_workflow_by_application($application_id);
         $this->data['daily_logs'] = $this->app->get_logs_by_application($application_id);
         $this->data['weekly_logs'] = $this->app->get_weekly_logbooks($application_id);
+        $this->data['lembar_konsultasi'] = $this->seminar->get_lembar_konsultasi($application_id);
         $this->render('seminar_manage');
     }
 
@@ -439,7 +441,7 @@ class Seminar extends MY_Controller
     }
 
     /**
-     * Lecturer approves a report for seminar
+     * Lecturer approves a report for seminar with lembar konsultasi validation
      */
     public function approve($application_id)
     {
@@ -455,6 +457,14 @@ class Seminar extends MY_Controller
         $application = $this->app->get_application_by_id($application_id);
         if ($application->lecturer_id != $user_id) {
             show_error('Tidak diizinkan');
+            return;
+        }
+
+        // Check if there are any lembar konsultasi entries
+        $lembar_konsultasi = $this->seminar->get_lembar_konsultasi($application_id);
+        if (empty($lembar_konsultasi)) {
+            $this->session->set_flashdata('error', 'Tidak dapat menyetujui seminar. Minimal harus ada satu lembar konsultasi.');
+            redirect('internship/seminar/manage/' . $application_id);
             return;
         }
 
@@ -511,5 +521,161 @@ class Seminar extends MY_Controller
 
         $this->session->set_flashdata('error', 'Laporan PKL ditolak.');
         redirect('internship/seminar/manage/' . $application_id);
+    }
+
+    /**
+     * Add a new lembar konsultasi entry
+     */
+    public function add_lembar_konsultasi($application_id)
+    {
+        $user_id = $this->session->userdata('id');
+        $roles = $this->session->userdata('role_names');
+
+        // Check if user is lecturer or student
+        $is_lecturer = in_array('lecturer', $roles) || in_array('admin', $roles);
+        $is_student = !$is_lecturer;
+
+        $application = $this->app->get_application_by_id($application_id);
+
+        // Security check
+        if ($is_student && $application->student_id != $user_id) {
+            show_error('Anda tidak diizinkan untuk melakukan aksi ini.', 403);
+            return;
+        }
+
+        if ($is_lecturer && !in_array('admin', $roles) && $application->lecturer_id != $user_id) {
+            show_error('Anda tidak diizinkan untuk melakukan aksi ini.', 403);
+            return;
+        }
+
+        // Set validation rules
+        $this->form_validation->set_rules('date', 'Tanggal', 'required');
+        $this->form_validation->set_rules('material', 'Materi', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->session->set_flashdata('error', validation_errors());
+        } else {
+            $data = [
+                'application_id' => $application_id,
+                'date' => $this->input->post('date'),
+                'material' => $this->input->post('material'),
+                'notes' => $this->input->post('notes')
+            ];
+
+            if ($this->seminar->insert_lembar_konsultasi($data)) {
+                $this->session->set_flashdata('success', 'Lembar konsultasi berhasil ditambahkan.');
+            } else {
+                $this->session->set_flashdata('error', 'Gagal menambahkan lembar konsultasi.');
+            }
+        }
+
+        // Redirect based on user role
+        if ($is_lecturer) {
+            redirect('internship/seminar/manage/' . $application_id);
+        } else {
+            redirect('internship/seminar/index/' . $application_id);
+        }
+    }
+
+    /**
+     * Edit a lembar konsultasi entry
+     */
+    public function edit_lembar_konsultasi($id)
+    {
+        $user_id = $this->session->userdata('id');
+        $roles = $this->session->userdata('role_names');
+
+        // Check if user is lecturer or student
+        $is_lecturer = in_array('lecturer', $roles) || in_array('admin', $roles);
+
+        $lembar_konsultasi = $this->seminar->get_lembar_konsultasi_by_id($id);
+        if (!$lembar_konsultasi) {
+            show_error('Lembar konsultasi tidak ditemukan.');
+            return;
+        }
+
+        $application = $this->app->get_application_by_id($lembar_konsultasi->application_id);
+
+        // Security check
+        if (!$is_lecturer && $application->student_id != $user_id) {
+            show_error('Anda tidak diizinkan untuk melakukan aksi ini.', 403);
+            return;
+        }
+
+        if ($is_lecturer && !in_array('admin', $roles) && $application->lecturer_id != $user_id) {
+            show_error('Anda tidak diizinkan untuk melakukan aksi ini.', 403);
+            return;
+        }
+
+        // Set validation rules
+        $this->form_validation->set_rules('date', 'Tanggal', 'required');
+        $this->form_validation->set_rules('material', 'Materi', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->session->set_flashdata('error', validation_errors());
+        } else {
+            $data = [
+                'date' => $this->input->post('date'),
+                'material' => $this->input->post('material'),
+                'notes' => $this->input->post('notes')
+            ];
+
+            if ($this->seminar->update_lembar_konsultasi($id, $data)) {
+                $this->session->set_flashdata('success', 'Lembar konsultasi berhasil diperbarui.');
+            } else {
+                $this->session->set_flashdata('error', 'Gagal memperbarui lembar konsultasi.');
+            }
+        }
+
+        // Redirect based on user role
+        if ($is_lecturer) {
+            redirect('internship/seminar/manage/' . $lembar_konsultasi->application_id);
+        } else {
+            redirect('internship/seminar/index/' . $lembar_konsultasi->application_id);
+        }
+    }
+
+    /**
+     * Delete a lembar konsultasi entry
+     */
+    public function delete_lembar_konsultasi($id)
+    {
+        $user_id = $this->session->userdata('id');
+        $roles = $this->session->userdata('role_names');
+
+        // Check if user is lecturer or student
+        $is_lecturer = in_array('lecturer', $roles) || in_array('admin', $roles);
+
+        $lembar_konsultasi = $this->seminar->get_lembar_konsultasi_by_id($id);
+        if (!$lembar_konsultasi) {
+            show_error('Lembar konsultasi tidak ditemukan.');
+            return;
+        }
+
+        $application = $this->app->get_application_by_id($lembar_konsultasi->application_id);
+
+        // Security check
+        if (!$is_lecturer && $application->student_id != $user_id) {
+            show_error('Anda tidak diizinkan untuk melakukan aksi ini.', 403);
+            return;
+        }
+
+        if ($is_lecturer && !in_array('admin', $roles) && $application->lecturer_id != $user_id) {
+            show_error('Anda tidak diizinkan untuk melakukan aksi ini.', 403);
+            return;
+        }
+
+        if ($this->seminar->delete_lembar_konsultasi($id)) {
+            $this->session->set_flashdata('success', 'Lembar konsultasi berhasil dihapus.');
+        } else {
+            $this->session->set_flashdata('error', 'Gagal menghapus lembar konsultasi.');
+        }
+
+        // Redirect based on user role
+        if ($is_lecturer) {
+            redirect('internship/seminar/manage/' . $lembar_konsultasi->application_id);
+        } else {
+            redirect('internship/seminar/index/' . $lembar_konsultasi->application_id);
+        }
     }
 }

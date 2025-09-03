@@ -328,4 +328,15 @@ class Applications_model extends CI_Model
             ->where('a.lecturer_id', $user_id)
             ->order_by('a.submission_date', 'DESC')->get()->result();
     }
+
+    /**
+     * Get all lembar konsultasi entries for an application
+     */
+    public function get_lembar_konsultasi($application_id)
+    {
+        return $this->db->where('application_id', $application_id)
+            ->order_by('date', 'ASC')
+            ->get('pkl_lembar_konsultasi')
+            ->result();
+    }
 }

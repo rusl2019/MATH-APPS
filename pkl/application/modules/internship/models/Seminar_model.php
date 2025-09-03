@@ -51,4 +51,51 @@ class Seminar_model extends CI_Model
             ->get('pkl_seminars')
             ->row();
     }
+
+    /**
+     * Get all lembar konsultasi entries for an application
+     */
+    public function get_lembar_konsultasi($application_id)
+    {
+        return $this->db->where('application_id', $application_id)
+            ->order_by('date', 'ASC')
+            ->get('pkl_lembar_konsultasi')
+            ->result();
+    }
+
+    /**
+     * Insert a new lembar konsultasi entry
+     */
+    public function insert_lembar_konsultasi($data)
+    {
+        return $this->db->insert('pkl_lembar_konsultasi', $data);
+    }
+
+    /**
+     * Update a lembar konsultasi entry
+     */
+    public function update_lembar_konsultasi($id, $data)
+    {
+        return $this->db->where('id', $id)
+            ->update('pkl_lembar_konsultasi', $data);
+    }
+
+    /**
+     * Delete a lembar konsultasi entry
+     */
+    public function delete_lembar_konsultasi($id)
+    {
+        return $this->db->where('id', $id)
+            ->delete('pkl_lembar_konsultasi');
+    }
+
+    /**
+     * Get a specific lembar konsultasi entry
+     */
+    public function get_lembar_konsultasi_by_id($id)
+    {
+        return $this->db->where('id', $id)
+            ->get('pkl_lembar_konsultasi')
+            ->row();
+    }
 }

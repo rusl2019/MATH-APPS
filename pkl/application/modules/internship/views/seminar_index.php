@@ -145,6 +145,64 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <div class="card-header bg-dark text-white">Status: Menunggu Persetujuan</div>
                         <div class="card-body">
                             <p>Draft laporan Anda telah dikirim. Saat ini sedang menunggu persetujuan dari Dosen Pembimbing untuk pelaksanaan seminar.</p>
+                            
+                            <!-- Lembar Konsultasi Section -->
+                            <div class="mt-4">
+                                <h5>Lembar Konsultasi</h5>
+                                <p>Anda dapat menambahkan lembar konsultasi dengan dosen pembimbing Anda selama proses seminar.</p>
+                                
+                                <!-- Add New Consultation Form -->
+                                <?= form_open('internship/seminar/add_lembar_konsultasi/' . $application->id); ?>
+                                <div class="card mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Tambah Lembar Konsultasi</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                                                <input type="date" name="date" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-8 mb-3">
+                                                <label for="material" class="form-label">Materi <span class="text-danger">*</span></label>
+                                                <input type="text" name="material" class="form-control" placeholder="Materi konsultasi" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="notes" class="form-label">Catatan</label>
+                                            <textarea name="notes" class="form-control" rows="2" placeholder="Catatan tambahan"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-primary">Tambah</button>
+                                    </div>
+                                </div>
+                                <?= form_close(); ?>
+                                
+                                <!-- Existing Consultations -->
+                                <?php if (!empty($lembar_konsultasi)) : ?>
+                                    <div class="mt-3">
+                                        <h6>Riwayat Konsultasi:</h6>
+                                        <?php foreach ($lembar_konsultasi as $konsultasi) : ?>
+                                            <div class="card mb-2">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <strong><?= date('d M Y', strtotime($konsultasi->date)) ?></strong>
+                                                            <div><?= html_escape($konsultasi->material) ?></div>
+                                                        </div>
+                                                        <div>
+                                                            <?php if (!empty($konsultasi->notes)) : ?>
+                                                                <small class="text-muted"><?= html_escape($konsultasi->notes) ?></small>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else : ?>
+                                    <div class="alert alert-info">Belum ada lembar konsultasi yang ditambahkan.</div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -160,6 +218,62 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <li><strong>Lokasi:</strong> <?= html_escape($application->seminar_location) ?></li>
                             </ul>
                             <p>Harap persiapkan diri Anda dengan baik.</p>
+                            
+                            <!-- Lembar Konsultasi Section -->
+                            <div class="mt-4">
+                                <h5>Lembar Konsultasi</h5>
+                                <!-- Add New Consultation Form -->
+                                <?= form_open('internship/seminar/add_lembar_konsultasi/' . $application->id); ?>
+                                <div class="card mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Tambah Lembar Konsultasi</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                                                <input type="date" name="date" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-8 mb-3">
+                                                <label for="material" class="form-label">Materi <span class="text-danger">*</span></label>
+                                                <input type="text" name="material" class="form-control" placeholder="Materi konsultasi" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="notes" class="form-label">Catatan</label>
+                                            <textarea name="notes" class="form-control" rows="2" placeholder="Catatan tambahan"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-primary">Tambah</button>
+                                    </div>
+                                </div>
+                                <?= form_close(); ?>
+                                
+                                <!-- Existing Consultations -->
+                                <?php if (!empty($lembar_konsultasi)) : ?>
+                                    <div class="mt-3">
+                                        <h6>Riwayat Konsultasi:</h6>
+                                        <?php foreach ($lembar_konsultasi as $konsultasi) : ?>
+                                            <div class="card mb-2">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <strong><?= date('d M Y', strtotime($konsultasi->date)) ?></strong>
+                                                            <div><?= html_escape($konsultasi->material) ?></div>
+                                                        </div>
+                                                        <div>
+                                                            <?php if (!empty($konsultasi->notes)) : ?>
+                                                                <small class="text-muted"><?= html_escape($konsultasi->notes) ?></small>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else : ?>
+                                    <div class="alert alert-info">Belum ada lembar konsultasi yang ditambahkan.</div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -171,6 +285,62 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <div class="card-body">
                             <p>Anda telah melaksanakan seminar. Dosen pembimbing akan segera memberikan hasil penilaian dan catatan revisi (jika ada).</p>
                             <p>Silakan tunggu informasi selanjutnya untuk tahap revisi laporan.</p>
+                            
+                            <!-- Lembar Konsultasi Section -->
+                            <div class="mt-4">
+                                <h5>Lembar Konsultasi</h5>
+                                <!-- Add New Consultation Form -->
+                                <?= form_open('internship/seminar/add_lembar_konsultasi/' . $application->id); ?>
+                                <div class="card mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Tambah Lembar Konsultasi</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                                                <input type="date" name="date" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-8 mb-3">
+                                                <label for="material" class="form-label">Materi <span class="text-danger">*</span></label>
+                                                <input type="text" name="material" class="form-control" placeholder="Materi konsultasi" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="notes" class="form-label">Catatan</label>
+                                            <textarea name="notes" class="form-control" rows="2" placeholder="Catatan tambahan"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-primary">Tambah</button>
+                                    </div>
+                                </div>
+                                <?= form_close(); ?>
+                                
+                                <!-- Existing Consultations -->
+                                <?php if (!empty($lembar_konsultasi)) : ?>
+                                    <div class="mt-3">
+                                        <h6>Riwayat Konsultasi:</h6>
+                                        <?php foreach ($lembar_konsultasi as $konsultasi) : ?>
+                                            <div class="card mb-2">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <strong><?= date('d M Y', strtotime($konsultasi->date)) ?></strong>
+                                                            <div><?= html_escape($konsultasi->material) ?></div>
+                                                        </div>
+                                                        <div>
+                                                            <?php if (!empty($konsultasi->notes)) : ?>
+                                                                <small class="text-muted"><?= html_escape($konsultasi->notes) ?></small>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else : ?>
+                                    <div class="alert alert-info">Belum ada lembar konsultasi yang ditambahkan.</div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -195,6 +365,62 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </div>
                             <button type="submit" class="btn btn-primary">Kirim Laporan Revisi</button>
                             <?= form_close(); ?>
+                            
+                            <!-- Lembar Konsultasi Section -->
+                            <div class="mt-4">
+                                <h5>Lembar Konsultasi</h5>
+                                <!-- Add New Consultation Form -->
+                                <?= form_open('internship/seminar/add_lembar_konsultasi/' . $application->id); ?>
+                                <div class="card mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Tambah Lembar Konsultasi</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                                                <input type="date" name="date" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-8 mb-3">
+                                                <label for="material" class="form-label">Materi <span class="text-danger">*</span></label>
+                                                <input type="text" name="material" class="form-control" placeholder="Materi konsultasi" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="notes" class="form-label">Catatan</label>
+                                            <textarea name="notes" class="form-control" rows="2" placeholder="Catatan tambahan"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-primary">Tambah</button>
+                                    </div>
+                                </div>
+                                <?= form_close(); ?>
+                                
+                                <!-- Existing Consultations -->
+                                <?php if (!empty($lembar_konsultasi)) : ?>
+                                    <div class="mt-3">
+                                        <h6>Riwayat Konsultasi:</h6>
+                                        <?php foreach ($lembar_konsultasi as $konsultasi) : ?>
+                                            <div class="card mb-2">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <strong><?= date('d M Y', strtotime($konsultasi->date)) ?></strong>
+                                                            <div><?= html_escape($konsultasi->material) ?></div>
+                                                        </div>
+                                                        <div>
+                                                            <?php if (!empty($konsultasi->notes)) : ?>
+                                                                <small class="text-muted"><?= html_escape($konsultasi->notes) ?></small>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else : ?>
+                                    <div class="alert alert-info">Belum ada lembar konsultasi yang ditambahkan.</div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -212,6 +438,36 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </div>
                             <button type="submit" class="btn btn-success">Selesaikan PKL</button>
                             <?= form_close(); ?>
+                            
+                            <!-- Lembar Konsultasi Section -->
+                            <div class="mt-4">
+                                <h5>Lembar Konsultasi</h5>
+                                <!-- Existing Consultations (readonly) -->
+                                <?php if (!empty($lembar_konsultasi)) : ?>
+                                    <div class="mt-3">
+                                        <h6>Riwayat Konsultasi:</h6>
+                                        <?php foreach ($lembar_konsultasi as $konsultasi) : ?>
+                                            <div class="card mb-2">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <strong><?= date('d M Y', strtotime($konsultasi->date)) ?></strong>
+                                                            <div><?= html_escape($konsultasi->material) ?></div>
+                                                        </div>
+                                                        <div>
+                                                            <?php if (!empty($konsultasi->notes)) : ?>
+                                                                <small class="text-muted"><?= html_escape($konsultasi->notes) ?></small>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else : ?>
+                                    <div class="alert alert-info">Belum ada lembar konsultasi yang ditambahkan.</div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -223,6 +479,36 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <div class="card-body text-center">
                             <h4 class="card-title">Selamat!</h4>
                             <p class="card-text">Anda telah menyelesaikan seluruh rangkaian kegiatan PKL. Semua dokumen dan laporan telah tersimpan.</p>
+                            
+                            <!-- Lembar Konsultasi Section -->
+                            <div class="mt-4">
+                                <h5>Lembar Konsultasi</h5>
+                                <!-- Existing Consultations (readonly) -->
+                                <?php if (!empty($lembar_konsultasi)) : ?>
+                                    <div class="mt-3">
+                                        <h6>Riwayat Konsultasi:</h6>
+                                        <?php foreach ($lembar_konsultasi as $konsultasi) : ?>
+                                            <div class="card mb-2">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <strong><?= date('d M Y', strtotime($konsultasi->date)) ?></strong>
+                                                            <div><?= html_escape($konsultasi->material) ?></div>
+                                                        </div>
+                                                        <div>
+                                                            <?php if (!empty($konsultasi->notes)) : ?>
+                                                                <small class="text-muted"><?= html_escape($konsultasi->notes) ?></small>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else : ?>
+                                    <div class="alert alert-info">Belum ada lembar konsultasi yang ditambahkan.</div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>

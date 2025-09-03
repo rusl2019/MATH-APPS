@@ -235,3 +235,18 @@ CREATE TABLE `pkl_workflow` (
   KEY `application_id` (`application_id`),
   CONSTRAINT `fk_workflow_application` FOREIGN KEY (`application_id`) REFERENCES `pkl_applications` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Create table for lembar konsultasi (consultation sheets)
+DROP TABLE IF EXISTS `pkl_lembar_konsultasi`;
+CREATE TABLE `pkl_lembar_konsultasi` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `application_id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `material` text NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `application_id` (`application_id`),
+  CONSTRAINT `fk_lembar_konsultasi_application` FOREIGN KEY (`application_id`) REFERENCES `pkl_applications` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

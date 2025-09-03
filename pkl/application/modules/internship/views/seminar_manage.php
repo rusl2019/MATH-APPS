@@ -125,6 +125,105 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         </div>
                     </div>
                 <?php endif; ?>
+                
+                <!-- Lembar Konsultasi Section -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Lembar Konsultasi</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Daftar konsultasi dengan mahasiswa terkait laporan PKL dan seminar.</p>
+                        
+                        <!-- Add New Consultation Form -->
+                        <?= form_open('internship/seminar/add_lembar_konsultasi/' . $application->id); ?>
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Tambah Lembar Konsultasi</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                                        <input type="date" name="date" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-8 mb-3">
+                                        <label for="material" class="form-label">Materi <span class="text-danger">*</span></label>
+                                        <input type="text" name="material" class="form-control" placeholder="Materi konsultasi" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Catatan</label>
+                                    <textarea name="notes" class="form-control" rows="2" placeholder="Catatan tambahan"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary">Tambah</button>
+                            </div>
+                        </div>
+                        <?= form_close(); ?>
+                        
+                        <!-- Existing Consultations -->
+                        <?php if (!empty($lembar_konsultasi)) : ?>
+                            <div class="mt-3">
+                                <h6>Riwayat Konsultasi:</h6>
+                                <?php foreach ($lembar_konsultasi as $konsultasi) : ?>
+                                    <div class="card mb-2">
+                                        <div class="card-body py-2">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <strong><?= date('d M Y', strtotime($konsultasi->date)) ?></strong>
+                                                    <div><?= html_escape($konsultasi->material) ?></div>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <?php if (!empty($konsultasi->notes)) : ?>
+                                                        <small class="text-muted me-2"><?= html_escape($konsultasi->notes) ?></small>
+                                                    <?php endif; ?>
+                                                    <div>
+                                                        <!-- Edit and Delete buttons -->
+                                                        <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editModal<?= $konsultasi->id ?>">Edit</button>
+                                                        <a href="<?= site_url('internship/seminar/delete_lembar_konsultasi/' . $konsultasi->id) ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus lembar konsultasi ini?')">Hapus</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" id="editModal<?= $konsultasi->id ?>" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <?= form_open('internship/seminar/edit_lembar_konsultasi/' . $konsultasi->id); ?>
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Lembar Konsultasi</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                                                        <input type="date" name="date" class="form-control" value="<?= $konsultasi->date ?>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="material" class="form-label">Materi <span class="text-danger">*</span></label>
+                                                        <input type="text" name="material" class="form-control" value="<?= html_escape($konsultasi->material) ?>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="notes" class="form-label">Catatan</label>
+                                                        <textarea name="notes" class="form-control" rows="3"><?= html_escape($konsultasi->notes) ?></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                                </div>
+                                                <?= form_close(); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else : ?>
+                            <div class="alert alert-info">Belum ada lembar konsultasi yang ditambahkan.</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
 
             <div class="col-md-5">
