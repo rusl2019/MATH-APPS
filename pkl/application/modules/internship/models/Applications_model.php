@@ -156,9 +156,10 @@ class Applications_model extends CI_Model
         $id_kps = $this->get_study_program_kps();
         $user_id = $this->session->userdata('id');
 
-        $this->db->select('a.*, s.name as student_name, p.name as place_name, p.address as place_address, l.name as lecturer_name')
+        $this->db->select('a.*, s.name as student_name, s.id as student_nim, sp.name as study_program_name, p.name as place_name, p.address as place_address, l.name as lecturer_name')
             ->from('pkl_applications a')
             ->join('apps_students s', 'a.student_id = s.id')
+            ->join('apps_study_programs sp', 's.study_program_id = sp.id', 'left')
             ->join('pkl_places p', 'a.place_id = p.id', 'left')
             ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left');
 
@@ -228,9 +229,10 @@ class Applications_model extends CI_Model
      */
     public function get_all_applications()
     {
-        return $this->db->select('a.*, s.name as student_name, p.name as place_name, p.address as place_address, l.name as lecturer_name')
+        return $this->db->select('a.*, s.name as student_name, s.id as student_nim, sp.name as study_program_name, p.name as place_name, p.address as place_address, l.name as lecturer_name')
             ->from('pkl_applications a')
             ->join('apps_students s', 'a.student_id = s.id')
+            ->join('apps_study_programs sp', 's.study_program_id = sp.id', 'left')
             ->join('pkl_places p', 'a.place_id = p.id', 'left')
             ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left')
             ->get()
@@ -311,5 +313,19 @@ class Applications_model extends CI_Model
     public function insert_weekly_logbook($data)
     {
         return $this->db->insert('pkl_logbook_weekly', $data);
+    }
+
+    /**
+     * Get supervised internship applications based on user role
+     */
+    public function get_supervised_internships_by_user_id($user_id)
+    {
+        return $this->db->select('a.*, s.name as student_name, l.name as lecturer_name, p.name as place_name')
+            ->from('pkl_applications a')
+            ->join('apps_students s', 'a.student_id = s.id')
+            ->join('apps_lecturers l', 'a.lecturer_id = l.id', 'left')
+            ->join('pkl_places p', 'a.place_id = p.id', 'left')
+            ->where('a.lecturer_id', $user_id)
+            ->order_by('a.submission_date', 'DESC')->get()->result();
     }
 }

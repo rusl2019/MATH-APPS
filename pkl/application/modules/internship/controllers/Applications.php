@@ -245,10 +245,11 @@ class Applications extends MY_Controller
      */
     public function get_application_detail($id)
     {
-        // Security check - only allow users with approval roles
+        // Security check - only allow users with approval roles or admin
         $roles = $this->session->userdata('role_names');
+        $is_admin = $this->session->userdata('is_admin');
         $allowed_roles = array('head study program', 'head department', 'lecturer');
-        if (empty(array_intersect($roles, $allowed_roles))) {
+        if (empty(array_intersect($roles, $allowed_roles)) && !$is_admin) {
             show_error('Tidak diizinkan');
             return;
         }
@@ -851,5 +852,16 @@ class Applications extends MY_Controller
         ]);
 
         $this->session->set_flashdata('success', 'Status penolakan oleh instansi berhasil dilaporkan.');
+    }
+
+    /**
+     * Display supervised internship list for lecturers/KPS/Kadep
+     */
+    public function supervised_internships()
+    {
+        $user_id = $this->session->userdata('id');
+        $this->data['title'] = 'Daftar Bimbingan PKL';
+        $this->data['applications'] = $this->app->get_supervised_internships_by_user_id($user_id);
+        $this->render('supervised_internships');
     }
 }

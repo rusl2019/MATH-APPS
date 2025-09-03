@@ -127,6 +127,8 @@ class Seminar extends MY_Controller
         $this->data['student'] = $this->app->get_student($application->student_id);
         $this->data['documents'] = $this->app->get_documents_by_application($application_id);
         $this->data['workflow'] = $this->app->get_workflow_by_application($application_id);
+        $this->data['daily_logs'] = $this->app->get_logs_by_application($application_id);
+        $this->data['weekly_logs'] = $this->app->get_weekly_logbooks($application_id);
         $this->render('seminar_manage');
     }
 

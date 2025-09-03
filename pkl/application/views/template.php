@@ -199,8 +199,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             <p>Approvals</p>
                                         </a>
                                     </li>
-                                </ul>
-                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="<?php echo base_url('internship/applications/supervised_internships'); ?>" class="nav-link <?php echo is_active('supervised_internships', 3); ?>">
+                                            <i class="nav-icon bi bi-person-check"></i>
+                                            <p>Bimbingan PKL</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a href="<?php echo base_url('internship/applications/all_applications'); ?>" class="nav-link <?php echo is_active('all_applications', 3); ?>">
                                             <i class="nav-icon bi bi-list"></i>

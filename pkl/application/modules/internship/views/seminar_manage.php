@@ -180,7 +180,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                         </div>
                                         <div>
                                             <span class="badge bg-info"><?= html_escape($step->role) ?></span>
-                                            <span class="badge bg-<?= $step->status === 'approved' ? 'success' : ($step->status === 'rejected' ? 'danger' : 'secondary') ?>">
+                                            <span class="badge bg-<?= $step->status === 'approved' ? 'bg-success' : ($step->status === 'rejected' ? 'danger' : 'secondary') ?>">
                                                 <?= html_escape($step->status) ?>
                                             </span>
                                         </div>
@@ -195,6 +195,71 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- Logbook Card -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-dark text-white">
+                        <h3 class="card-title">Logbook Mahasiswa</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="nav nav-tabs" id="logbookTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="daily-log-tab" data-bs-toggle="tab" data-bs-target="#daily-log" type="button" role="tab" aria-controls="daily-log" aria-selected="true">Logbook Harian</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="weekly-log-tab" data-bs-toggle="tab" data-bs-target="#weekly-log" type="button" role="tab" aria-controls="weekly-log" aria-selected="false">Logbook Mingguan (TTD)</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="logbookTabContent">
+                            <div class="tab-pane fade show active p-3" id="daily-log" role="tabpanel" aria-labelledby="daily-log-tab">
+                                <?php if (empty($daily_logs)) : ?>
+                                    <p class="text-muted">Mahasiswa belum mengisi logbook harian.</p>
+                                <?php else : ?>
+                                    <div class="table-responsive" style="max-height: 400px;">
+                                        <table class="table table-sm table-bordered table-hover">
+                                            <thead class="table-light position-sticky top-0">
+                                                <tr>
+                                                    <th>Tanggal</th>
+                                                    <th>Kegiatan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($daily_logs as $log) : ?>
+                                                    <tr>
+                                                        <td style="width:100px;"><?= date('d/m/Y', strtotime($log->date)) ?></td>
+                                                        <td>
+                                                            <strong><?= html_escape($log->activity_title) ?></strong><br>
+                                                            <small><?= nl2br(html_escape($log->activity_description)) ?></small>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="tab-pane fade p-3" id="weekly-log" role="tabpanel" aria-labelledby="weekly-log-tab">
+                                <?php if (empty($weekly_logs)) : ?>
+                                    <p class="text-muted">Mahasiswa belum mengunggah logbook mingguan.</p>
+                                <?php else : ?>
+                                    <ul class="list-group">
+                                        <?php foreach ($weekly_logs as $log) : ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>Minggu ke-<?= $log->week_number ?></strong>
+                                                    <span class="badge bg-<?= $log->status == 'approved' ? 'success' : ($log->status == 'rejected' ? 'danger' : 'secondary') ?>"><?= ucfirst($log->status) ?></span>
+                                                </div>
+                                                <a href="<?= base_url($log->file_path) ?>" target="_blank" class="btn btn-sm btn-outline-primary">Lihat File</a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
             </div>
         </div>
 

@@ -72,6 +72,8 @@ if (!function_exists('get_status_label')) {
                     <thead class="table-dark">
                         <tr>
                             <th>Mahasiswa</th>
+                            <th>NIM</th>
+                            <th>Program Studi</th>
                             <th>Dosen</th>
                             <th>Instansi</th>
                             <th>Tanggal</th>
@@ -83,6 +85,8 @@ if (!function_exists('get_status_label')) {
                         <?php foreach ($applications as $application) : ?>
                             <tr>
                                 <td><?php echo html_escape(isset($application->student_name) ? $application->student_name : '-'); ?></td>
+                                <td><?php echo html_escape(isset($application->student_nim) ? $application->student_nim : '-'); ?></td>
+                                <td><?php echo html_escape(isset($application->study_program_name) ? $application->study_program_name : '-'); ?></td>
                                 <td><?php echo html_escape(isset($application->lecturer_name) ? $application->lecturer_name : '-'); ?></td>
                                 <td><?php echo html_escape(isset($application->place_name) ? $application->place_name : '-'); ?></td>
                                 <td><?php echo isset($application->submission_date) ? date('d-m-Y', strtotime($application->submission_date)) : '-'; ?></td>

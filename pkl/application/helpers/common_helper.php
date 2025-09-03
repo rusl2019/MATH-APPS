@@ -66,7 +66,40 @@ if (!function_exists('get_status_label')) {
             'revision_approved' => 'Revisi Disetujui',
             'finished' => 'Selesai'
         ];
-        
+
         return $status_labels[$status] ?? $status;
+    }
+}
+
+if (!function_exists('get_status_badge')) {
+    /**
+     * Get Bootstrap badge class for PKL application status
+     *
+     * @param string $status The status code
+     * @return string
+     */
+    function get_status_badge($status)
+    {
+        $rejected_statuses = ['rejected', 'rejected_instansi', 'report_rejected'];
+        if (in_array($status, $rejected_statuses)) {
+            return 'bg-danger';
+        }
+
+        $completed_statuses = ['finished', 'revision_approved'];
+        if (in_array($status, $completed_statuses)) {
+            return 'bg-success';
+        }
+
+        $ongoing_statuses = ['ongoing', 'seminar_scheduled', 'revision'];
+        if (in_array($status, $ongoing_statuses)) {
+            return 'bg-primary';
+        }
+
+        $warning_statuses = ['submitted', 'seminar_requested', 'revision_submitted'];
+        if (in_array($status, $warning_statuses)) {
+            return 'bg-warning text-dark';
+        }
+
+        return 'bg-info text-dark';
     }
 }
