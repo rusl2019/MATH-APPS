@@ -43,6 +43,7 @@ class Seminar extends MY_Controller
         $this->data['assessments'] = $this->app->get_assessments_by_application($application_id);
         $this->data['documents'] = $this->app->get_documents_by_application($application_id);
         $this->data['lembar_konsultasi'] = $this->seminar->get_lembar_konsultasi($application_id);
+        $this->data['recap_scores'] = $this->_calculate_final_score($application_id);
         $this->render('seminar_index');
     }
 
@@ -131,6 +132,22 @@ class Seminar extends MY_Controller
         $this->data['daily_logs'] = $this->app->get_logs_by_application($application_id);
         $this->data['weekly_logs'] = $this->app->get_weekly_logbooks($application_id);
         $this->data['lembar_konsultasi'] = $this->seminar->get_lembar_konsultasi($application_id);
+
+        // NEW: Get guidance assessment scores
+        $all_assessments = $this->app->get_assessments_by_application($application_id);
+        $guidance_scores = [];
+        $guidance_criteria = [
+            'bimbingan_proses', 'bimbingan_disiplin', 'bimbingan_topik',
+            'bimbingan_relevansi', 'bimbingan_pembahasan', 'bimbingan_tata_tulis'
+        ];
+        foreach ($all_assessments as $assessment) {
+            if (in_array($assessment->form_type, $guidance_criteria)) {
+                $guidance_scores[$assessment->form_type] = $assessment->score;
+            }
+        }
+        $this->data['guidance_scores'] = $guidance_scores;
+        $this->data['recap_scores'] = $this->_calculate_final_score($application_id);
+
         $this->render('seminar_manage');
     }
 
@@ -186,6 +203,62 @@ class Seminar extends MY_Controller
     }
 
     /**
+     * Save guidance assessment from lecturer
+     */
+    public function save_guidance_assessment($application_id)
+    {
+        $user_id = $this->session->userdata('id');
+        $roles = $this->session->userdata('role_names');
+        if (!in_array('lecturer', $roles) && !in_array('admin', $roles)) {
+            show_error('Tidak diizinkan');
+            return;
+        }
+
+        $application = $this->app->get_application_by_id($application_id);
+        if (!in_array('admin', $roles) && $application->lecturer_id != $user_id) {
+            show_error('Anda bukan pembimbing untuk aplikasi ini.');
+            return;
+        }
+
+        $criteria = [
+            'bimbingan_proses', 'bimbingan_disiplin', 'bimbingan_topik',
+            'bimbingan_relevansi', 'bimbingan_pembahasan', 'bimbingan_tata_tulis'
+        ];
+
+        foreach ($criteria as $criterion) {
+            $this->form_validation->set_rules($criterion, ucfirst(str_replace('_', ' ', $criterion)), 'required|numeric|less_than_equal_to[100]|greater_than_equal_to[0]');
+        }
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('internship/seminar/manage/' . $application_id);
+            return;
+        }
+
+        // Delete existing scores to prevent duplicates, making the action idempotent
+        $this->seminar->delete_guidance_assessment($application_id);
+
+        $assessments = [];
+        foreach ($criteria as $criterion) {
+            $assessments[] = [
+                'application_id' => $application_id,
+                'assessor_type' => 'dosen_pembimbing',
+                'form_type' => $criterion,
+                'score' => $this->input->post($criterion),
+                'remarks' => 'Penilaian Proses Pembimbingan (Form B-5)',
+            ];
+        }
+
+        if ($this->app->insert_assessments($assessments)) {
+            $this->session->set_flashdata('success', 'Penilaian proses pembimbingan berhasil disimpan.');
+        } else {
+            $this->session->set_flashdata('error', 'Gagal menyimpan penilaian.');
+        }
+
+        redirect('internship/seminar/manage/' . $application_id);
+    }
+
+    /**
      * Save seminar assessment from lecturer
      */
     public function save_assessment($application_id)
@@ -206,9 +279,10 @@ class Seminar extends MY_Controller
             return;
         }
 
-        // For now, let's assume two simple criteria
-        $this->form_validation->set_rules('presentasi', 'Nilai Presentasi', 'required|numeric');
-        $this->form_validation->set_rules('penguasaan', 'Nilai Penguasaan Materi', 'required|numeric');
+        // New criteria validation
+        $this->form_validation->set_rules('kualitas_presentasi', 'Kualitas Presentasi', 'required|numeric|less_than_equal_to[100]|greater_than_equal_to[0]');
+        $this->form_validation->set_rules('kualitas_diskusi', 'Kualitas Diskusi', 'required|numeric|less_than_equal_to[100]|greater_than_equal_to[0]');
+        $this->form_validation->set_rules('penguasaan_materi', 'Penguasaan Materi', 'required|numeric|less_than_equal_to[100]|greater_than_equal_to[0]');
 
         if ($this->form_validation->run() === FALSE) {
             $this->session->set_flashdata('error', validation_errors());
@@ -216,32 +290,25 @@ class Seminar extends MY_Controller
             return;
         }
 
-        // 1. Handle Berita Acara Upload
-        $berita_acara_path = $this->_do_upload('berita_acara_file', 'berita_acara_' . $application_id);
-        if (!$berita_acara_path) {
-            redirect('internship/seminar/manage/' . $application_id);
-            return;
-        }
-        $this->app->insert_document([
-            'application_id' => $application_id,
-            'doc_type' => 'berita_acara_seminar',
-            'file_path' => $berita_acara_path,
-            'status' => 'submitted',
-        ]);
-
         // 2. Insert scores
         $assessments = [
             [
                 'application_id' => $application_id,
                 'assessor_type' => 'dosen_pembimbing',
-                'form_type' => 'seminar_presentasi',
-                'score' => $this->input->post('presentasi'),
+                'form_type' => 'seminar_kualitas_presentasi',
+                'score' => $this->input->post('kualitas_presentasi'),
+            ],
+            [
+                'application_id' => $application_id,
+                'assessor_type' => 'dosen_pembimbing',
+                'form_type' => 'seminar_kualitas_diskusi',
+                'score' => $this->input->post('kualitas_diskusi'),
             ],
             [
                 'application_id' => $application_id,
                 'assessor_type' => 'dosen_pembimbing',
                 'form_type' => 'seminar_penguasaan_materi',
-                'score' => $this->input->post('penguasaan'),
+                'score' => $this->input->post('penguasaan_materi'),
             ]
         ];
         $this->app->insert_assessments($assessments);
@@ -323,16 +390,16 @@ class Seminar extends MY_Controller
             ]);
             $this->session->set_flashdata('success', 'Tahap revisi telah dimulai.');
         } elseif ($action === 'no_revision') {
-            $this->app->update_status($application_id, 'revision_approved');
+            $this->app->update_status($application_id, 'finished');
             $this->app->insert_workflow([
                 'application_id' => $application_id,
-                'step_name' => 'Persetujuan Akhir',
+                'step_name' => 'Penyelesaian PKL',
                 'actor_id' => $user_id,
                 'role' => 'dosen',
-                'status' => 'approved',
-                'remarks' => 'Laporan disetujui tanpa revisi.',
+                'status' => 'completed',
+                'remarks' => 'Laporan disetujui tanpa revisi. PKL Selesai.',
             ]);
-            $this->session->set_flashdata('success', 'Laporan akhir disetujui tanpa revisi.');
+            $this->session->set_flashdata('success', 'Laporan akhir disetujui tanpa revisi. Proses PKL telah selesai.');
         }
 
         redirect('internship/seminar/manage/' . $application_id);
@@ -391,53 +458,18 @@ class Seminar extends MY_Controller
             return;
         }
 
-        $this->app->update_status($application_id, 'revision_approved');
+        $this->app->update_status($application_id, 'finished');
         $this->app->insert_workflow([
             'application_id' => $application_id,
-            'step_name' => 'Persetujuan Akhir',
+            'step_name' => 'Penyelesaian PKL',
             'actor_id' => $user_id,
             'role' => 'dosen',
-            'status' => 'approved',
-            'remarks' => 'Dosen menyetujui laporan akhir hasil revisi.',
+            'status' => 'completed',
+            'remarks' => 'Dosen menyetujui laporan akhir hasil revisi. PKL Selesai.',
         ]);
 
-        $this->session->set_flashdata('success', 'Laporan akhir telah disetujui. Mahasiswa sekarang dapat mengunggah lembar pengesahan.');
+        $this->session->set_flashdata('success', 'Laporan akhir telah disetujui. Proses PKL mahasiswa telah selesai.');
         redirect('internship/seminar/manage/' . $application_id);
-    }
-
-    public function upload_final_sheet($application_id)
-    {
-        $student_id = $this->session->userdata('id');
-        $application = $this->app->get_application_by_id($application_id);
-
-        // Security check
-        if (!$application || $application->student_id != $student_id) {
-            show_error('Anda tidak diizinkan untuk melakukan aksi ini.', 403);
-            return;
-        }
-
-        $file_path = $this->_do_upload('final_sheet_file', 'lembar_pengesahan_' . $application_id);
-        if ($file_path) {
-            $this->app->insert_document([
-                'application_id' => $application_id,
-                'doc_type' => 'lembar_pengesahan',
-                'file_path' => $file_path,
-            ]);
-
-            $this->app->update_status($application_id, 'finished');
-
-            $this->app->insert_workflow([
-                'application_id' => $application_id,
-                'step_name' => 'Penyelesaian Administrasi',
-                'actor_id' => $student_id,
-                'role' => 'mahasiswa',
-                'status' => 'completed',
-                'remarks' => 'Mahasiswa mengunggah lembar pengesahan. PKL selesai.',
-            ]);
-
-            $this->session->set_flashdata('success', 'Selamat! Anda telah menyelesaikan seluruh rangkaian kegiatan PKL.');
-        }
-        redirect('internship/seminar/index/' . $application_id);
     }
 
     /**
@@ -677,5 +709,47 @@ class Seminar extends MY_Controller
         } else {
             redirect('internship/seminar/index/' . $lembar_konsultasi->application_id);
         }
+    }
+
+    /**
+     * Calculate final score based on all assessments.
+     * @return array
+     */
+    private function _calculate_final_score($application_id)
+    {
+        $all_assessments = $this->app->get_assessments_by_application($application_id);
+
+        $lapangan_scores = [];
+        $bimbingan_scores = [];
+        $seminar_scores = [];
+
+        $bimbingan_criteria = ['bimbingan_proses', 'bimbingan_disiplin', 'bimbingan_topik', 'bimbingan_relevansi', 'bimbingan_pembahasan', 'bimbingan_tata_tulis'];
+        $seminar_criteria = ['seminar_kualitas_presentasi', 'seminar_kualitas_diskusi', 'seminar_penguasaan_materi'];
+
+        foreach ($all_assessments as $assessment) {
+            if ($assessment->assessor_type === 'lapangan') {
+                $lapangan_scores[] = $assessment->score;
+            } elseif (in_array($assessment->form_type, $bimbingan_criteria)) {
+                $bimbingan_scores[] = $assessment->score;
+            } elseif (in_array($assessment->form_type, $seminar_criteria)) {
+                $seminar_scores[] = $assessment->score;
+            }
+        }
+
+        $avg_lapangan = !empty($lapangan_scores) ? array_sum($lapangan_scores) / count($lapangan_scores) : 0;
+        $avg_bimbingan = !empty($bimbingan_scores) ? array_sum($bimbingan_scores) / count($bimbingan_scores) : 0;
+        $avg_seminar = !empty($seminar_scores) ? array_sum($seminar_scores) / count($seminar_scores) : 0;
+
+        $is_complete = ($avg_lapangan > 0 && $avg_bimbingan > 0 && $avg_seminar > 0);
+
+        $final_score = ($avg_lapangan * 0.25) + ($avg_bimbingan * 0.25) + ($avg_seminar * 0.50);
+
+        return [
+            'avg_lapangan' => $avg_lapangan,
+            'avg_bimbingan' => $avg_bimbingan,
+            'avg_seminar' => $avg_seminar,
+            'final_score' => $final_score,
+            'is_complete' => $is_complete
+        ];
     }
 }

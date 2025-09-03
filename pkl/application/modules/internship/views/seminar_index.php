@@ -80,6 +80,32 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     </div>
                 </div>
 
+                <!-- Score Recap -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-success text-white">Rekapitulasi Hasil Penilaian</div>
+                    <div class="card-body">
+                        <?php if ($recap_scores['is_complete']) : ?>
+                            <dl class="row">
+                                <dt class="col-sm-8">Nilai Pembimbingan Lapangan (25%)</dt>
+                                <dd class="col-sm-4 text-end"><?= number_format($recap_scores['avg_lapangan'], 2) ?></dd>
+
+                                <dt class="col-sm-8">Nilai Proses Pembimbingan Dosen (25%)</dt>
+                                <dd class="col-sm-4 text-end"><?= number_format($recap_scores['avg_bimbingan'], 2) ?></dd>
+
+                                <dt class="col-sm-8">Nilai Seminar (50%)</dt>
+                                <dd class="col-sm-4 text-end"><?= number_format($recap_scores['avg_seminar'], 2) ?></dd>
+                            </dl>
+                            <hr>
+                            <dl class="row">
+                                <dt class="col-sm-8 h5">NILAI AKHIR</dt>
+                                <dd class="col-sm-4 text-end h5"><?= number_format($recap_scores['final_score'], 2) ?></dd>
+                            </dl>
+                        <?php else : ?>
+                            <p class="text-muted">Nilai akhir akan ditampilkan setelah semua komponen penilaian diisi oleh dosen pembimbing dan pembimbing lapangan.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
                 <!-- Workflow History -->
                 <div class="card shadow-sm mt-4">
                     <div class="card-header bg-secondary text-white">Riwayat Proses</div>
@@ -396,53 +422,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <?= form_close(); ?>
                                 
                                 <!-- Existing Consultations -->
-                                <?php if (!empty($lembar_konsultasi)) : ?>
-                                    <div class="mt-3">
-                                        <h6>Riwayat Konsultasi:</h6>
-                                        <?php foreach ($lembar_konsultasi as $konsultasi) : ?>
-                                            <div class="card mb-2">
-                                                <div class="card-body py-2">
-                                                    <div class="d-flex justify-content-between">
-                                                        <div>
-                                                            <strong><?= date('d M Y', strtotime($konsultasi->date)) ?></strong>
-                                                            <div><?= html_escape($konsultasi->material) ?></div>
-                                                        </div>
-                                                        <div>
-                                                            <?php if (!empty($konsultasi->notes)) : ?>
-                                                                <small class="text-muted"><?= html_escape($konsultasi->notes) ?></small>
-                                                            <?php endif; ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php else : ?>
-                                    <div class="alert alert-info">Belum ada lembar konsultasi yang ditambahkan.</div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Action: Upload Final Sheet -->
-                <?php if ($application->status === 'revision_approved') : ?>
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-success text-white">Langkah Akhir: Unggah Lembar Pengesahan</div>
-                        <div class="card-body">
-                            <p>Selamat, laporan akhir Anda telah disetujui! Langkah terakhir adalah mengunggah Lembar Pengesahan yang telah ditandatangani lengkap.</p>
-                            <?= form_open_multipart('internship/seminar/upload_final_sheet/' . $application->id); ?>
-                            <div class="mb-3">
-                                <label class="form-label">Unggah Lembar Pengesahan (PDF) <span class="text-danger">*</span></label>
-                                <input type="file" name="final_sheet_file" class="form-control" accept=".pdf" required>
-                            </div>
-                            <button type="submit" class="btn btn-success">Selesaikan PKL</button>
-                            <?= form_close(); ?>
-                            
-                            <!-- Lembar Konsultasi Section -->
-                            <div class="mt-4">
-                                <h5>Lembar Konsultasi</h5>
-                                <!-- Existing Consultations (readonly) -->
                                 <?php if (!empty($lembar_konsultasi)) : ?>
                                     <div class="mt-3">
                                         <h6>Riwayat Konsultasi:</h6>

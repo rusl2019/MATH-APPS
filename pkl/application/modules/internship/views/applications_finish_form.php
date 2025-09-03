@@ -76,12 +76,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     <div class="form-text">Unggah sertifikat atau surat keterangan selesai PKL dari instansi.</div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="evaluation_file" class="form-label">Unggah Lembar Penilaian dari Pembimbing Lapangan (PDF) <span class="text-danger">*</span></label>
-                    <input type="file" name="evaluation_file" id="evaluation_file" class="form-control" accept=".pdf" required>
-                    <div class="form-text">Unggah lembar penilaian yang sudah diisi dan ditandatangani oleh pembimbing lapangan.</div>
-                </div>
-
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary">Batal</a>
                     <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin semua data yang diisi sudah benar? Aksi ini akan menyelesaikan proses PKL Anda.')">Kirim Laporan & Selesaikan PKL</button>

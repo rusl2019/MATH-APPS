@@ -128,12 +128,7 @@ if (!function_exists('get_status_label')) {
 
                                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?php echo isset($application->id) ? $application->id : ''; ?>">Tolak Pengajuan</button>
 
-                                    <?php elseif ($application->status === 'seminar_requested') : ?>
-                                        <a href="<?php echo site_url('internship/seminar/approve/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan ini untuk seminar?')">Setujui Seminar</a>
-
-                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectReportModal<?php echo isset($application->id) ? $application->id : ''; ?>">Tolak Laporan</button>
-
-                                    <?php elseif (in_array($application->status, array('seminar_approved', 'seminar_scheduled', 'seminar_completed', 'report_rejected', 'revision_submitted'))) : ?>
+                                    <?php elseif (in_array($application->status, array('seminar_requested', 'seminar_approved', 'seminar_scheduled', 'seminar_completed', 'report_rejected', 'revision_submitted'))) : ?>
                                         <a href="<?php echo site_url('internship/seminar/manage/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-primary">Kelola Seminar</a>
                                     <?php endif; ?>
 

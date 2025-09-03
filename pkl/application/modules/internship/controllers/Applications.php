@@ -505,24 +505,11 @@ class Applications extends MY_Controller
                 return;
             }
 
-            // 2. Handle Evaluation Form Upload
-            $evaluation_path = $this->_do_upload('evaluation_file', 'penilaian_lapangan_' . $id);
-            if (!$evaluation_path) {
-                redirect('internship/applications/finish_internship/' . $id);
-                return;
-            }
-
             // 3. Insert documents to DB
             $this->app->insert_document([
                 'application_id' => $id,
                 'doc_type' => 'sertifikat',
                 'file_path' => $certificate_path,
-                'status' => 'submitted',
-            ]);
-            $this->app->insert_document([
-                'application_id' => $id,
-                'doc_type' => 'berita_acara', // Using 'berita_acara' for field evaluation form
-                'file_path' => $evaluation_path,
                 'status' => 'submitted',
             ]);
 

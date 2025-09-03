@@ -98,4 +98,19 @@ class Seminar_model extends CI_Model
             ->get('pkl_lembar_konsultasi')
             ->row();
     }
+
+    /**
+     * Delete guidance assessment scores for a specific application
+     */
+    public function delete_guidance_assessment($application_id)
+    {
+        $form_types = [
+            'bimbingan_proses', 'bimbingan_disiplin', 'bimbingan_topik',
+            'bimbingan_relevansi', 'bimbingan_pembahasan', 'bimbingan_tata_tulis'
+        ];
+        return $this->db->where('application_id', $application_id)
+                        ->where('assessor_type', 'dosen_pembimbing')
+                        ->where_in('form_type', $form_types)
+                        ->delete('pkl_assessments');
+    }
 }

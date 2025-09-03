@@ -39,6 +39,77 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
         <div class="row">
             <div class="col-md-7">
+                <!-- Approval and Initial Assessment -->
+                <?php if ($application->status === 'seminar_requested') : ?>
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-dark text-white">Langkah 1: Persetujuan & Penilaian Awal</div>
+                        <div class="card-body">
+                            <p>Mahasiswa telah mengunggah draf laporan dan meminta persetujuan seminar. Silakan berikan penilaian proses pembimbingan (Form B-5) sebelum menyetujui atau menolak.</p>
+
+                            <!-- Penilaian Proses Pembimbingan Form -->
+                            <?= form_open('internship/seminar/save_guidance_assessment/' . $application->id); ?>
+                            <h5 class="mt-3">Penilaian Proses Pembimbingan (Form B-5)</h5>
+                            <hr>
+                            <?php
+                            $bimbingan_criteria = [
+                                'bimbingan_proses' => ['label' => 'Proses bimbingan', 'weight' => '20%'],
+                                'bimbingan_disiplin' => ['label' => 'Kedisiplinan bimbingan', 'weight' => '10%'],
+                                'bimbingan_topik' => ['label' => 'Pemilihan topik', 'weight' => '10%'],
+                                'bimbingan_relevansi' => ['label' => 'Relevansi topik dengan keilmuan', 'weight' => '15%'],
+                                'bimbingan_pembahasan' => ['label' => 'Pembahasan', 'weight' => '30%'],
+                                'bimbingan_tata_tulis' => ['label' => 'Tata tulis dan tata bahasa', 'weight' => '15%']
+                            ];
+                            ?>
+                            <?php foreach ($bimbingan_criteria as $key => $props) : ?>
+                                <div class="row mb-3">
+                                    <label class="col-sm-5 col-form-label"><?= $props['label'] ?> (Bobot <?= $props['weight'] ?>) <span class="text-danger">*</span></label>
+                                    <div class="col-sm-7">
+                                        <input type="number" min="0" max="100" name="<?= $key ?>" class="form-control" placeholder="0-100" value="<?= html_escape($guidance_scores[$key] ?? '') ?>" required>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-success">Simpan Penilaian Bimbingan</button>
+                            </div>
+                            <?= form_close(); ?>
+
+                            <hr class="my-4">
+
+                            <!-- Approval/Rejection Buttons -->
+                            <div class="text-center">
+                                <h5>Tindakan Seminar</h5>
+                                <p>Setelah menyimpan penilaian di atas, Anda dapat menyetujui seminar atau menolak laporan.</p>
+                                <a href="<?= site_url('internship/seminar/approve/' . $application->id) ?>" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan ini untuk seminar?')">Setujui Seminar</a>
+                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectReportModal<?= $application->id ?>">Tolak Laporan</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reject Modal for Report -->
+                    <div class="modal fade" id="rejectReportModal<?= $application->id ?>" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <?= form_open(site_url('internship/seminar/reject_report/' . $application->id)); ?>
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Alasan Penolakan Laporan</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Berikan alasan atau catatan revisi:</label>
+                                        <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan atau catatan untuk revisi..." required></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-danger">Tolak Laporan</button>
+                                </div>
+                                <?= form_close(); ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <!-- Scheduling Form -->
                 <?php if ($application->status === 'seminar_approved') : ?>
                     <div class="card shadow-sm">
@@ -70,23 +141,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <h5 class="mt-3">Komponen Penilaian Seminar</h5>
                             <hr>
                             <div class="row mb-3">
-                                <label class="col-sm-5 col-form-label">Nilai Presentasi <span class="text-danger">*</span></label>
+                                <label class="col-sm-5 col-form-label">Kualitas Presentasi (Bobot 40%) <span class="text-danger">*</span></label>
                                 <div class="col-sm-7">
-                                    <input type="number" min="0" max="100" name="presentasi" class="form-control" placeholder="0-100" required>
+                                    <input type="number" min="0" max="100" name="kualitas_presentasi" class="form-control" placeholder="0-100" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label class="col-sm-5 col-form-label">Nilai Penguasaan Materi <span class="text-danger">*</span></label>
+                                <label class="col-sm-5 col-form-label">Kualitas Diskusi (Bobot 20%) <span class="text-danger">*</span></label>
                                 <div class="col-sm-7">
-                                    <input type="number" min="0" max="100" name="penguasaan" class="form-control" placeholder="0-100" required>
+                                    <input type="number" min="0" max="100" name="kualitas_diskusi" class="form-control" placeholder="0-100" required>
                                 </div>
                             </div>
-
-                            <h5 class="mt-4">Dokumen</h5>
-                            <hr>
-                            <div class="mb-3">
-                                <label for="berita_acara_file" class="form-label">Unggah Berita Acara Seminar (PDF) <span class="text-danger">*</span></label>
-                                <input type="file" name="berita_acara_file" class="form-control" accept=".pdf" required>
+                            <div class="row mb-3">
+                                <label class="col-sm-5 col-form-label">Penguasaan Materi (Bobot 40%) <span class="text-danger">*</span></label>
+                                <div class="col-sm-7">
+                                    <input type="number" min="0" max="100" name="penguasaan_materi" class="form-control" placeholder="0-100" required>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-success">Simpan Penilaian</button>
@@ -238,6 +308,32 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <strong>Tanggal:</strong> <?= date('d M Y, H:i', strtotime($application->seminar_date)) ?><br>
                                 <strong>Lokasi:</strong> <?= html_escape($application->seminar_location) ?>
                             </p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Score Recap -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-success text-white">Rekapitulasi Hasil Penilaian</div>
+                    <div class="card-body">
+                        <?php if ($recap_scores['is_complete']) : ?>
+                            <dl class="row">
+                                <dt class="col-sm-8">Nilai Pembimbingan Lapangan (25%)</dt>
+                                <dd class="col-sm-4 text-end"><?= number_format($recap_scores['avg_lapangan'], 2) ?></dd>
+
+                                <dt class="col-sm-8">Nilai Proses Pembimbingan Dosen (25%)</dt>
+                                <dd class="col-sm-4 text-end"><?= number_format($recap_scores['avg_bimbingan'], 2) ?></dd>
+
+                                <dt class="col-sm-8">Nilai Seminar (50%)</dt>
+                                <dd class="col-sm-4 text-end"><?= number_format($recap_scores['avg_seminar'], 2) ?></dd>
+                            </dl>
+                            <hr>
+                            <dl class="row">
+                                <dt class="col-sm-8 h5">NILAI AKHIR</dt>
+                                <dd class="col-sm-4 text-end h5"><?= number_format($recap_scores['final_score'], 2) ?></dd>
+                            </dl>
+                        <?php else : ?>
+                            <p class="text-muted">Nilai akhir akan ditampilkan setelah semua komponen penilaian diisi.</p>
                         <?php endif; ?>
                     </div>
                 </div>
