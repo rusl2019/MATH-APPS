@@ -41,7 +41,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <div class="card-body">
                 <p>Silakan isi form berikut untuk melaporkan bahwa kegiatan PKL Anda telah selesai. Masukkan nilai dari setiap komponen sesuai dengan lembar penilaian yang diberikan oleh pembimbing lapangan.</p>
 
-                <?= form_open_multipart('pkl/applications/finish_pkl/' . $application_id); ?>
+                <?= form_open_multipart('internship/applications/finish_internship/' . $application_id); ?>
 
                 <h5 class="mt-3">Komponen Penilaian Lapangan</h5>
                 <hr>
@@ -83,7 +83,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="<?= site_url('pkl/applications') ?>" class="btn btn-secondary">Batal</a>
+                    <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary">Batal</a>
                     <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin semua data yang diisi sudah benar? Aksi ini akan menyelesaikan proses PKL Anda.')">Kirim Laporan & Selesaikan PKL</button>
                 </div>
 

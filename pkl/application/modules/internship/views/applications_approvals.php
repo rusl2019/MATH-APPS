@@ -120,17 +120,17 @@ if (!function_exists('get_status_label')) {
                                     <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal<?php echo isset($application->id) ? $application->id : ''; ?>">Detail</button>
 
                                     <?php if ($application->status === 'submitted' || strpos($application->status, 'approved') !== false) : ?>
-                                        <a href="<?php echo site_url('pkl/applications/approve/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">Setujui Pengajuan</a>
+                                        <a href="<?php echo site_url('internship/applications/approve/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">Setujui Pengajuan</a>
 
                                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?php echo isset($application->id) ? $application->id : ''; ?>">Tolak Pengajuan</button>
 
                                     <?php elseif ($application->status === 'seminar_requested') : ?>
-                                        <a href="<?php echo site_url('pkl/seminar/approve/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan ini untuk seminar?')">Setujui Seminar</a>
+                                        <a href="<?php echo site_url('internship/seminar/approve/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan ini untuk seminar?')">Setujui Seminar</a>
 
                                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectReportModal<?php echo isset($application->id) ? $application->id : ''; ?>">Tolak Laporan</button>
 
                                     <?php elseif (in_array($application->status, array('seminar_approved', 'seminar_scheduled', 'seminar_completed', 'report_rejected', 'revision_submitted'))) : ?>
-                                        <a href="<?php echo site_url('pkl/seminar/manage/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-primary">Kelola Seminar</a>
+                                        <a href="<?php echo site_url('internship/seminar/manage/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-primary">Kelola Seminar</a>
                                     <?php endif; ?>
 
 
@@ -163,7 +163,7 @@ if (!function_exists('get_status_label')) {
                                     <div class="modal fade" id="rejectModal<?php echo isset($application->id) ? $application->id : ''; ?>" tabindex="-1">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <?php echo form_open(site_url('pkl/applications/reject/' . (isset($application->id) ? $application->id : ''))); ?>
+                                                <?php echo form_open(site_url('internship/applications/reject/' . (isset($application->id) ? $application->id : ''))); ?>
                                                 <div class="modal-header">
                                                     <h5 class="modal-title">Alasan Penolakan Pengajuan</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -187,7 +187,7 @@ if (!function_exists('get_status_label')) {
                                     <div class="modal fade" id="rejectReportModal<?php echo isset($application->id) ? $application->id : ''; ?>" tabindex="-1">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <?php echo form_open(site_url('pkl/seminar/reject_report/' . (isset($application->id) ? $application->id : ''))); ?>
+                                                <?php echo form_open(site_url('internship/seminar/reject_report/' . (isset($application->id) ? $application->id : ''))); ?>
                                                 <div class="modal-header">
                                                     <h5 class="modal-title">Alasan Penolakan Laporan</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -278,7 +278,7 @@ if (!function_exists('get_status_label')) {
         });
 
         function fetchDetail(applicationId) {
-            fetch('<?php echo site_url('pkl/applications/get_application_detail/'); ?>' + applicationId)
+            fetch('<?php echo site_url('internship/applications/get_application_detail/'); ?>' + applicationId)
                 .then(function(response) {
                     return response.json();
                 })

@@ -43,7 +43,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <div class="card-body text-center">
                             <h5 class="card-title text-danger">Belum Mendaftar PKL</h5>
                             <p class="card-text">Anda belum memiliki data pengajuan PKL.</p>
-                            <a href="<?= site_url('pkl/applications/create') ?>" class="btn btn-success">
+                            <a href="<?= site_url('internship/applications/create') ?>" class="btn btn-success">
                                 + Ajukan PKL Sekarang
                             </a>
                         </div>
@@ -202,7 +202,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <div class="card-header bg-warning text-dark"><strong>Tindak Lanjut dari Instansi</strong></div>
                             <div class="card-body text-center">
                                 <p class="card-text">Silakan laporkan hasil dari pengajuan surat rekomendasi ke instansi.</p>
-                                <a href="<?= site_url('pkl/applications/report_decision/' . ($application->id ?? '')) ?>" class="btn btn-primary">Laporkan Keputusan Instansi</a>
+                                <a href="<?= site_url('internship/applications/report_decision/' . ($application->id ?? '')) ?>" class="btn btn-primary">Laporkan Keputusan Instansi</a>
                             </div>
                         </div>
                     <?php elseif (in_array($application->status ?? '', ['rejected', 'rejected_instansi'])) : ?>
@@ -210,7 +210,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <div class="card-header bg-danger text-white"><strong>Tindak Lanjut Diperlukan</strong></div>
                             <div class="card-body text-center">
                                 <p class="card-text">Pengajuan Anda ditolak. Silakan perbaiki data Anda dan ajukan kembali.</p>
-                                <a href="<?= site_url('pkl/applications/create/' . ($application->id ?? '')) ?>" class="btn btn-warning">Ajukan Ulang</a>
+                                <a href="<?= site_url('internship/applications/create/' . ($application->id ?? '')) ?>" class="btn btn-warning">Ajukan Ulang</a>
                             </div>
                         </div>
                     <?php elseif (($application->status ?? '') === 'ongoing') : ?>
@@ -218,8 +218,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <div class="card-header bg-primary text-white"><strong>Pelaksanaan PKL</strong></div>
                             <div class="card-body text-center">
                                 <p class="card-text">Status PKL Anda sedang berlangsung. Silakan isi logbook harian. Jika telah selesai, laporkan penyelesaian PKL.</p>
-                                <a href="<?= site_url('pkl/applications/pelaksanaan/' . ($application->id ?? '')) ?>" class="btn btn-info">Buka Logbook</a>
-                                <a href="<?= site_url('pkl/applications/finish_pkl/' . ($application->id ?? '')) ?>" class="btn btn-success">Laporkan Selesai PKL</a>
+                                <a href="<?= site_url('internship/applications/pelaksanaan/' . ($application->id ?? '')) ?>" class="btn btn-info">Buka Logbook</a>
+                                <a href="<?= site_url('internship/applications/finish_internship/' . ($application->id ?? '')) ?>" class="btn btn-success">Laporkan Selesai PKL</a>
                             </div>
                         </div>
                     <?php elseif (($application->status ?? '') === 'field_work_completed') : ?>
@@ -227,7 +227,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <div class="card-header bg-primary text-white"><strong>Tahap Seminar & Laporan</strong></div>
                             <div class="card-body text-center">
                                 <p class="card-text">Anda telah menyelesaikan kegiatan PKL di lapangan. Tahap selanjutnya adalah penulisan laporan dan seminar PKL.</p>
-                                <a href="<?= site_url('pkl/seminar/index/' . ($application->id ?? '')) ?>" class="btn btn-primary">Mulai Proses Seminar</a>
+                                <a href="<?= site_url('internship/seminar/index/' . ($application->id ?? '')) ?>" class="btn btn-primary">Mulai Proses Seminar</a>
                             </div>
                         </div>
                     <?php
@@ -241,7 +241,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <div class="card-header bg-info text-white"><strong>Proses Seminar Berlangsung</strong></div>
                             <div class="card-body text-center">
                                 <p class="card-text">Anda sedang dalam tahap seminar dan revisi laporan. Klik tombol di bawah untuk melihat detail dan melanjutkan proses.</p>
-                                <a href="<?= site_url('pkl/seminar/index/' . ($application->id ?? '')) ?>" class="btn btn-info">Lanjutkan Proses Seminar</a>
+                                <a href="<?= site_url('internship/seminar/index/' . ($application->id ?? '')) ?>" class="btn btn-info">Lanjutkan Proses Seminar</a>
                             </div>
                         </div>
                     <?php elseif (($application->status ?? '') === 'finished') : ?>

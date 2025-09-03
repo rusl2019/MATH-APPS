@@ -63,7 +63,7 @@ class Applications extends MY_Controller
                 $this->session->set_flashdata('error', 'Gagal menyimpan pengajuan PKL.');
             }
 
-            redirect('pkl/applications');
+            redirect('internship/applications');
         }
     }
 
@@ -162,7 +162,7 @@ class Applications extends MY_Controller
             }
         }
 
-        redirect('pkl/applications/pelaksanaan/' . $id);
+        redirect('internship/applications/pelaksanaan/' . $id);
     }
 
     /**
@@ -178,7 +178,7 @@ class Applications extends MY_Controller
         $application = $this->app->get_application_by_id($application_id);
         $start_date = new DateTime($application->activity_period_start);
         $start_date->modify('+ ' . (($week_number - 1) * 7) . ' days');
-        
+
         $end_date = clone $start_date;
         $end_date->modify('+6 days');
 
@@ -225,7 +225,7 @@ class Applications extends MY_Controller
             // Error message is set in _do_upload()
         }
 
-        redirect('pkl/applications/pelaksanaan/' . $application_id);
+        redirect('internship/applications/pelaksanaan/' . $application_id);
     }
 
 
@@ -252,30 +252,30 @@ class Applications extends MY_Controller
             show_error('Tidak diizinkan');
             return;
         }
-        
+
         // Get detailed application data
         $application = $this->app->get_application_by_id($id);
-        
+
         // Check if application exists
         if (!$application) {
             header('Content-Type: application/json');
             echo json_encode(array('error' => 'Pengajuan tidak ditemukan'));
             return;
         }
-        
+
         // Get student details
         $student = $this->app->get_student($application->student_id);
-        
+
         // Get documents
         $documents = $this->app->get_documents_by_application($id);
-        
+
         // Prepare response data
         $data = array(
             'application' => $application,
             'student' => $student,
             'documents' => $documents
         );
-        
+
         // Return JSON response
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -307,7 +307,7 @@ class Applications extends MY_Controller
         ]);
 
         $this->session->set_flashdata('success', 'Pengajuan PKL berhasil disetujui.');
-        redirect('pkl/applications/approvals');
+        redirect('internship/applications/approvals');
     }
 
     /**
@@ -330,7 +330,7 @@ class Applications extends MY_Controller
         ]);
 
         $this->session->set_flashdata('error', 'Pengajuan PKL ditolak.');
-        redirect('pkl/applications/approvals');
+        redirect('internship/applications/approvals');
     }
 
     /**
@@ -352,7 +352,7 @@ class Applications extends MY_Controller
         $application = $this->db->get_where('pkl_applications', ['id' => $id])->row();
         if (!$application || $application->status !== 'approved_kadep') {
             $this->session->set_flashdata('error', 'Pengajuan tidak valid atau belum disetujui oleh Ketua Departemen.');
-            redirect('pkl/applications/all_applications');
+            redirect('internship/applications/all_applications');
             return;
         }
 
@@ -395,10 +395,10 @@ class Applications extends MY_Controller
                 ]);
 
                 $this->session->set_flashdata('success', 'Surat rekomendasi berhasil diunggah.');
-                redirect('pkl/applications/all_applications');
+                redirect('internship/applications/all_applications');
             } else {
                 $this->session->set_flashdata('error', 'Gagal mengunggah surat rekomendasi: ' . $this->upload->display_errors());
-                redirect('pkl/applications/upload_recommendation/' . $id);
+                redirect('internship/applications/upload_recommendation/' . $id);
             }
         }
 
@@ -426,7 +426,7 @@ class Applications extends MY_Controller
             $decision = $this->input->post('decision');
 
             if (!$this->validate_decision_submission($decision)) {
-                redirect('pkl/applications/report_decision/' . $id);
+                redirect('internship/applications/report_decision/' . $id);
                 return;
             }
 
@@ -458,10 +458,10 @@ class Applications extends MY_Controller
                     $this->process_rejected_decision($id);
                 }
 
-                redirect('pkl/applications');
+                redirect('internship/applications');
             } else {
                 $this->session->set_flashdata('error', 'Gagal mengunggah surat: ' . $this->upload->display_errors());
-                redirect('pkl/applications/report_decision/' . $id);
+                redirect('internship/applications/report_decision/' . $id);
             }
         } else {
             // Display the form
@@ -472,7 +472,7 @@ class Applications extends MY_Controller
     /**
      * Report PKL completion
      */
-    public function finish_pkl($id)
+    public function finish_internship($id)
     {
         $student_id = $this->session->userdata('id');
 
@@ -500,14 +500,14 @@ class Applications extends MY_Controller
             // 1. Handle Certificate Upload
             $certificate_path = $this->_do_upload('certificate_file', 'sertifikat_' . $id);
             if (!$certificate_path) {
-                redirect('pkl/applications/finish_pkl/' . $id);
+                redirect('internship/applications/finish_internship/' . $id);
                 return;
             }
 
             // 2. Handle Evaluation Form Upload
             $evaluation_path = $this->_do_upload('evaluation_file', 'penilaian_lapangan_' . $id);
             if (!$evaluation_path) {
-                redirect('pkl/applications/finish_pkl/' . $id);
+                redirect('internship/applications/finish_internship/' . $id);
                 return;
             }
 
@@ -554,7 +554,7 @@ class Applications extends MY_Controller
             ]);
 
             $this->session->set_flashdata('success', 'Selamat, Anda telah menyelesaikan PKL di lapangan! Status PKL Anda telah diperbarui. Silakan lanjutkan ke tahap seminar.');
-            redirect('pkl/applications');
+            redirect('internship/applications');
         }
     }
 
@@ -598,7 +598,7 @@ class Applications extends MY_Controller
             return true;
         } else {
             $this->session->set_flashdata('error', 'Pengajuan yang ingin Anda ajukan ulang tidak valid.');
-            redirect('pkl/applications');
+            redirect('internship/applications');
             return false;
         }
     }
@@ -610,7 +610,7 @@ class Applications extends MY_Controller
     {
         if (!$active_semester) {
             $this->session->set_flashdata('error', 'Saat ini tidak ada semester aktif yang ditetapkan oleh admin. Pendaftaran ditutup.');
-            redirect('pkl/applications');
+            redirect('internship/applications');
             return false;
         }
         return true;
@@ -624,7 +624,7 @@ class Applications extends MY_Controller
         $submission_count = $this->app->count_applications_by_semester($student_id, $active_semester->id);
         if ($submission_count >= 3) {
             $this->session->set_flashdata('error', 'Anda telah mencapai batas maksimal 3 kali pengajuan untuk semester ini.');
-            redirect('pkl/applications');
+            redirect('internship/applications');
             return false;
         }
         return true;
@@ -724,7 +724,7 @@ class Applications extends MY_Controller
                 ]);
             } else {
                 $this->session->set_flashdata('error', 'Gagal mengunggah ' . $doc_type . ': ' . $this->upload->display_errors());
-                redirect('pkl/applications/create');
+                redirect('internship/applications/create');
             }
         }
     }
@@ -738,7 +738,7 @@ class Applications extends MY_Controller
 
         if (!$application || $application->student_id != $student_id || $application->status !== $required_status) {
             $this->session->set_flashdata('error', 'Halaman tidak valid atau Anda tidak diizinkan.');
-            redirect('pkl/applications');
+            redirect('internship/applications');
             return false;
         }
 
@@ -788,7 +788,7 @@ class Applications extends MY_Controller
 
         if ($application->status !== 'recommendation_uploaded') {
             $this->session->set_flashdata('error', 'Aksi ini belum dapat dilakukan.');
-            redirect('pkl/applications');
+            redirect('internship/applications');
             return false;
         }
 

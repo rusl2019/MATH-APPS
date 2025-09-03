@@ -39,7 +39,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-dark text-white">Tambah Logbook Harian</div>
             <div class="card-body">
-                <?= form_open('pkl/applications/add_log/' . $application->id); ?>
+                <?= form_open('internship/applications/add_log/' . $application->id); ?>
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
@@ -76,7 +76,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Simpan Logbook</button>
-                <a href="<?= site_url('pkl/applications') ?>" class="btn btn-secondary">Kembali</a>
+                <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary">Kembali</a>
                 <?= form_close(); ?>
             </div>
         </div>
@@ -127,50 +127,50 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     </div>
                                     <div class="col-md-4">
                                         <h5>Logbook Mingguan (TTD)</h5>
-                                        <a href="<?= site_url('pkl/applications/print_logbook_weekly/' . $application->id . '/' . $week_number) ?>" target="_blank" class="btn btn-sm btn-info mb-3 w-100"><i class="fas fa-print"></i> Cetak Logbook Minggu Ini</a>
+                                        <a href="<?= site_url('internship/applications/print_logbook_weekly/' . $application->id . '/' . $week_number) ?>" target="_blank" class="btn btn-sm btn-info mb-3 w-100"><i class="fas fa-print"></i> Cetak Logbook Minggu Ini</a>
 
                                         <div class="card">
                                             <div class="card-body">
                                                 <?php if ($week['weekly_upload']) : ?>
-                                                    <p class="mb-2"><strong>Status:</strong> 
-                                                        <?php 
-                                                            $status = $week['weekly_upload']->status;
-                                                            $badge_class = 'bg-secondary';
-                                                            if ($status == 'approved') $badge_class = 'bg-success';
-                                                            if ($status == 'rejected') $badge_class = 'bg-danger';
+                                                    <p class="mb-2"><strong>Status:</strong>
+                                                        <?php
+                                                        $status = $week['weekly_upload']->status;
+                                                        $badge_class = 'bg-secondary';
+                                                        if ($status == 'approved') $badge_class = 'bg-success';
+                                                        if ($status == 'rejected') $badge_class = 'bg-danger';
                                                         ?>
                                                         <span class="badge <?= $badge_class ?>"><?= ucfirst($status) ?></span>
                                                     </p>
                                                     <p class="mb-2"><strong>Diunggah pada:</strong> <?= date('d M Y H:i', strtotime($week['weekly_upload']->uploaded_at)) ?></p>
                                                     <a href="<?= base_url($week['weekly_upload']->file_path) ?>" target="_blank" class="btn btn-sm btn-success w-100">Lihat File</a>
-                                                    <?php if($status == 'rejected'): ?>
+                                                    <?php if ($status == 'rejected') : ?>
                                                         <p class="mt-2 text-danger"><small><strong>Catatan:</strong> <?= html_escape($week['weekly_upload']->remarks) ?></small></p>
                                                         <hr>
                                                         <p class="text-center">Silakan unggah revisi:</p>
                                                         <!-- Revision Upload Form -->
-                                                        <?= form_open_multipart('pkl/applications/upload_logbook_weekly/' . $application->id) ?>
-                                                            <input type="hidden" name="week_number" value="<?= $week_number ?>">
-                                                            <input type="hidden" name="start_date" value="<?= $week['start_date'] ?>">
-                                                            <input type="hidden" name="end_date" value="<?= $week['end_date'] ?>">
-                                                            <div class="mb-2">
-                                                                <input type="file" name="logbook_file" class="form-control form-control-sm" required>
-                                                            </div>
-                                                            <button type="submit" class="btn btn-sm btn-warning w-100">Unggah Ulang</button>
+                                                        <?= form_open_multipart('internship/applications/upload_logbook_weekly/' . $application->id) ?>
+                                                        <input type="hidden" name="week_number" value="<?= $week_number ?>">
+                                                        <input type="hidden" name="start_date" value="<?= $week['start_date'] ?>">
+                                                        <input type="hidden" name="end_date" value="<?= $week['end_date'] ?>">
+                                                        <div class="mb-2">
+                                                            <input type="file" name="logbook_file" class="form-control form-control-sm" required>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-sm btn-warning w-100">Unggah Ulang</button>
                                                         <?= form_close() ?>
                                                     <?php endif; ?>
                                                 <?php else : ?>
                                                     <p class="text-muted text-center">Belum ada bukti logbook yang diunggah untuk minggu ini.</p>
                                                     <hr>
                                                     <!-- Upload Form -->
-                                                    <?= form_open_multipart('pkl/applications/upload_logbook_weekly/' . $application->id) ?>
-                                                        <input type="hidden" name="week_number" value="<?= $week_number ?>">
-                                                        <input type="hidden" name="start_date" value="<?= $week['start_date'] ?>">
-                                                        <input type="hidden" name="end_date" value="<?= $week['end_date'] ?>">
-                                                        <div class="mb-2">
-                                                            <label class="form-label"><small>Unggah Bukti TTD (PDF):</small></label>
-                                                            <input type="file" name="logbook_file" class="form-control form-control-sm" required accept=".pdf">
-                                                        </div>
-                                                        <button type="submit" class="btn btn-sm btn-primary w-100">Unggah</button>
+                                                    <?= form_open_multipart('internship/applications/upload_logbook_weekly/' . $application->id) ?>
+                                                    <input type="hidden" name="week_number" value="<?= $week_number ?>">
+                                                    <input type="hidden" name="start_date" value="<?= $week['start_date'] ?>">
+                                                    <input type="hidden" name="end_date" value="<?= $week['end_date'] ?>">
+                                                    <div class="mb-2">
+                                                        <label class="form-label"><small>Unggah Bukti TTD (PDF):</small></label>
+                                                        <input type="file" name="logbook_file" class="form-control form-control-sm" required accept=".pdf">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-sm btn-primary w-100">Unggah</button>
                                                     <?= form_close() ?>
                                                 <?php endif; ?>
                                             </div>

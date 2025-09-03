@@ -21,14 +21,14 @@ class Seminar extends MY_Controller
 
         if (!$application || $application->student_id != $student_id) {
             $this->session->set_flashdata('error', 'Aplikasi tidak ditemukan.');
-            redirect('pkl/applications');
+            redirect('internship/applications');
             return;
         }
 
         $allowed_statuses = ['field_work_completed', 'seminar_requested', 'report_rejected', 'seminar_approved', 'seminar_scheduled', 'seminar_completed', 'revision', 'revision_submitted', 'revision_approved', 'finished'];
         if (!in_array($application->status, $allowed_statuses)) {
             $this->session->set_flashdata('error', 'Aplikasi Anda belum atau tidak dalam tahap seminar.');
-            redirect('pkl/applications');
+            redirect('internship/applications');
             return;
         }
 
@@ -56,7 +56,7 @@ class Seminar extends MY_Controller
         // Security and status check
         if (!$application || $application->student_id != $student_id || !in_array($application->status, ['field_work_completed', 'report_rejected'])) {
             $this->session->set_flashdata('error', 'Aksi tidak diizinkan.');
-            redirect('pkl/seminar/index/' . $application_id);
+            redirect('internship/seminar/index/' . $application_id);
             return;
         }
 
@@ -98,7 +98,7 @@ class Seminar extends MY_Controller
             $this->session->set_flashdata('error', 'Gagal mengunggah laporan: ' . $this->upload->display_errors());
         }
 
-        redirect('pkl/seminar/index/' . $application_id);
+        redirect('internship/seminar/index/' . $application_id);
     }
 
     /**
@@ -156,7 +156,7 @@ class Seminar extends MY_Controller
 
         if ($this->form_validation->run() === FALSE) {
             $this->session->set_flashdata('error', validation_errors());
-            redirect('pkl/seminar/manage/' . $application_id);
+            redirect('internship/seminar/manage/' . $application_id);
             return;
         }
 
@@ -178,7 +178,7 @@ class Seminar extends MY_Controller
         ]);
 
         $this->session->set_flashdata('success', 'Jadwal seminar berhasil disimpan.');
-        redirect('pkl/seminar/manage/' . $application_id);
+        redirect('internship/seminar/manage/' . $application_id);
     }
 
     /**
@@ -208,14 +208,14 @@ class Seminar extends MY_Controller
 
         if ($this->form_validation->run() === FALSE) {
             $this->session->set_flashdata('error', validation_errors());
-            redirect('pkl/seminar/manage/' . $application_id);
+            redirect('internship/seminar/manage/' . $application_id);
             return;
         }
 
         // 1. Handle Berita Acara Upload
         $berita_acara_path = $this->_do_upload('berita_acara_file', 'berita_acara_' . $application_id);
         if (!$berita_acara_path) {
-            redirect('pkl/seminar/manage/' . $application_id);
+            redirect('internship/seminar/manage/' . $application_id);
             return;
         }
         $this->app->insert_document([
@@ -256,7 +256,7 @@ class Seminar extends MY_Controller
         ]);
 
         $this->session->set_flashdata('success', 'Penilaian seminar berhasil disimpan.');
-        redirect('pkl/seminar/manage/' . $application_id);
+        redirect('internship/seminar/manage/' . $application_id);
     }
 
     /**
@@ -331,7 +331,7 @@ class Seminar extends MY_Controller
             $this->session->set_flashdata('success', 'Laporan akhir disetujui tanpa revisi.');
         }
 
-        redirect('pkl/seminar/manage/' . $application_id);
+        redirect('internship/seminar/manage/' . $application_id);
     }
 
     public function upload_revision($application_id)
@@ -366,7 +366,7 @@ class Seminar extends MY_Controller
 
             $this->session->set_flashdata('success', 'Laporan revisi berhasil diunggah. Menunggu persetujuan akhir dari dosen.');
         }
-        redirect('pkl/seminar/index/' . $application_id);
+        redirect('internship/seminar/index/' . $application_id);
     }
 
     public function approve_final_report($application_id)
@@ -398,7 +398,7 @@ class Seminar extends MY_Controller
         ]);
 
         $this->session->set_flashdata('success', 'Laporan akhir telah disetujui. Mahasiswa sekarang dapat mengunggah lembar pengesahan.');
-        redirect('pkl/seminar/manage/' . $application_id);
+        redirect('internship/seminar/manage/' . $application_id);
     }
 
     public function upload_final_sheet($application_id)
@@ -433,7 +433,7 @@ class Seminar extends MY_Controller
 
             $this->session->set_flashdata('success', 'Selamat! Anda telah menyelesaikan seluruh rangkaian kegiatan PKL.');
         }
-        redirect('pkl/seminar/index/' . $application_id);
+        redirect('internship/seminar/index/' . $application_id);
     }
 
     /**
@@ -470,7 +470,7 @@ class Seminar extends MY_Controller
         ]);
 
         $this->session->set_flashdata('success', 'Laporan PKL disetujui untuk seminar.');
-        redirect('pkl/seminar/manage/' . $application_id);
+        redirect('internship/seminar/manage/' . $application_id);
     }
 
     /**
@@ -508,6 +508,6 @@ class Seminar extends MY_Controller
         ]);
 
         $this->session->set_flashdata('error', 'Laporan PKL ditolak.');
-        redirect('pkl/seminar/manage/' . $application_id);
+        redirect('internship/seminar/manage/' . $application_id);
     }
 }

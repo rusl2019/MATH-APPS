@@ -47,7 +47,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <div class="card-body">
                 <p>Silakan unggah surat rekomendasi dalam format PDF.</p>
 
-                <?= form_open_multipart('pkl/applications/upload_recommendation/' . $application_id); ?>
+                <?= form_open_multipart('internship/applications/upload_recommendation/' . $application_id); ?>
 
                 <div class="mb-4">
                     <label class="form-label">Unggah Surat Rekomendasi (PDF) <span class="text-danger">*</span></label>
@@ -56,7 +56,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="<?= site_url('pkl/applications/all_applications') ?>" class="btn btn-secondary">Batal</a>
+                    <a href="<?= site_url('internship/applications/all_applications') ?>" class="btn btn-secondary">Batal</a>
                     <button type="submit" class="btn btn-primary">Unggah Surat</button>
                 </div>
 

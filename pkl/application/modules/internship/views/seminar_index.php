@@ -128,7 +128,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <p>Silakan unggah draft laporan PKL Anda untuk meminta persetujuan seminar dari dosen pembimbing.</p>
                             <?php endif; ?>
 
-                            <?= form_open_multipart('pkl/seminar/upload_report/' . $application->id); ?>
+                            <?= form_open_multipart('internship/seminar/upload_report/' . $application->id); ?>
                             <div class="mb-3">
                                 <label for="report_file" class="form-label">File Laporan PKL (PDF, max 5MB) <span class="text-danger">*</span></label>
                                 <input type="file" name="report_file" class="form-control" accept=".pdf" required>
@@ -188,7 +188,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </div>
                             <?php endif; ?>
 
-                            <?= form_open_multipart('pkl/seminar/upload_revision/' . $application->id); ?>
+                            <?= form_open_multipart('internship/seminar/upload_revision/' . $application->id); ?>
                             <div class="mb-3">
                                 <label class="form-label">Unggah Laporan Hasil Revisi (PDF) <span class="text-danger">*</span></label>
                                 <input type="file" name="revision_file" class="form-control" accept=".pdf" required>
@@ -205,7 +205,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <div class="card-header bg-success text-white">Langkah Akhir: Unggah Lembar Pengesahan</div>
                         <div class="card-body">
                             <p>Selamat, laporan akhir Anda telah disetujui! Langkah terakhir adalah mengunggah Lembar Pengesahan yang telah ditandatangani lengkap.</p>
-                            <?= form_open_multipart('pkl/seminar/upload_final_sheet/' . $application->id); ?>
+                            <?= form_open_multipart('internship/seminar/upload_final_sheet/' . $application->id); ?>
                             <div class="mb-3">
                                 <label class="form-label">Unggah Lembar Pengesahan (PDF) <span class="text-danger">*</span></label>
                                 <input type="file" name="final_sheet_file" class="form-control" accept=".pdf" required>
@@ -251,7 +251,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         </div>
 
         <div class="mt-4">
-            <a href="<?= site_url('pkl/applications') ?>" class="btn btn-light">Kembali ke Dashboard PKL</a>
+            <a href="<?= site_url('internship/applications') ?>" class="btn btn-light">Kembali ke Dashboard PKL</a>
         </div>
     </div>
     <!--end::Container-->

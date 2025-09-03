@@ -29,7 +29,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <!--begin::Container-->
     <div class="container-fluid">
         <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
-        <?= form_open_multipart('pkl/applications/create'); ?>
+        <?= form_open_multipart('internship/applications/create'); ?>
 
         <?php if ($this->session->flashdata('error')) : ?>
             <div class="alert alert-danger">
@@ -146,7 +146,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         </div>
 
         <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
-        <a href="<?= site_url('pkl/applications') ?>" class="btn btn-secondary">Batal</a>
+        <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary">Batal</a>
         <?= form_close(); ?>
     </div>
     <!--end::Container-->

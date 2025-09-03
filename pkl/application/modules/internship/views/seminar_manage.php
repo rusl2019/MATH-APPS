@@ -45,7 +45,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <div class="card-header bg-dark text-white">Langkah 2: Jadwalkan Seminar</div>
                         <div class="card-body">
                             <p>Laporan mahasiswa telah disetujui. Silakan tentukan jadwal seminar.</p>
-                            <?= form_open('pkl/seminar/save_schedule/' . $application->id); ?>
+                            <?= form_open('internship/seminar/save_schedule/' . $application->id); ?>
                             <div class="mb-3">
                                 <label for="seminar_date" class="form-label">Tanggal & Waktu Seminar <span class="text-danger">*</span></label>
                                 <input type="datetime-local" name="seminar_date" class="form-control" required>
@@ -66,7 +66,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <div class="card-header bg-dark text-white">Langkah 3: Penilaian Seminar</div>
                         <div class="card-body">
                             <p>Seminar telah dilaksanakan. Silakan isi form penilaian dan unggah berita acara.</p>
-                            <?= form_open_multipart('pkl/seminar/save_assessment/' . $application->id); ?>
+                            <?= form_open_multipart('internship/seminar/save_assessment/' . $application->id); ?>
                             <h5 class="mt-3">Komponen Penilaian Seminar</h5>
                             <hr>
                             <div class="row mb-3">
@@ -101,7 +101,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <div class="card-header bg-warning text-dark">Langkah 4: Mulai Tahap Revisi</div>
                         <div class="card-body">
                             <p>Penilaian seminar telah disimpan. Jika mahasiswa memerlukan revisi, silakan tuliskan catatan revisi di bawah ini dan mulai tahap revisi. Jika tidak ada revisi, Anda dapat langsung menyetujui laporan akhir.</p>
-                            <?= form_open('pkl/seminar/start_revision/' . $application->id); ?>
+                            <?= form_open('internship/seminar/start_revision/' . $application->id); ?>
                             <div class="mb-3">
                                 <label class="form-label">Catatan Revisi (Opsional)</label>
                                 <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan catatan revisi untuk mahasiswa..."></textarea>
@@ -121,7 +121,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <p>Mahasiswa telah mengunggah laporan hasil revisi. Silakan periksa kembali.</p>
                             <a href="#" class="btn btn-info" target="_blank">Lihat Laporan Revisi</a>
                             <hr>
-                            <a href="<?= site_url('pkl/seminar/approve_final_report/' . $application->id) ?>" class="btn btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan akhir ini?')">Setujui Laporan Akhir</a>
+                            <a href="<?= site_url('internship/seminar/approve_final_report/' . $application->id) ?>" class="btn btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui laporan akhir ini?')">Setujui Laporan Akhir</a>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -199,7 +199,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         </div>
 
         <div class="mt-4">
-            <a href="<?= site_url('pkl/applications/approvals') ?>" class="btn btn-light">Kembali ke Daftar Approval</a>
+            <a href="<?= site_url('internship/applications/approvals') ?>" class="btn btn-light">Kembali ke Daftar Approval</a>
         </div>
     </div>
     <!--end::Container-->

@@ -163,8 +163,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                         <!-- PKL Management for Mahasiswa -->
                         <?php if (in_array('student', $roles)) : ?>
-                            <li class="nav-item <?php echo is_active('pkl', 1, 'menu-open'); ?>">
-                                <a href="#" class="nav-link <?php echo is_active('pkl'); ?>">
+                            <li class="nav-item <?php echo is_active('internship', 1, 'menu-open'); ?>">
+                                <a href="#" class="nav-link <?php echo is_active('internship'); ?>">
                                     <i class="nav-icon bi bi-briefcase"></i>
                                     <p>
                                         PKL Management
@@ -173,7 +173,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="<?php echo base_url('pkl/applications'); ?>" class="nav-link <?php echo is_active('applications', 2); ?>">
+                                        <a href="<?php echo base_url('internship/applications'); ?>" class="nav-link <?php echo is_active('applications', 2); ?>">
                                             <i class="nav-icon bi bi-list-check"></i>
                                             <p>My Applications</p>
                                         </a>
@@ -184,8 +184,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                         <!-- PKL Management for Dosen, KPS, Kadep -->
                         <?php if (in_array('lecturer', $roles) || in_array('head study program', $roles) || in_array('head department', $roles)) : ?>
-                            <li class="nav-item <?php echo is_active('pkl', 1, 'menu-open'); ?>">
-                                <a href="#" class="nav-link <?php echo is_active('pkl'); ?>">
+                            <li class="nav-item <?php echo is_active('internship', 1, 'menu-open'); ?>">
+                                <a href="#" class="nav-link <?php echo is_active('internship'); ?>">
                                     <i class="nav-icon bi bi-briefcase"></i>
                                     <p>
                                         PKL Management
@@ -194,7 +194,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="<?php echo base_url('pkl/applications/approvals'); ?>" class="nav-link <?php echo is_active('approvals', 3); ?>">
+                                        <a href="<?php echo base_url('internship/applications/approvals'); ?>" class="nav-link <?php echo is_active('approvals', 3); ?>">
                                             <i class="nav-icon bi bi-check-circle"></i>
                                             <p>Approvals</p>
                                         </a>
@@ -202,7 +202,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </ul>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="<?php echo base_url('pkl/applications/all_applications'); ?>" class="nav-link <?php echo is_active('all_applications', 3); ?>">
+                                        <a href="<?php echo base_url('internship/applications/all_applications'); ?>" class="nav-link <?php echo is_active('all_applications', 3); ?>">
                                             <i class="nav-icon bi bi-list"></i>
                                             <p>All Applications</p>
                                         </a>

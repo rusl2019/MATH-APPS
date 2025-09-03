@@ -92,7 +92,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </td>
                                 <td>
                                     <?php if ($application->status === 'approved_kadep') : ?>
-                                        <a href="<?= site_url('pkl/applications/upload_recommendation/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-primary">Unggah Surat Rekomendasi</a>
+                                        <a href="<?= site_url('internship/applications/upload_recommendation/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-primary">Unggah Surat Rekomendasi</a>
                                     <?php endif; ?>
                                 </td>
                             </tr>

@@ -1,20 +1,132 @@
 {
-  "id": "041aef77-5a59-4602-a579-08d94ed14eb7",
+  "id": "837df03d-e82d-4247-87a4-bbc177d9514b",
   "version": "2.0",
   "name": "MATH-APPS",
   "url": "http://localhost",
   "tests": [{
-    "id": "4dda0ce2-70b4-4c77-bea6-6909268ce090",
-    "name": "application",
+    "id": "8e6562c9-940a-48b2-9d04-aa50a25ecca9",
+    "name": "01-Login",
     "commands": [{
-      "id": "c561a779-00e7-4927-915d-585b63548093",
+      "id": "3e3ec2a4-2f41-4092-be36-172f4183c0ac",
       "comment": "",
       "command": "open",
-      "target": "/pkl/pkl/applications/create",
+      "target": "/pkl",
       "targets": [],
       "value": ""
     }, {
-      "id": "f9196aa8-388e-4a9c-9ee3-0014201a1b31",
+      "id": "7601a325-b798-4cf1-bada-5203755c1f2d",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["name=username", "name"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//form[@id='kc-form-login']/div/div/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ruslan"
+    }, {
+      "id": "6733995a-d5f4-4a26-bb5d-9e7fbf4aaf90",
+      "comment": "",
+      "command": "type",
+      "target": "id=password",
+      "targets": [
+        ["id=password", "id"],
+        ["name=password", "name"],
+        ["css=#password", "css:finder"],
+        ["xpath=//input[@id='password']", "xpath:attributes"],
+        ["xpath=//form[@id='kc-form-login']/div[2]/div/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/input", "xpath:position"]
+      ],
+      "value": "HelloWorld52;"
+    }, {
+      "id": "6869b307-daaf-4d9b-8775-18b69d7112bd",
+      "comment": "",
+      "command": "click",
+      "target": "id=kc-login",
+      "targets": [
+        ["id=kc-login", "id"],
+        ["name=login", "name"],
+        ["css=#kc-login", "css:finder"],
+        ["xpath=//input[@id='kc-login']", "xpath:attributes"],
+        ["xpath=//div[@id='kc-form-buttons']/input[2]", "xpath:idRelative"],
+        ["xpath=//input[2]", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "b70d5402-d74e-46ed-a187-bdf71f8e46df",
+    "name": "02-Login As Student",
+    "commands": [{
+      "id": "a75e42b3-780b-4fb6-b938-d85d00508a7f",
+      "comment": "",
+      "command": "open",
+      "target": "/pkl/switch_user",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "689d9c48-a622-49fa-8967-9b7c00b1c1c6",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-user_type-container",
+      "targets": [
+        ["id=select2-user_type-container", "id"],
+        ["css=#select2-user_type-container", "css:finder"],
+        ["xpath=//span[@id='select2-user_type-container']", "xpath:attributes"],
+        ["xpath=//form[@id='login_form']/div/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "1cdd1f89-422f-4ee7-a283-e6674868c798",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-user_id-container",
+      "targets": [
+        ["id=select2-user_id-container", "id"],
+        ["css=#select2-user_id-container", "css:finder"],
+        ["xpath=//span[@id='select2-user_id-container']", "xpath:attributes"],
+        ["xpath=//div[@id='user_id_container']/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div[2]/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "d9024b30-0ddd-47a5-83bd-a8c07a73ecd1",
+      "comment": "",
+      "command": "click",
+      "target": "css=.select2-search__field",
+      "targets": [
+        ["css=.select2-search__field", "css:finder"],
+        ["xpath=//input[@type='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "51be25b5-17a1-4368-b651-c0d067c3951c",
+      "comment": "",
+      "command": "type",
+      "target": "css=.select2-search__field",
+      "targets": [
+        ["css=.select2-search__field", "css:finder"],
+        ["xpath=//input[@type='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "adit"
+    }]
+  }, {
+    "id": "ae588ddc-2c2e-4b8b-9731-2dea0298146c",
+    "name": "03-Registration",
+    "commands": [{
+      "id": "c9a98c19-69cc-4934-a20e-b5af37c578da",
+      "comment": "",
+      "command": "open",
+      "target": "/pkl/internship/applications/create",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d9a667bc-4560-4fb8-86dd-e3e2df3e37dd",
       "comment": "",
       "command": "type",
       "target": "name=phone_number",
@@ -22,52 +134,52 @@
         ["name=phone_number", "name"],
         ["css=.input-group > .form-control", "css:finder"],
         ["xpath=//input[@name='phone_number']", "xpath:attributes"],
-        ["xpath=//main[@id='main']/div/form/div[5]/div/input", "xpath:idRelative"],
-        ["xpath=//div[5]/div/input", "xpath:position"]
+        ["xpath=//main[@id='main']/div[2]/div/form/div[6]/div/input", "xpath:idRelative"],
+        ["xpath=//div[6]/div/input", "xpath:position"]
       ],
       "value": "81338851192"
     }, {
-      "id": "c79232a0-5ed8-43e6-a9e4-16c6cc912934",
+      "id": "10378a46-b47d-4ba1-97fa-f98c0934552d",
       "comment": "",
       "command": "select",
       "target": "name=lecturer_id",
       "targets": [],
       "value": "label=Prof.Dr. Agus Widodo, M.Kes"
     }, {
-      "id": "1a65bb9d-bad6-4936-a8e3-e289294a296a",
+      "id": "14db7394-44e9-4d1d-a3ed-44e4865b4d4d",
       "comment": "",
       "command": "select",
       "target": "name=place_id",
       "targets": [],
       "value": "label=PT Jasa Raharja Kota Malang"
     }, {
-      "id": "d573f320-5fba-411e-a1a9-5e003b4493a7",
+      "id": "13c6ec9f-da53-4595-bb38-7cb525a46379",
       "comment": "",
       "command": "type",
       "target": "name=addressed_to",
       "targets": [
         ["name=addressed_to", "name"],
-        ["css=.mb-3:nth-child(8) > .form-control", "css:finder"],
+        ["css=.mb-3:nth-child(9) > .form-control", "css:finder"],
         ["xpath=//input[@name='addressed_to']", "xpath:attributes"],
-        ["xpath=//main[@id='main']/div/form/div[8]/input", "xpath:idRelative"],
-        ["xpath=//div[8]/input", "xpath:position"]
+        ["xpath=//main[@id='main']/div[2]/div/form/div[9]/input", "xpath:idRelative"],
+        ["xpath=//div[9]/input", "xpath:position"]
       ],
       "value": "Kepala HRD"
     }, {
-      "id": "1cdd50f2-fff2-427d-ba72-5450988883d8",
+      "id": "e930b02d-f86b-4f2e-bcb0-f5424fe8f5b0",
       "comment": "",
       "command": "type",
       "target": "name=equivalent_activity",
       "targets": [
         ["name=equivalent_activity", "name"],
-        ["css=.mb-3:nth-child(9) > .form-control", "css:finder"],
+        ["css=.mb-3:nth-child(10) > .form-control", "css:finder"],
         ["xpath=//input[@name='equivalent_activity']", "xpath:attributes"],
-        ["xpath=//main[@id='main']/div/form/div[9]/input", "xpath:idRelative"],
-        ["xpath=//div[9]/input", "xpath:position"]
+        ["xpath=//main[@id='main']/div[2]/div/form/div[10]/input", "xpath:idRelative"],
+        ["xpath=//div[10]/input", "xpath:position"]
       ],
       "value": "Tidak tau"
     }, {
-      "id": "08f00f99-5c3e-46c8-b22b-f250f9f7482c",
+      "id": "40021d1b-d8a3-4802-b0e4-986485af71f3",
       "comment": "",
       "command": "type",
       "target": "name=activity_period_start",
@@ -75,12 +187,12 @@
         ["name=activity_period_start", "name"],
         ["css=.col-md-6:nth-child(1) > .form-control", "css:finder"],
         ["xpath=//input[@name='activity_period_start']", "xpath:attributes"],
-        ["xpath=//main[@id='main']/div/form/div[10]/div/input", "xpath:idRelative"],
-        ["xpath=//div[10]/div/input", "xpath:position"]
+        ["xpath=//main[@id='main']/div[2]/div/form/div[11]/div/input", "xpath:idRelative"],
+        ["xpath=//div[11]/div/input", "xpath:position"]
       ],
-      "value": "2024-07-29"
+      "value": "2025-09-03"
     }, {
-      "id": "77191519-f805-4a7a-acc7-357caf9a6f4a",
+      "id": "ff8bdd50-1e2f-46b8-99e9-a5a21a2fbded",
       "comment": "",
       "command": "type",
       "target": "name=activity_period_end",
@@ -88,45 +200,197 @@
         ["name=activity_period_end", "name"],
         ["css=.col-md-6:nth-child(2) > .form-control", "css:finder"],
         ["xpath=//input[@name='activity_period_end']", "xpath:attributes"],
-        ["xpath=//main[@id='main']/div/form/div[10]/div[2]/input", "xpath:idRelative"],
-        ["xpath=//div[10]/div[2]/input", "xpath:position"]
+        ["xpath=//main[@id='main']/div[2]/div/form/div[11]/div[2]/input", "xpath:idRelative"],
+        ["xpath=//div[11]/div[2]/input", "xpath:position"]
       ],
-      "value": "2024-07-29"
+      "value": "2025-10-03"
+    }]
+  }, {
+    "id": "e572beec-f50f-445e-b09d-053bc515ba4a",
+    "name": "04-Login As Lecturer",
+    "commands": [{
+      "id": "0ef7dc77-e171-4e24-aa8c-37591c1a00b0",
+      "comment": "",
+      "command": "open",
+      "target": "/pkl/switch_user",
+      "targets": [],
+      "value": ""
     }, {
-      "id": "325e9ad0-cc45-459e-ac26-f488aea664bf",
+      "id": "fdfbe083-4b2c-40f6-b8d6-74579138aeec",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-user_type-container",
+      "targets": [
+        ["id=select2-user_type-container", "id"],
+        ["css=#select2-user_type-container", "css:finder"],
+        ["xpath=//span[@id='select2-user_type-container']", "xpath:attributes"],
+        ["xpath=//form[@id='login_form']/div/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "df3a70ba-7ea8-4310-8e04-291b1b25b545",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-user_id-container",
+      "targets": [
+        ["id=select2-user_id-container", "id"],
+        ["css=#select2-user_id-container", "css:finder"],
+        ["xpath=//span[@id='select2-user_id-container']", "xpath:attributes"],
+        ["xpath=//div[@id='user_id_container']/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div[2]/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "fda6111c-b5d7-471d-8fb5-6ccc140e6597",
+      "comment": "",
+      "command": "click",
+      "target": "css=.select2-search__field",
+      "targets": [
+        ["css=.select2-search__field", "css:finder"],
+        ["xpath=//input[@type='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "95474033-fc4d-45a7-9134-326d00ece19d",
       "comment": "",
       "command": "type",
-      "target": "name=type",
+      "target": "css=.select2-search__field",
       "targets": [
-        ["name=type", "name"],
-        ["css=.mb-3:nth-child(12) > .form-control", "css:finder"],
-        ["xpath=//input[@name='type']", "xpath:attributes"],
-        ["xpath=//main[@id='main']/div/form/div[12]/input", "xpath:idRelative"],
-        ["xpath=//div[12]/input", "xpath:position"]
+        ["css=.select2-search__field", "css:finder"],
+        ["xpath=//input[@type='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
       ],
-      "value": "Praktik"
+      "value": "agus"
+    }]
+  }, {
+    "id": "b5bb05d3-3f9a-42ca-a5c9-e62c1ab22805",
+    "name": "05-Login As KPS",
+    "commands": [{
+      "id": "68fb4dbc-0a93-4fee-9740-091677be4975",
+      "comment": "",
+      "command": "open",
+      "target": "/pkl/switch_user",
+      "targets": [],
+      "value": ""
     }, {
-      "id": "77e9f18e-4689-453d-ba49-85e3d7b78124",
+      "id": "a3eb6d5f-4dc9-4e30-9be8-fd3d207ebf03",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-user_type-container",
+      "targets": [
+        ["id=select2-user_type-container", "id"],
+        ["css=#select2-user_type-container", "css:finder"],
+        ["xpath=//span[@id='select2-user_type-container']", "xpath:attributes"],
+        ["xpath=//form[@id='login_form']/div/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "9e64e530-fc30-4e27-ab1e-d1fa9aa9d4b2",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-user_id-container",
+      "targets": [
+        ["id=select2-user_id-container", "id"],
+        ["css=#select2-user_id-container", "css:finder"],
+        ["xpath=//span[@id='select2-user_id-container']", "xpath:attributes"],
+        ["xpath=//div[@id='user_id_container']/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div[2]/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "1a21201e-654d-408e-9977-9cfdbe944972",
+      "comment": "",
+      "command": "click",
+      "target": "css=.select2-search__field",
+      "targets": [
+        ["css=.select2-search__field", "css:finder"],
+        ["xpath=//input[@type='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c98bf7e8-7d45-4756-b277-d63b8a72b6a5",
       "comment": "",
       "command": "type",
-      "target": "css=.mb-3:nth-child(12) > .form-control",
+      "target": "css=.select2-search__field",
       "targets": [
-        ["css=.mb-3:nth-child(12) > .form-control", "css:finder"],
-        ["xpath=//input[@name='title']", "xpath:attributes"],
-        ["xpath=//main[@id='main']/div/form/div[12]/input", "xpath:idRelative"],
-        ["xpath=//div[12]/input", "xpath:position"]
+        ["css=.select2-search__field", "css:finder"],
+        ["xpath=//input[@type='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
       ],
-      "value": "Praktik"
+      "value": "ummu"
+    }]
+  }, {
+    "id": "e89f35aa-f212-4ec9-8cf6-a24c8448fa03",
+    "name": "06-Login As KaDep",
+    "commands": [{
+      "id": "a3f3bcae-0fcc-4e76-9869-4c2ceb71e672",
+      "comment": "",
+      "command": "open",
+      "target": "/pkl/switch_user",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b37a00a0-20a7-4bdb-9c70-1f2d2616f1a1",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-user_type-container",
+      "targets": [
+        ["id=select2-user_type-container", "id"],
+        ["css=#select2-user_type-container", "css:finder"],
+        ["xpath=//span[@id='select2-user_type-container']", "xpath:attributes"],
+        ["xpath=//form[@id='login_form']/div/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "d70f8793-35d2-4f31-9eee-9dd21ef4acb9",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-user_id-container",
+      "targets": [
+        ["id=select2-user_id-container", "id"],
+        ["css=#select2-user_id-container", "css:finder"],
+        ["xpath=//span[@id='select2-user_id-container']", "xpath:attributes"],
+        ["xpath=//div[@id='user_id_container']/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div[2]/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "047c3afb-865f-4208-9045-0fd8dfcf27bb",
+      "comment": "",
+      "command": "click",
+      "target": "css=.select2-search__field",
+      "targets": [
+        ["css=.select2-search__field", "css:finder"],
+        ["xpath=//input[@type='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "87c82348-1b17-4b5d-ac01-3f9981681168",
+      "comment": "",
+      "command": "type",
+      "target": "css=.select2-search__field",
+      "targets": [
+        ["css=.select2-search__field", "css:finder"],
+        ["xpath=//input[@type='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "sa`adatul"
     }]
   }],
   "suites": [{
-    "id": "de0ccea3-31f3-4a8b-b115-3b0945445420",
+    "id": "19bc9b46-b6a3-40b2-ba51-bbce4b080510",
     "name": "Default Suite",
     "persistSession": false,
     "parallel": false,
     "timeout": 300,
-    "tests": ["4dda0ce2-70b4-4c77-bea6-6909268ce090"]
+    "tests": ["8e6562c9-940a-48b2-9d04-aa50a25ecca9"]
   }],
-  "urls": ["http://localhost/"],
+  "urls": ["https://iam.ub.ac.id/", "http://localhost/"],
   "plugins": []
 }

@@ -43,7 +43,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <div class="card-body">
                 <p>Silakan pilih keputusan dari instansi terkait pengajuan PKL Anda dan unggah surat balasan resmi.</p>
 
-                <?= form_open_multipart('pkl/applications/report_decision/' . $application->id); ?>
+                <?= form_open_multipart('internship/applications/report_decision/' . $application->id); ?>
 
                 <div class="mb-4">
                     <h5>Keputusan Instansi</h5>
@@ -68,7 +68,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="<?= site_url('pkl/applications') ?>" class="btn btn-secondary">Batal</a>
+                    <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary">Batal</a>
                     <button type="submit" class="btn btn-primary">Kirim Laporan</button>
                 </div>
 
