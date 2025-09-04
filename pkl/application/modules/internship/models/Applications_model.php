@@ -69,6 +69,14 @@ class Applications_model extends CI_Model
     }
 
     /**
+     * Get semester by ID
+     */
+    public function get_semester_by_id($semester_id)
+    {
+        return $this->db->get_where('pkl_semesters', ['id' => $semester_id])->row();
+    }
+
+    /**
      * Get application by ID
      */
     public function get_application_by_id($id)

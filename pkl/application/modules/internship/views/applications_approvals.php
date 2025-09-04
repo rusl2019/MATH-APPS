@@ -255,11 +255,24 @@ if (!function_exists('get_status_label')) {
             <div class="row">
                 <div class="col-md-6">
                     <h6>Data Mahasiswa</h6><hr class="mt-1">
-                    <dl class="row"><dt class="col-sm-4">Nama</dt><dd class="col-sm-8">${student.name || '-'}</dd><dt class="col-sm-4">NIM</dt><dd class="col-sm-8">${student.id || '-'}</dd><dt class="col-sm-4">Program Studi</dt><dd class="col-sm-8">${student.study_program || '-'}</dd></dl>
+                    <dl class="row">
+                        <dt class="col-sm-4">Nama</dt><dd class="col-sm-8">${student.name || '-'}</dd>
+                        <dt class="col-sm-4">NIM</dt><dd class="col-sm-8">${student.id || '-'}</dd>
+                        <dt class="col-sm-4">Email</dt><dd class="col-sm-8">${student.email || '-'}</dd>
+                        <dt class="col-sm-4">Program Studi</dt><dd class="col-sm-8">${student.study_program || '-'}</dd>
+                        <dt class="col-sm-4">No HP/WA</dt><dd class="col-sm-8">${app.phone_number || '-'}</dd>
+                    </dl>
                 </div>
                 <div class="col-md-6">
                     <h6>Data Pengajuan</h6><hr class="mt-1">
-                    <dl class="row"><dt class="col-sm-4">Dosen</dt><dd class="col-sm-8">${app.lecturer_name || '-'}</dd><dt class="col-sm-4">Instansi</dt><dd class="col-sm-8">${app.place_name || '-'}</dd><dt class="col-sm-4">Periode</dt><dd class="col-sm-8">${period}</dd></dl>
+                    <dl class="row">
+                        <dt class="col-sm-4">Dosen</dt><dd class="col-sm-8">${app.lecturer_name || '-'}</dd>
+                        <dt class="col-sm-4">Surat ditujukan kepada</dt><dd class="col-sm-8">${app.addressed_to || '-'}</dd>
+                        <dt class="col-sm-4">Instansi</dt><dd class="col-sm-8">${app.place_name || '-'}</dd>
+                        <dt class="col-sm-4">Alamat</dt><dd class="col-sm-8">${app.place_address || '-'}</dd>
+                        <dt class="col-sm-4">Kegiatan Setara</dt><dd class="col-sm-8">${app.equivalent_activity || '-'}</dd>
+                        <dt class="col-sm-4">Periode</dt><dd class="col-sm-8">${period}</dd>
+                    </dl>
                 </div>
             </div>
             <h6 class="mt-3">Dokumen Pengajuan</h6><hr class="mt-1">

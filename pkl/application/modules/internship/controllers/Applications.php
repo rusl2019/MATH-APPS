@@ -21,7 +21,15 @@ class Applications extends MY_Controller
         $this->data['title'] = 'Daftar Pengajuan PKL Saya';
         $this->data['applications'] = $this->app->get_by_student($student_id);
         $this->data['student_detail'] = $this->app->get_student($student_id);
-        $this->data['documents'] = $this->app->get_documents_by_student($student_id);
+        
+        // Get documents for the first (latest) application only
+        $documents = [];
+        if (!empty($this->data['applications'])) {
+            $first_application = $this->data['applications'][0];
+            $documents = $this->app->get_documents_by_application($first_application->id);
+        }
+        $this->data['documents'] = $documents;
+        
         $this->render('applications_index');
     }
 
@@ -38,25 +46,45 @@ class Applications extends MY_Controller
             return;
         }
 
-        // Validate semester and submission limits
-        $active_semester = $this->app->get_active_semester();
-        if (
-            !$this->validate_semester($active_semester) ||
-            !$this->validate_submission_limit($student_id, $active_semester)
-        ) {
-            return;
-        }
-
         // Set form validation rules
         $this->set_application_validation_rules();
 
         if ($this->form_validation->run() === false) {
-            $this->load_form_data($student_id, $active_semester->id);
+            // Load form data with active semester as default
+            $active_semester = $this->app->get_active_semester();
+            $active_semester_id = $active_semester ? $active_semester->id : null;
+            $this->load_form_data($student_id, $active_semester_id);
             $this->render('applications_form');
         } else {
+            // Validate semester and submission limits using the selected semester
+            $selected_semester_id = $this->input->post('semester_id');
+            $selected_semester = $this->app->get_semester_by_id($selected_semester_id);
+            
+            if (!$selected_semester) {
+                $this->session->set_flashdata('error', 'Semester yang dipilih tidak valid.');
+                redirect('internship/applications/create');
+                return;
+            }
+            
+            if (!$this->validate_submission_limit($student_id, $selected_semester)) {
+                redirect('internship/applications/create');
+                return;
+            }
+
             $application_id = $this->process_application_submission($student_id);
 
             if ($application_id) {
+                $user_id = $this->session->userdata('id');
+
+                $this->app->insert_workflow([
+                    'application_id' => $application_id,
+                    'step_name' => 'Pengajuan PKL',
+                    'actor_id' => $user_id,
+                    'role' => 'mahasiswa',
+                    'status' => 'submitted',
+                    'remarks' => 'Formulir pengajuan diajukan',
+                ]);
+
                 $this->process_documents($application_id);
                 $this->session->set_flashdata('success', 'Pengajuan PKL berhasil disimpan!');
             } else {
@@ -605,18 +633,7 @@ class Applications extends MY_Controller
         }
     }
 
-    /**
-     * Validate active semester
-     */
-    private function validate_semester($active_semester)
-    {
-        if (!$active_semester) {
-            $this->session->set_flashdata('error', 'Saat ini tidak ada semester aktif yang ditetapkan oleh admin. Pendaftaran ditutup.');
-            redirect('internship/applications');
-            return false;
-        }
-        return true;
-    }
+    
 
     /**
      * Validate submission limit
@@ -708,16 +725,6 @@ class Applications extends MY_Controller
 
             if ($this->upload->do_upload($field_name)) {
                 $file = $this->upload->data();
-                $user_id = $this->session->userdata('id');
-
-                $this->app->insert_workflow([
-                    'application_id' => $application_id,
-                    'step_name' => 'Pengajuan PKL',
-                    'actor_id' => $user_id,
-                    'role' => 'mahasiswa',
-                    'status' => 'submitted',
-                    'remarks' => 'Formulir pengajuan diajukan',
-                ]);
 
                 $this->app->insert_document([
                     'application_id' => $application_id,
