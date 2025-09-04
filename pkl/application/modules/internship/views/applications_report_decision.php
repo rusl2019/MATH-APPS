@@ -29,52 +29,95 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <!--begin::Container-->
     <div class="container-fluid">
         <?php if ($this->session->flashdata('error')) : ?>
-            <div class="alert alert-danger"><?= $this->session->flashdata('error'); ?></div>
-        <?php endif; ?>
-
-        <?php if ($this->session->flashdata('success')) : ?>
-            <div class="alert alert-success"><?= $this->session->flashdata('success'); ?></div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('error'); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         <?php endif; ?>
 
         <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">
-                Laporan Keputusan Instansi
+            <div class="card-header">
+                <h5 class="card-title mb-0">Laporan Keputusan Instansi</h5>
             </div>
             <div class="card-body">
-                <p>Silakan pilih keputusan dari instansi terkait pengajuan PKL Anda dan unggah surat balasan resmi.</p>
+                <p class="card-text">Silakan pilih keputusan dari instansi terkait pengajuan PKL Anda dan unggah surat balasan resmi sebagai bukti.</p>
 
                 <?= form_open_multipart('internship/applications/report_decision/' . $application->id); ?>
 
                 <div class="mb-4">
-                    <h5>Keputusan Instansi</h5>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="decision" id="decision_accepted" value="accepted" required>
-                        <label class="form-check-label" for="decision_accepted">
-                            <span class="badge bg-success">Diterima</span> oleh Instansi
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="decision" id="decision_rejected" value="rejected" required>
-                        <label class="form-check-label" for="decision_rejected">
-                            <span class="badge bg-danger">Ditolak</span> oleh Instansi
-                        </label>
+                    <h6 class="form-label">Keputusan Instansi <span class="text-danger">*</span></h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check card-radio">
+                                <input class="form-check-input" type="radio" name="decision" id="decision_accepted" value="accepted" required>
+                                <label class="form-check-label" for="decision_accepted">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span>Diterima</span>
+                                    <small class="d-block">Pilih jika instansi menerima pengajuan PKL Anda.</small>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check card-radio">
+                                <input class="form-check-input" type="radio" name="decision" id="decision_rejected" value="rejected" required>
+                                <label class="form-check-label" for="decision_rejected">
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                    <span>Ditolak</span>
+                                    <small class="d-block">Pilih jika instansi menolak pengajuan PKL Anda.</small>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <label for="response_letter" class="form-label">Unggah Surat Balasan dari Instansi (PDF) <span class="text-danger">*</span></label>
                     <input type="file" name="response_letter" id="response_letter" class="form-control" accept=".pdf" required>
-                    <div class="form-text">Unggah surat resmi dari instansi sebagai bukti keputusan.</div>
+                    <div class="form-text">Unggah surat balasan resmi dari instansi sebagai bukti keputusan.</div>
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary">Batal</a>
-                    <button type="submit" class="btn btn-primary">Kirim Laporan</button>
+                <div class="d-flex justify-content-end">
+                    <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary me-2">Batal</a>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send me-2"></i>Kirim Laporan</button>
                 </div>
 
                 <?= form_close(); ?>
             </div>
         </div>
+
+<style>
+.card-radio {
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.card-radio:hover {
+    border-color: #86b7fe;
+}
+.card-radio input[type="radio"] {
+    display: none;
+}
+.card-radio input[type="radio"]:checked + .form-check-label {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.form-check-label {
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: .375rem;
+    padding: 1rem;
+}
+.form-check-label span {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+.form-check-label i {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+</style>
     </div>
     <!--end::Container-->
 </div>

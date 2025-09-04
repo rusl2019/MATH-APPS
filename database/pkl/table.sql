@@ -31,6 +31,7 @@ CREATE TABLE `pkl_applications` (
   `place_id` int(11) DEFAULT NULL,
   `addressed_to` varchar(255) DEFAULT NULL,
   `equivalent_activity` varchar(255) DEFAULT NULL,
+  `report_title` varchar(255) DEFAULT NULL,
   `status` enum('draft','submitted','approved_dosen','approved_kps','approved_kadep','recommendation_uploaded','rejected','rejected_instansi','ongoing','field_work_completed','seminar_requested','seminar_approved','seminar_scheduled','seminar_completed','revision','revision_submitted','revision_approved','finished') DEFAULT 'draft',
   `rejection_reason` text DEFAULT NULL,
   `reapplication_count` tinyint(1) DEFAULT 0,

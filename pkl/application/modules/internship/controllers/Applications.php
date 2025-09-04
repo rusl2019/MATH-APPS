@@ -505,11 +505,25 @@ class Applications extends MY_Controller
                 return;
             }
 
+            // 2. Handle Assessment Form Upload
+            $assessment_path = $this->_do_upload('assessment_file', 'penilaian_lapangan_' . $id);
+            if (!$assessment_path) {
+                redirect('internship/applications/finish_internship/' . $id);
+                return;
+            }
+
             // 3. Insert documents to DB
             $this->app->insert_document([
                 'application_id' => $id,
                 'doc_type' => 'sertifikat',
                 'file_path' => $certificate_path,
+                'status' => 'submitted',
+            ]);
+
+            $this->app->insert_document([
+                'application_id' => $id,
+                'doc_type' => 'form_b2',
+                'file_path' => $assessment_path,
                 'status' => 'submitted',
             ]);
 
@@ -538,10 +552,10 @@ class Applications extends MY_Controller
                 'actor_id' => $user_id,
                 'role' => 'mahasiswa',
                 'status' => 'done',
-                'remarks' => 'Mahasiswa melaporkan bahwa kegiatan PKL di lapangan telah selesai. Nilai dari pembimbing lapangan telah diinput.',
+                'remarks' => 'Mahasiswa melaporkan bahwa kegiatan PKL di lapangan telah selesai. Nilai dari pembimbing lapangan telah diinput. Dokumen penilaian dan sertifikat telah diunggah.',
             ]);
 
-            $this->session->set_flashdata('success', 'Selamat, Anda telah menyelesaikan PKL di lapangan! Status PKL Anda telah diperbarui. Silakan lanjutkan ke tahap seminar.');
+            $this->session->set_flashdata('success', 'Selamat, Anda telah menyelesaikan PKL di lapangan! Dokumen penilaian dan sertifikat telah diunggah. Status PKL Anda telah diperbarui. Silakan lanjutkan ke tahap seminar.');
             redirect('internship/applications');
         }
     }

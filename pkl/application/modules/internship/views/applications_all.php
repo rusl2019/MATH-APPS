@@ -29,118 +29,107 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <!--begin::Container-->
     <div class="container-fluid">
         <?php if ($this->session->flashdata('success')) : ?>
-            <div class="alert alert-success"><?= $this->session->flashdata('success') ?></div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('success') ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         <?php endif; ?>
         <?php if ($this->session->flashdata('error')) : ?>
-            <div class="alert alert-danger"><?= $this->session->flashdata('error') ?></div>
-        <?php endif; ?>
-
-        <?php if (empty($applications)) : ?>
-            <div class="alert alert-info">
-                Tidak ada pengajuan PKL yang tersedia.
-            </div>
-        <?php else : ?>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Mahasiswa</th>
-                            <th>NIM</th>
-                            <th>Program Studi</th>
-                            <th>Dosen</th>
-                            <th>Instansi</th>
-                            <th>Tanggal Pengajuan</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($applications as $application) : ?>
-                            <tr>
-                                <td><?= html_escape($application->student_name ?? '-') ?></td>
-                                <td><?= html_escape($application->student_nim ?? '-') ?></td>
-                                <td><?= html_escape($application->study_program_name ?? '-') ?></td>
-                                <td><?= html_escape($application->lecturer_name ?? '-') ?></td>
-                                <td><?= html_escape($application->place_name ?? '-') ?></td>
-                                <td>
-                                    <?= $application->submission_date ? date('d-m-Y', strtotime($application->submission_date)) : '-' ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $status_labels = [
-                                        'draft' => 'Draft',
-                                        'submitted' => 'Dikirim',
-                                        'approved_dosen' => 'Disetujui Dosen',
-                                        'approved_kps' => 'Disetujui KPS',
-                                        'approved_kadep' => 'Disetujui Kadep',
-                                        'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
-                                        'rejected' => 'Ditolak',
-                                        'rejected_instansi' => 'Ditolak Instansi',
-                                        'ongoing' => 'Sedang Berlangsung',
-                                        'field_work_completed' => 'Lapangan Selesai',
-                                        'seminar_requested' => 'Pengajuan Seminar',
-                                        'seminar_approved' => 'Seminar Disetujui',
-                                        'seminar_scheduled' => 'Seminar Dijadwalkan',
-                                        'seminar_completed' => 'Seminar Selesai',
-                                        'revision' => 'Revisi Laporan',
-                                        'revision_submitted' => 'Revisi Dikirim',
-                                        'revision_approved' => 'Revisi Disetujui',
-                                        'finished' => 'Selesai'
-                                    ];
-                                    $status = $application->status ?? '';
-                                    $badge_class = ($status === 'rejected' || $status === 'rejected_instansi') ? 'bg-danger' : 'bg-success';
-                                    ?>
-                                    <span class="badge <?= $badge_class ?>">
-                                        <?= $status_labels[$status] ?? $status ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal<?= $application->id ?>">Detail</button>
-
-                                    <?php if ($application->status === 'approved_kadep') : ?>
-                                        <a href="<?= site_url('internship/applications/upload_recommendation/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-primary">Unggah Surat Rekomendasi</a>
-                                    <?php endif; ?>
-
-                                    <!-- Detail Modal -->
-                                    <div class="modal fade" id="detailModal<?= $application->id ?>" tabindex="-1">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Detail Pengajuan PKL</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div id="detail-content-<?= $application->id ?>">
-                                                        <!-- Detail content will be loaded here -->
-                                                        <div class="text-center">
-                                                            <div class="spinner-border" role="status">
-                                                                <span class="visually-hidden">Loading...</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('error') ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <?php if (empty($applications)) : ?>
+                    <div class="text-center p-5">
+                        <i class="bi bi-folder2-open text-muted fs-1"></i>
+                        <h5 class="mt-3">Belum Ada Pengajuan</h5>
+                        <p class="text-muted">Tidak ada data pengajuan PKL yang tersedia di dalam sistem.</p>
+                    </div>
+                <?php else : ?>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Mahasiswa</th>
+                                    <th>Instansi & Dosen</th>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($applications as $application) : ?>
+                                    <tr>
+                                        <td>
+                                            <strong><?= html_escape($application->student_name ?? '-') ?></strong><br>
+                                            <small class="text-muted"><?= html_escape($application->student_nim ?? '-') ?> - <?= html_escape($application->study_program_name ?? '-') ?></small>
+                                        </td>
+                                        <td>
+                                            <strong><?= html_escape($application->place_name ?? '-') ?></strong><br>
+                                            <small class="text-muted">Dosen: <?= html_escape($application->lecturer_name ?? '-') ?></small>
+                                        </td>
+                                        <td><?= $application->submission_date ? date('d M Y', strtotime($application->submission_date)) : '-' ?></td>
+                                        <td>
+                                            <?php
+                                            $status = $application->status ?? '';
+                                            $badge_class = 'bg-secondary';
+                                            if (strpos($status, 'rejected') !== false) $badge_class = 'bg-danger';
+                                            if (strpos($status, 'approved') !== false || $status === 'finished') $badge_class = 'bg-success';
+                                            if (strpos($status, 'seminar') !== false || $status === 'ongoing' || $status === 'revision') $badge_class = 'bg-info';
+                                            if ($status === 'submitted') $badge_class = 'bg-warning';
+                                            ?>
+                                            <span class="badge <?= $badge_class ?>"><?= get_status_label($status) ?></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-info" onclick="fetchDetail(<?= $application->id ?>)">Detail</button>
+                                            <?php if ($application->status === 'approved_kadep') : ?>
+                                                <a href="<?= site_url('internship/applications/upload_recommendation/' . ($application->id ?? '')) ?>" class="btn btn-sm btn-primary">Unggah Surat</a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Detail Modal -->
+        <div class="modal fade" id="detailModal" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Detail Pengajuan PKL</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="detailModalBody">
+                        <!-- Content loaded by JS -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!--end::Container-->
 </div>
 <!--end::App Content-->
 
 <script>
-    // Status label helper function
-    function getStatusLabel(status) {
-        var statusLabels = {
+    let detailModal;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+    });
+
+    function get_status_label(status) {
+        const statusLabels = {
             'draft': 'Draft',
             'submitted': 'Dikirim',
             'approved_dosen': 'Disetujui Dosen',
@@ -163,92 +152,61 @@ defined('BASEPATH') or exit('No direct script access allowed');
         return statusLabels[status] || status;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        var detailModals = document.querySelectorAll('.modal[id^="detailModal"]');
+    function fetchDetail(applicationId) {
+        const modalBody = document.getElementById('detailModalBody');
+        modalBody.innerHTML = '<div class="text-center p-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+        detailModal.show();
 
-        detailModals.forEach(function(modal) {
-            modal.addEventListener('show.bs.modal', function(event) {
-                var button = event.relatedTarget;
-                var applicationId = button.getAttribute('data-bs-target').replace('#detailModal', '');
-                fetchDetail(applicationId);
+        fetch(`<?= site_url('internship/applications/get_application_detail/') ?>${applicationId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    return;
+                }
+                displayDetail(data);
+            })
+            .catch(error => {
+                console.error('Error fetching detail:', error);
+                modalBody.innerHTML = '<div class="alert alert-danger">Gagal memuat detail pengajuan.</div>';
             });
-        });
+    }
 
-        function fetchDetail(applicationId) {
-            var contentDiv = document.getElementById('detail-content-' + applicationId);
-            contentDiv.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+    function displayDetail(data) {
+        const modalBody = document.getElementById('detailModalBody');
+        const app = data.application;
+        const student = data.student;
 
-            fetch('<?php echo site_url('internship/applications/get_application_detail/'); ?>' + applicationId)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        contentDiv.innerHTML = '<div class="alert alert-danger">' + data.error + '</div>';
-                        return;
-                    }
-                    displayDetail(applicationId, data);
-                })
-                .catch(error => {
-                    console.error('Error fetching detail:', error);
-                    contentDiv.innerHTML = '<div class="alert alert-danger">Gagal memuat detail pengajuan.</div>';
-                });
+        const submissionDate = app.submission_date ? new Date(app.submission_date).toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        }) : '-';
+        const period = `${new Date(app.activity_period_start).toLocaleDateString('id-ID')} - ${new Date(app.activity_period_end).toLocaleDateString('id-ID')}`;
+
+        let documentsHtml = '<p class="text-muted">Tidak ada dokumen.</p>';
+        if (data.documents && data.documents.length > 0) {
+            documentsHtml = '<ul class="list-group list-group-flush">';
+            data.documents.forEach(doc => {
+                const docName = doc.doc_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                documentsHtml += `<li class="list-group-item"><a href="<?= base_url() ?>${doc.file_path}" target="_blank"><i class="bi bi-file-earmark-text me-2"></i>${docName}</a></li>`;
+            });
+            documentsHtml += '</ul>';
         }
 
-        function displayDetail(applicationId, data) {
-            var contentDiv = document.getElementById('detail-content-' + applicationId);
-
-            if (!data.application) {
-                contentDiv.innerHTML = '<div class="alert alert-danger">Data pengajuan tidak ditemukan.</div>';
-                return;
-            }
-
-            var submissionDate = data.application.submission_date ? new Date(data.application.submission_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-';
-            var periodStart = data.application.activity_period_start ? new Date(data.application.activity_period_start).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-';
-            var periodEnd = data.application.activity_period_end ? new Date(data.application.activity_period_end).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-';
-
-            var documentsHtml = '';
-            if (data.documents && data.documents.length > 0) {
-                documentsHtml = '<ul class="list-group">';
-                data.documents.forEach(function(doc) {
-                    var docName = doc.doc_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    documentsHtml += `<li class="list-group-item"><a href="<?php echo base_url(); ?>${doc.file_path}" target="_blank">${docName}</a></li>`;
-                });
-                documentsHtml += '</ul>';
-            } else {
-                documentsHtml = '<p class="text-muted">Tidak ada dokumen yang diunggah.</p>';
-            }
-
-            var student = data.student || {};
-            var application = data.application || {};
-
-            contentDiv.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Data Mahasiswa</h6><hr>
-                        <dl class="row">
-                            <dt class="col-sm-4">Nama</dt><dd class="col-sm-8">${student.name || '-'}</dd>
-                            <dt class="col-sm-4">NIM</dt><dd class="col-sm-8">${student.id || '-'}</dd>
-                            <dt class="col-sm-4">Email</dt><dd class="col-sm-8">${student.email || '-'}</dd>
-                            <dt class="col-sm-4">Program Studi</dt><dd class="col-sm-8">${student.study_program || '-'}</dd>
-                        </dl>
-                        <h6>Data Pengajuan</h6><hr>
-                        <dl class="row">
-                            <dt class="col-sm-4">Dosen Pembimbing</dt><dd class="col-sm-8">${application.lecturer_name || '-'}</dd>
-                            <dt class="col-sm-4">Instansi</dt><dd class="col-sm-8">${application.place_name || '-'}</dd>
-                            <dt class="col-sm-4">Alamat Instansi</dt><dd class="col-sm-8">${application.place_address || '-'}</dd>
-                            <dt class="col-sm-4">Tanggal Pengajuan</dt><dd class="col-sm-8">${submissionDate}</dd>
-                            <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge ${application.status && application.status.includes('rejected') ? 'bg-danger' : 'bg-success'}">${getStatusLabel(application.status)}</span></dd>
-                            <dt class="col-sm-4">Periode Kegiatan</dt><dd class="col-sm-8">${periodStart} s/d ${periodEnd}</dd>
-                            <dt class="col-sm-4">Nomor Telepon</dt><dd class="col-sm-8">+62${application.phone_number || '-'}</dd>
-                            <dt class="col-sm-4">Surat Ditujukan</dt><dd class="col-sm-8">${application.addressed_to || '-'}</dd>
-                            <dt class="col-sm-4">Kegiatan Setara</dt><dd class="col-sm-8">${application.equivalent_activity || '-'}</dd>
-                        </dl>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Dokumen Pengajuan</h6><hr>
-                        ${documentsHtml}
-                    </div>
+        modalBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Data Mahasiswa</h6><hr class="mt-1">
+                    <dl class="row"><dt class="col-sm-4">Nama</dt><dd class="col-sm-8">${student.name || '-'}</dd><dt class="col-sm-4">NIM</dt><dd class="col-sm-8">${student.id || '-'}</dd><dt class="col-sm-4">Program Studi</dt><dd class="col-sm-8">${student.study_program || '-'}</dd></dl>
                 </div>
-            `;
-        }
-    });
+                <div class="col-md-6">
+                    <h6>Data Pengajuan</h6><hr class="mt-1">
+                    <dl class="row"><dt class="col-sm-4">Dosen</dt><dd class="col-sm-8">${app.lecturer_name || '-'}</dd><dt class="col-sm-4">Instansi</dt><dd class="col-sm-8">${app.place_name || '-'}</dd><dt class="col-sm-4">Periode</dt><dd class="col-sm-8">${period}</dd><dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-primary">${get_status_label(app.status)}</span></dd></dl>
+                </div>
+            </div>
+            <h6 class="mt-3">Dokumen Pengajuan</h6><hr class="mt-1">
+            ${documentsHtml}
+        `;
+    }
 </script>

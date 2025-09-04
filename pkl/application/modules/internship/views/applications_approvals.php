@@ -56,171 +56,134 @@ if (!function_exists('get_status_label')) {
     <!--begin::Container-->
     <div class="container-fluid">
         <?php if ($this->session->flashdata('success')) : ?>
-            <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('success'); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         <?php endif; ?>
         <?php if ($this->session->flashdata('error')) : ?>
-            <div class="alert alert-danger"><?php echo $this->session->flashdata('error'); ?></div>
-        <?php endif; ?>
-
-        <?php if (empty($applications)) : ?>
-            <div class="alert alert-info">
-                Tidak ada pengajuan PKL yang memerlukan persetujuan.
-            </div>
-        <?php else : ?>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Mahasiswa</th>
-                            <th>NIM</th>
-                            <th>Program Studi</th>
-                            <th>Dosen</th>
-                            <th>Instansi</th>
-                            <th>Tanggal</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($applications as $application) : ?>
-                            <tr>
-                                <td><?php echo html_escape(isset($application->student_name) ? $application->student_name : '-'); ?></td>
-                                <td><?php echo html_escape(isset($application->student_nim) ? $application->student_nim : '-'); ?></td>
-                                <td><?php echo html_escape(isset($application->study_program_name) ? $application->study_program_name : '-'); ?></td>
-                                <td><?php echo html_escape(isset($application->lecturer_name) ? $application->lecturer_name : '-'); ?></td>
-                                <td><?php echo html_escape(isset($application->place_name) ? $application->place_name : '-'); ?></td>
-                                <td><?php echo isset($application->submission_date) ? date('d-m-Y', strtotime($application->submission_date)) : '-'; ?></td>
-                                <td>
-                                    <?php
-                                    $status_labels = array(
-                                        'draft' => 'Draft',
-                                        'submitted' => 'Dikirim',
-                                        'approved_dosen' => 'Disetujui Dosen',
-                                        'approved_kps' => 'Disetujui KPS',
-                                        'approved_kadep' => 'Disetujui Kadep',
-                                        'recommendation_uploaded' => 'Surat Rekomendasi Diunggah',
-                                        'rejected' => 'Ditolak',
-                                        'rejected_instansi' => 'Ditolak Instansi',
-                                        'ongoing' => 'Sedang Berlangsung',
-                                        'field_work_completed' => 'Lapangan Selesai',
-                                        'seminar_requested' => 'Pengajuan Seminar',
-                                        'seminar_approved' => 'Seminar Disetujui',
-                                        'seminar_scheduled' => 'Seminar Dijadwalkan',
-                                        'seminar_completed' => 'Seminar Selesai',
-                                        'revision' => 'Revisi Laporan',
-                                        'revision_submitted' => 'Revisi Dikirim',
-                                        'revision_approved' => 'Revisi Disetujui',
-                                        'finished' => 'Selesai'
-                                    );
-                                    $status = isset($application->status) ? $application->status : '';
-                                    $badge_class = ($status === 'rejected' || $status === 'rejected_instansi') ? 'bg-danger' : 'bg-success';
-                                    ?>
-                                    <span class="badge <?php echo $badge_class; ?>">
-                                        <?php echo isset($status_labels[$status]) ? $status_labels[$status] : $status; ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <!-- Detail Button -->
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal<?php echo isset($application->id) ? $application->id : ''; ?>">Detail</button>
-
-                                    <?php if ($application->status === 'submitted' || strpos($application->status, 'approved') !== false) : ?>
-                                        <a href="<?php echo site_url('internship/applications/approve/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">Setujui Pengajuan</a>
-
-                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?php echo isset($application->id) ? $application->id : ''; ?>">Tolak Pengajuan</button>
-
-                                    <?php elseif (in_array($application->status, array('seminar_requested', 'seminar_approved', 'seminar_scheduled', 'seminar_completed', 'report_rejected', 'revision_submitted'))) : ?>
-                                        <a href="<?php echo site_url('internship/seminar/manage/' . (isset($application->id) ? $application->id : '')); ?>" class="btn btn-sm btn-primary">Kelola Seminar</a>
-                                    <?php endif; ?>
-
-
-                                    <!-- Detail Modal -->
-                                    <div class="modal fade" id="detailModal<?php echo isset($application->id) ? $application->id : ''; ?>" tabindex="-1">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Detail Pengajuan PKL</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div id="detail-content-<?php echo isset($application->id) ? $application->id : ''; ?>">
-                                                        <!-- Detail content will be loaded here -->
-                                                        <div class="text-center">
-                                                            <div class="spinner-border" role="status">
-                                                                <span class="visually-hidden">Loading...</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Reject Modal for Application -->
-                                    <div class="modal fade" id="rejectModal<?php echo isset($application->id) ? $application->id : ''; ?>" tabindex="-1">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <?php echo form_open(site_url('internship/applications/reject/' . (isset($application->id) ? $application->id : ''))); ?>
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Alasan Penolakan Pengajuan</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Berikan alasan penolakan:</label>
-                                                        <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan..." required></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-danger">Tolak Pengajuan</button>
-                                                </div>
-                                                <?php echo form_close(); ?>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Reject Modal for Report -->
-                                    <div class="modal fade" id="rejectReportModal<?php echo isset($application->id) ? $application->id : ''; ?>" tabindex="-1">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <?php echo form_open(site_url('internship/seminar/reject_report/' . (isset($application->id) ? $application->id : ''))); ?>
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Alasan Penolakan Laporan</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Berikan alasan atau catatan revisi:</label>
-                                                        <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan atau catatan untuk revisi..." required></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-danger">Tolak Laporan</button>
-                                                </div>
-                                                <?php echo form_close(); ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('error'); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <?php if (empty($applications)) : ?>
+                    <div class="text-center p-5">
+                        <i class="bi bi-check-circle-fill text-success fs-1"></i>
+                        <h5 class="mt-3">Tidak Ada Pengajuan</h5>
+                        <p class="text-muted">Saat ini tidak ada pengajuan PKL yang memerlukan persetujuan Anda.</p>
+                    </div>
+                <?php else : ?>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Mahasiswa</th>
+                                    <th>Program Studi</th>
+                                    <th>Instansi</th>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($applications as $app) : ?>
+                                    <tr>
+                                        <td>
+                                            <strong><?= html_escape($app->student_name ?? '-') ?></strong><br>
+                                            <small class="text-muted"><?= html_escape($app->student_nim ?? '-') ?></small>
+                                        </td>
+                                        <td><?= html_escape($app->study_program_name ?? '-') ?></td>
+                                        <td><?= html_escape($app->place_name ?? '-') ?></td>
+                                        <td><?= $app->submission_date ? date('d M Y', strtotime($app->submission_date)) : '-' ?></td>
+                                        <td>
+                                            <?php
+                                            $status = $app->status ?? '';
+                                            $badge_class = 'bg-secondary';
+                                            if (strpos($status, 'rejected') !== false) $badge_class = 'bg-danger';
+                                            if (strpos($status, 'approved') !== false || $status === 'finished') $badge_class = 'bg-success';
+                                            if (strpos($status, 'seminar') !== false || $status === 'ongoing' || $status === 'revision') $badge_class = 'bg-info';
+                                            if ($status === 'submitted') $badge_class = 'bg-warning';
+                                            ?>
+                                            <span class="badge <?= $badge_class ?>"><?= get_status_label($status) ?></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <?php if (in_array($status, ['seminar_requested', 'seminar_approved', 'seminar_scheduled', 'seminar_completed', 'report_rejected', 'revision_submitted'])) : ?>
+                                                <a href="<?= site_url('internship/seminar/manage/' . ($app->id ?? '')) ?>" class="btn btn-sm btn-primary">Kelola Seminar</a>
+                                            <?php else : ?>
+                                                <button class="btn btn-sm btn-info" onclick="fetchDetail(<?= $app->id ?>)">Tinjau</button>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Detail Modal -->
+        <div class="modal fade" id="detailModal" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Detail Pengajuan PKL</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="detailModalBody">
+                        <!-- Detail content will be loaded here by JavaScript -->
+                    </div>
+                    <div class="modal-footer" id="detailModalFooter">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <!-- Action buttons will be appended here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reject Modal -->
+        <div class="modal fade" id="rejectModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <?= form_open('', ['id' => 'rejectForm']); ?>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Alasan Penolakan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Berikan alasan atau catatan revisi:</label>
+                            <textarea name="remarks" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Tolak</button>
+                    </div>
+                    <?= form_close(); ?>
+                </div>
+            </div>
+        </div>
     </div>
     <!--end::Container-->
 </div>
 <!--end::App Content-->
 
 <script>
-    // Status label helper function
+    let detailModal;
+    let rejectModal;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+        rejectModal = new bootstrap.Modal(document.getElementById('rejectModal'));
+    });
+
     function getStatusLabel(status) {
-        var statusLabels = {
+        const statusLabels = {
             'draft': 'Draft',
             'submitted': 'Dikirim',
             'approved_dosen': 'Disetujui Dosen',
@@ -243,147 +206,91 @@ if (!function_exists('get_status_label')) {
         return statusLabels[status] || status;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add event listeners to all detail buttons
-        var detailButtons = document.querySelectorAll('button[data-bs-toggle="modal"][data-bs-target^="#detailModal"]');
+    function fetchDetail(applicationId) {
+        const modalBody = document.getElementById('detailModalBody');
+        const modalFooter = document.getElementById('detailModalFooter');
+        modalBody.innerHTML = '<div class="text-center p-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+        
+        // Clear previous action buttons
+        while (modalFooter.firstChild) {
+            modalFooter.removeChild(modalFooter.lastChild);
+        }
 
-        detailButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                var row = this.closest('tr');
-                var applicationId = '';
-
-                // Try to get the application ID from the approve link
-                var approveLink = row.querySelector('a[href*="approve"]');
-                if (approveLink) {
-                    var match = approveLink.href.match(/\/(\d+)$/);
-                    if (match) {
-                        applicationId = match[1];
-                    }
+        fetch(`<?= site_url('internship/applications/get_application_detail/') ?>${applicationId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    return;
                 }
-
-                // If not found, try to get it from the modal target
-                if (!applicationId) {
-                    var modalTarget = this.dataset.bsTarget;
-                    var match = modalTarget.match(/(\d+)/);
-                    if (match) {
-                        applicationId = match[1];
-                    }
-                }
-
-                if (applicationId) {
-                    fetchDetail(applicationId);
-                }
+                displayDetail(data);
+                detailModal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching detail:', error);
+                modalBody.innerHTML = '<div class="alert alert-danger">Gagal memuat detail pengajuan.</div>';
             });
-        });
+    }
 
-        function fetchDetail(applicationId) {
-            fetch('<?php echo site_url('internship/applications/get_application_detail/'); ?>' + applicationId)
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    displayDetail(applicationId, data);
-                })
-                .catch(function(error) {
-                    console.error('Error fetching detail:', error);
-                    document.getElementById('detail-content-' + applicationId).innerHTML =
-                        '<div class="alert alert-danger">Gagal memuat detail pengajuan.</div>';
-                });
+    function displayDetail(data) {
+        const modalBody = document.getElementById('detailModalBody');
+        const modalFooter = document.getElementById('detailModalFooter');
+        const app = data.application;
+        const student = data.student;
+
+        const submissionDate = app.submission_date ? new Date(app.submission_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-';
+        const period = `${new Date(app.activity_period_start).toLocaleDateString('id-ID')} - ${new Date(app.activity_period_end).toLocaleDateString('id-ID')}`;
+
+        let documentsHtml = '<p class="text-muted">Tidak ada dokumen.</p>';
+        if (data.documents && data.documents.length > 0) {
+            documentsHtml = '<ul class="list-group list-group-flush">';
+            data.documents.forEach(doc => {
+                const docName = doc.doc_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                documentsHtml += `<li class="list-group-item"><a href="<?= base_url() ?>${doc.file_path}" target="_blank"><i class="bi bi-file-earmark-text me-2"></i>${docName}</a></li>`;
+            });
+            documentsHtml += '</ul>';
         }
 
-        function displayDetail(applicationId, data) {
-            var contentDiv = document.getElementById('detail-content-' + applicationId);
+        modalBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Data Mahasiswa</h6><hr class="mt-1">
+                    <dl class="row"><dt class="col-sm-4">Nama</dt><dd class="col-sm-8">${student.name || '-'}</dd><dt class="col-sm-4">NIM</dt><dd class="col-sm-8">${student.id || '-'}</dd><dt class="col-sm-4">Program Studi</dt><dd class="col-sm-8">${student.study_program || '-'}</dd></dl>
+                </div>
+                <div class="col-md-6">
+                    <h6>Data Pengajuan</h6><hr class="mt-1">
+                    <dl class="row"><dt class="col-sm-4">Dosen</dt><dd class="col-sm-8">${app.lecturer_name || '-'}</dd><dt class="col-sm-4">Instansi</dt><dd class="col-sm-8">${app.place_name || '-'}</dd><dt class="col-sm-4">Periode</dt><dd class="col-sm-8">${period}</dd></dl>
+                </div>
+            </div>
+            <h6 class="mt-3">Dokumen Pengajuan</h6><hr class="mt-1">
+            ${documentsHtml}
+        `;
 
-            if (!data.application) {
-                contentDiv.innerHTML = '<div class="alert alert-danger">Data pengajuan tidak ditemukan.</div>';
-                return;
-            }
+        // Add action buttons to footer
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'btn btn-secondary';
+        closeBtn.textContent = 'Tutup';
+        closeBtn.setAttribute('data-bs-dismiss', 'modal');
 
-            // Format dates
-            var submissionDate = '-';
-            if (data.application.submission_date) {
-                var submissionDateObj = new Date(data.application.submission_date);
-                submissionDate = submissionDateObj.toLocaleDateString('id-ID');
-            }
+        if (app.status === 'submitted' || app.status.includes('approved_dosen') || app.status.includes('approved_kps')) {
+            const rejectBtn = document.createElement('button');
+            rejectBtn.className = 'btn btn-danger';
+            rejectBtn.textContent = 'Tolak';
+            rejectBtn.onclick = () => {
+                document.getElementById('rejectForm').action = `<?= site_url('internship/applications/reject/') ?>${app.id}`;
+                detailModal.hide();
+                rejectModal.show();
+            };
 
-            var periodStart = '-';
-            if (data.application.activity_period_start) {
-                var periodStartObj = new Date(data.application.activity_period_start);
-                periodStart = periodStartObj.toLocaleDateString('id-ID');
-            }
-
-            var periodEnd = '-';
-            if (data.application.activity_period_end) {
-                var periodEndObj = new Date(data.application.activity_period_end);
-                periodEnd = periodEndObj.toLocaleDateString('id-ID');
-            }
-
-            // Build document list
-            var documentsHtml = '';
-            if (data.documents && data.documents.length > 0) {
-                documentsHtml = '<ul class="list-group">';
-                data.documents.forEach(function(doc) {
-                    var docName = 'Dokumen';
-                    if (doc.doc_type) {
-                        docName = doc.doc_type.replace(/_/g, ' ')
-                            .replace(/\b\w/g, function(l) {
-                                return l.toUpperCase();
-                            });
-                    }
-                    documentsHtml += '<li class="list-group-item">' +
-                        '<a href="<?php echo base_url(); ?>' + doc.file_path + '" target="_blank">' + docName + '</a>' +
-                        (doc.status ? '<span class="badge bg-secondary ms-2">' + doc.status + '</span>' : '') +
-                        '</li>';
-                });
-                documentsHtml += '</ul>';
-            } else {
-                documentsHtml = '<p class="text-muted">Tidak ada dokumen yang diunggah.</p>';
-            }
-
-            contentDiv.innerHTML =
-                '<div class="row">' +
-                '<div class="col-md-6">' +
-                '<h6>Data Mahasiswa</h6>' +
-                '<hr>' +
-                '<dl class="row">' +
-                '<dt class="col-sm-4">Nama</dt>' +
-                '<dd class="col-sm-8">' + (data.student && data.student.name ? data.student.name : '-') + '</dd>' +
-                '<dt class="col-sm-4">NIM</dt>' +
-                '<dd class="col-sm-8">' + (data.student && data.student.id ? data.student.id : '-') + '</dd>' +
-                '<dt class="col-sm-4">Email</dt>' +
-                '<dd class="col-sm-8">' + (data.student && data.student.email ? data.student.email : '-') + '</dd>' +
-                '<dt class="col-sm-4">Program Studi</dt>' +
-                '<dd class="col-sm-8">' + (data.student && data.student.study_program ? data.student.study_program : '-') + '</dd>' +
-                '</dl>' +
-                '<h6>Data Pengajuan</h6>' +
-                '<hr>' +
-                '<dl class="row">' +
-                '<dt class="col-sm-4">Dosen Pembimbing</dt>' +
-                '<dd class="col-sm-8">' + (data.application.lecturer_name || '-') + '</dd>' +
-                '<dt class="col-sm-4">Instansi</dt>' +
-                '<dd class="col-sm-8">' + (data.application.place_name || '-') + '</dd>' +
-                '<dt class="col-sm-4">Alamat Instansi</dt>' +
-                '<dd class="col-sm-8">' + (data.application.place_address || '-') + '</dd>' +
-                '<dt class="col-sm-4">Tanggal Pengajuan</dt>' +
-                '<dd class="col-sm-8">' + submissionDate + '</dd>' +
-                '<dt class="col-sm-4">Status</dt>' +
-                '<dd class="col-sm-8"><span class="badge ' + (data.application.status && data.application.status.includes('rejected') ? 'bg-danger' : 'bg-success') + '">' + getStatusLabel(data.application.status) + '</span></dd>' +
-                '<dt class="col-sm-4">Periode Kegiatan</dt>' +
-                '<dd class="col-sm-8">' + periodStart + ' s/d ' + periodEnd + '</dd>' +
-                '<dt class="col-sm-4">Nomor Telepon</dt>' +
-                '<dd class="col-sm-8">+62' + (data.application.phone_number || '-') + '</dd>' +
-                '<dt class="col-sm-4">Surat Ditujukan Kepada</dt>' +
-                '<dd class="col-sm-8">' + (data.application.addressed_to || '-') + '</dd>' +
-                '<dt class="col-sm-4">Kegiatan Setara</dt>' +
-                '<dd class="col-sm-8">' + (data.application.equivalent_activity || '-') + '</dd>' +
-                '</dl>' +
-                '</div>' +
-                '<div class="col-md-6">' +
-                '<h6>Dokumen Pengajuan</h6>' +
-                '<hr>' +
-                documentsHtml +
-                '</div>' +
-                '</div>';
+            const approveBtn = document.createElement('a');
+            approveBtn.className = 'btn btn-success';
+            approveBtn.textContent = 'Setujui';
+            approveBtn.href = `<?= site_url('internship/applications/approve/') ?>${app.id}`;
+            approveBtn.onclick = () => confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?');
+            
+            modalFooter.append(rejectBtn, approveBtn);
         }
-    });
+        
+        modalFooter.prepend(closeBtn);
+    }
 </script>

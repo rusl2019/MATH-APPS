@@ -35,15 +35,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
 
         <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">
-                Form Laporan Penyelesaian PKL
+            <div class="card-header">
+                <h5 class="card-title mb-0">Form Laporan Penyelesaian PKL</h5>
             </div>
             <div class="card-body">
-                <p>Silakan isi form berikut untuk melaporkan bahwa kegiatan PKL Anda telah selesai. Masukkan nilai dari setiap komponen sesuai dengan lembar penilaian yang diberikan oleh pembimbing lapangan.</p>
+                <p class="card-text">Silakan isi form berikut untuk melaporkan bahwa kegiatan PKL Anda di lapangan telah selesai. Masukkan nilai dari setiap komponen sesuai dengan lembar penilaian (Form B-2) yang diberikan oleh pembimbing lapangan dan unggah dokumen yang sudah ditandatangani.</p>
 
                 <?= form_open_multipart('internship/applications/finish_internship/' . $application_id); ?>
 
-                <h5 class="mt-3">Komponen Penilaian Lapangan</h5>
+                <h5 class="mt-4">Komponen Penilaian Lapangan (Form B-2)</h5>
                 <hr>
 
                 <?php
@@ -67,7 +67,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     </div>
                 <?php endforeach; ?>
 
-                <h5 class="mt-4">Dokumen Pendukung</h5>
+                <h5 class="mt-4">Dokumen Pendukung (Form B-3)</h5>
                 <hr>
 
                 <div class="mb-4">
@@ -76,9 +76,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     <div class="form-text">Unggah sertifikat atau surat keterangan selesai PKL dari instansi.</div>
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary">Batal</a>
-                    <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin semua data yang diisi sudah benar? Aksi ini akan menyelesaikan proses PKL Anda.')">Kirim Laporan & Selesaikan PKL</button>
+                <h5 class="mt-4">Dokumen Penilaian Lapangan (Form B-2)</h5>
+                <hr>
+
+                <div class="mb-4">
+                    <label for="assessment_file" class="form-label">Unggah Scan Dokumen Penilaian Lapangan (PDF) <span class="text-danger">*</span></label>
+                    <input type="file" name="assessment_file" id="assessment_file" class="form-control" accept=".pdf" required>
+                    <div class="form-text">Unggah scan dokumen penilaian dari pembimbing lapangan yang sudah ditandatangani.</div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="<?= site_url('internship/applications') ?>" class="btn btn-secondary me-2">Batal</a>
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin semua data yang diisi sudah benar dan dokumen yang diunggah sudah sesuai? Aksi ini akan menyelesaikan proses PKL Anda di lapangan.')"><i class="bi bi-check-circle me-2"></i>Kirim Laporan & Selesaikan PKL</button>
                 </div>
 
                 <?= form_close(); ?>

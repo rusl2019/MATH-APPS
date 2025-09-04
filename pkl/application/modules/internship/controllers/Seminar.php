@@ -62,6 +62,9 @@ class Seminar extends MY_Controller
             return;
         }
 
+        // Set validation rules
+        $this->form_validation->set_rules('report_title', 'Judul Laporan', 'required|trim|max_length[255]');
+
         $config = [
             'upload_path' => './uploads/pkl/',
             'allowed_types' => 'pdf',
@@ -71,8 +74,19 @@ class Seminar extends MY_Controller
 
         $this->load->library('upload', $config);
 
+        if ($this->form_validation->run() === FALSE) {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('internship/seminar/index/' . $application_id);
+            return;
+        }
+
         if ($this->upload->do_upload('report_file')) {
             $file = $this->upload->data();
+
+            // Update application with report title
+            $this->app->update_application($application_id, [
+                'report_title' => $this->input->post('report_title')
+            ]);
 
             // Insert document
             $this->app->insert_document([
@@ -92,12 +106,44 @@ class Seminar extends MY_Controller
                 'actor_id' => $student_id,
                 'role' => 'mahasiswa',
                 'status' => 'submitted',
-                'remarks' => 'Mahasiswa mengunggah draft laporan dan mengajukan seminar.',
+                'remarks' => 'Mahasiswa mengunggah draft laporan dan mengajukan seminar. Judul laporan: ' . $this->input->post('report_title'),
             ]);
 
             $this->session->set_flashdata('success', 'Draft laporan berhasil diunggah. Menunggu persetujuan dosen pembimbing untuk seminar.');
         } else {
             $this->session->set_flashdata('error', 'Gagal mengunggah laporan: ' . $this->upload->display_errors());
+        }
+
+        redirect('internship/seminar/index/' . $application_id);
+    }
+
+    /**
+     * Update report title
+     */
+    public function update_report_title($application_id)
+    {
+        $student_id = $this->session->userdata('id');
+        $application = $this->app->get_application_by_id($application_id);
+
+        // Security check
+        if (!$application || $application->student_id != $student_id) {
+            $this->session->set_flashdata('error', 'Aksi tidak diizinkan.');
+            redirect('internship/seminar/index/' . $application_id);
+            return;
+        }
+
+        // Set validation rules
+        $this->form_validation->set_rules('report_title', 'Judul Laporan', 'required|trim|max_length[255]');
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->session->set_flashdata('error', validation_errors());
+        } else {
+            // Update application with report title
+            $this->app->update_application($application_id, [
+                'report_title' => $this->input->post('report_title')
+            ]);
+
+            $this->session->set_flashdata('success', 'Judul laporan berhasil diperbarui.');
         }
 
         redirect('internship/seminar/index/' . $application_id);

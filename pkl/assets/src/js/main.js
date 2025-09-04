@@ -10,6 +10,11 @@ import "../css/datatables.local.css";
 import * as bootstrap from "bootstrap";
 import * as adminlte from "admin-lte";
 
+// Expose Bootstrap to the global window object.
+// This is needed for inline scripts in some views that use Bootstrap's JavaScript APIs directly,
+// such as creating modal instances (e.g., new bootstrap.Modal(...)).
+window.bootstrap = bootstrap;
+
 // Import fungsionalitas modular yang sudah ada
 import { initSidebarScrollbars } from "./sidebar.js";
 import "./color-mode.js";

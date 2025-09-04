@@ -41,6 +41,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <!--end::Third Party Plugin(Bootstrap Icons)-->
 
     <link rel="stylesheet" href="<?php echo base_url('assets/dist/bundle.css'); ?>" />
+
+    <!--begin::Script-->
+    <script src="<?php echo base_url('assets/dist/bundle.js'); ?>" defer></script>
+    <!--end::Script-->
 </head>
 <!--end::Head-->
 
@@ -294,9 +298,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <!--end::Footer-->
     </div>
     <!--end::App Wrapper-->
-    <!--begin::Script-->
-    <script src="<?php echo base_url('assets/dist/bundle.js'); ?>"></script>
-    <!--end::Script-->
 </body>
 <!--end::Body-->
 
