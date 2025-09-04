@@ -6,7 +6,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 defined('BASEPATH') or exit('No direct script access allowed');
 
 if (!function_exists('get_status_label')) {
-    function get_status_label($status) {
+    function get_status_label($status)
+    {
         $labels = [
             'submitted' => 'Menunggu Persetujuan Dosen',
             'approved_dosen' => 'Disetujui Dosen',
@@ -30,7 +31,8 @@ if (!function_exists('get_status_label')) {
 }
 
 if (!function_exists('get_status_badge')) {
-    function get_status_badge($status) {
+    function get_status_badge($status)
+    {
         if (strpos($status, 'rejected') !== false) return 'bg-danger';
         if (strpos($status, 'approved') !== false || $status === 'finished') return 'bg-success';
         if ($status === 'submitted' || $status === 'seminar_requested' || $status === 'revision_submitted') return 'bg-warning';
@@ -43,7 +45,9 @@ if (!function_exists('get_status_badge')) {
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-6"><h3 class="mb-0"><?= $title; ?></h3></div>
+            <div class="col-sm-6">
+                <h3 class="mb-0"><?= $title; ?></h3>
+            </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                     <li class="breadcrumb-item"><a href="<?= base_url(); ?>">Home</a></li>
